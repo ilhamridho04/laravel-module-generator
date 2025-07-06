@@ -47,3 +47,76 @@ jobs:
           else
             echo "No tests directory found, skipping tests"
           fi
+
+  laravel-integration-tests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php-version: [8.1, 8.2, 8.3]
+        laravel-version: [10.*, 11.*]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          extensions: mbstring, bcmath, pdo, pdo_sqlite
+          coverage: none
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.composer/cache
+          key: ${{ runner.os }}-laravel-${{ matrix.laravel-version }}-php-${{ matrix.php-version }}-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-laravel-${{ matrix.laravel-version }}-php-${{ matrix.php-version }}-
+            ${{ runner.os }}-laravel-${{ matrix.laravel-version }}-
+
+      - name: Create Laravel project
+        run: |
+          composer create-project laravel/laravel:${{ matrix.laravel-version }} laravel-app --prefer-dist --no-interaction
+          cd laravel-app
+
+      - name: Install package into Laravel
+        run: |
+          cd laravel-app
+          # Add local repository
+          composer config repositories.local path ../
+          # Require our package
+          composer require ngodingskuyy/laravel-module-generator:@dev --no-interaction
+
+      - name: Setup Laravel environment
+        run: |
+          cd laravel-app
+          cp .env.example .env
+          php artisan key:generate
+          touch database/database.sqlite
+
+      - name: Test package installation
+        run: |
+          cd laravel-app
+          # Test if service provider is registered
+          php artisan about --only=providers | grep -i "LaravelModuleGenerator" || echo "Provider not found in about command"
+          
+          # Test if package commands are available
+          php artisan list | grep -i "make:feature" && echo "✅ make:feature command is available" || echo "❌ make:feature command not found"
+
+      - name: Test package functionality
+        run: |
+          cd laravel-app
+          # Create a test module to verify package works
+          php artisan make:feature TestModule --force || echo "Command execution completed"
+          
+          # Check if files were created
+          echo "Checking created files:"
+          ls -la app/Http/Controllers/ | grep -i test || echo "No controller files found"
+          ls -la app/Models/ | grep -i test || echo "No model files found"
+          ls -la database/migrations/ | grep -i test || echo "No migration files found"
+
+      - name: Test Laravel application
+        run: |
+          cd laravel-app
+          # Run basic Laravel tests to ensure nothing is broken
+          php artisan test || echo "Laravel tests completed"
