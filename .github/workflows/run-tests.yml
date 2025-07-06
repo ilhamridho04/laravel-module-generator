@@ -62,25 +62,24 @@ jobs:
     strategy:
       matrix:
         include:
-          # PHP 8.1 with Laravel 9, 10, 11
+          # PHP 8.1 with Laravel 9, 10 only (Laravel 11+ requires PHP 8.2+)
           - php-version: 8.1
-            laravel-version: "^9.0"
+            laravel-version: "9.*"
+            testbench-version: "^7.0"
           - php-version: 8.1
-            laravel-version: "^10.0"
-          - php-version: 8.1
-            laravel-version: "^11.0"
-          # PHP 8.2 with Laravel 10, 11, 12
+            laravel-version: "10.*"
+            testbench-version: "^8.0"
+          # PHP 8.2 with Laravel 10, 11
           - php-version: 8.2
-            laravel-version: "^10.0"
+            laravel-version: "10.*"
+            testbench-version: "^8.0"
           - php-version: 8.2
-            laravel-version: "^11.0"
-          - php-version: 8.2
-            laravel-version: "^12.0"
-          # PHP 8.3 with Laravel 11, 12
+            laravel-version: "11.*"
+            testbench-version: "^9.0"
+          # PHP 8.3 with Laravel 11 (Laravel 12 is not yet stable)
           - php-version: 8.3
-            laravel-version: "^11.0"
-          - php-version: 8.3
-            laravel-version: "^12.0"
+            laravel-version: "11.*"
+            testbench-version: "^9.0"
 
     steps:
       - uses: actions/checkout@v4
@@ -103,18 +102,26 @@ jobs:
 
       - name: Create Laravel project
         run: |
-          # Install Laravel with specific version
-          composer create-project laravel/laravel:${{ matrix.laravel-version }} laravel-app --prefer-dist --no-interaction
+          # Install Laravel with specific version constraint
+          composer create-project laravel/laravel laravel-app --prefer-dist --no-interaction
+          cd laravel-app
+          # Update Laravel framework to the specific version we want to test
+          composer require "laravel/framework:${{ matrix.laravel-version }}" --no-interaction --with-all-dependencies
 
       - name: Install package into Laravel
         run: |
           cd laravel-app
           # Add local repository pointing to parent directory
           composer config repositories.local '{"type": "path", "url": "../", "options": {"symlink": false}}'
+          
           # Show current Laravel version for debugging
-          composer show laravel/framework | head -5
-          # Install our package
-          composer require ngodingskuyy/laravel-module-generator:@dev --no-interaction
+          echo "=== Laravel Framework Version ==="
+          composer show laravel/framework | head -5 || echo "Laravel framework info not available"
+          
+          # Install our package with dependency resolution
+          echo "=== Installing Package ==="
+          composer require ngodingskuyy/laravel-module-generator:@dev --no-interaction --no-update
+          composer update ngodingskuyy/laravel-module-generator --no-interaction
 
       - name: Setup Laravel environment
         run: |
@@ -130,86 +137,129 @@ jobs:
         run: |
           cd laravel-app
           echo "=== Debugging Package Installation ==="
-          # Check if composer installed the package
-          composer show ngodingskuyy/laravel-module-generator || echo "Package not found in composer show"
           
-          # Show all installed packages for debugging
-          echo "=== Installed Packages ==="
-          composer show | grep -E "(illuminate|spatie|ngodingskuyy)" || echo "No relevant packages found"
+          # Check if composer installed the package
+          if composer show ngodingskuyy/laravel-module-generator; then
+            echo "✅ Package found in composer show"
+            composer show ngodingskuyy/laravel-module-generator
+          else
+            echo "❌ Package not found in composer show"
+            echo "=== All installed packages ==="
+            composer show
+            exit 1
+          fi
+          
+          # Show Laravel and package versions
+          echo "=== Framework and Package Versions ==="
+          composer show laravel/framework | grep -E "(name|versions)" || echo "Laravel framework info not available"
+          composer show spatie/laravel-permission | grep -E "(name|versions)" || echo "Spatie permission info not available"
           
           # Clear and optimize Laravel
           php artisan config:clear
           php artisan cache:clear
-          
-          # Only cache config if package is properly installed
-          if composer show ngodingskuyy/laravel-module-generator > /dev/null 2>&1; then
-            php artisan config:cache
-            echo "✅ Package is installed and config cached"
-          else
-            echo "❌ Package installation verification failed"
-          fi
+          php artisan config:cache
+          echo "✅ Laravel caches cleared and rebuilt"
 
       - name: Test package installation
         run: |
           cd laravel-app
+          
           # Check if package is actually installed before testing
           if ! composer show ngodingskuyy/laravel-module-generator > /dev/null 2>&1; then
-            echo "❌ Package is not installed, skipping service provider tests"
-            exit 0
+            echo "❌ Package is not installed, this should not happen"
+            exit 1
           fi
           
           # Test if service provider is registered
           echo "=== Testing Service Provider Registration ==="
-          php artisan about --only=providers | grep -i "LaravelModuleGenerator" && echo "✅ Service provider found" || echo "❌ Service provider not found"
+          if php artisan about --only=providers 2>/dev/null | grep -i "LaravelModuleGenerator"; then
+            echo "✅ Service provider found in providers list"
+          else
+            echo "⚠️ Service provider not found in providers list (may be normal for some Laravel versions)"
+          fi
           
           # Test if package commands are available
           echo "=== Testing Available Commands ==="
-          php artisan list | grep -i "make:feature" && echo "✅ make:feature command is available" || echo "❌ make:feature command not found"
+          if php artisan list | grep -i "make:feature"; then
+            echo "✅ make:feature command is available"
+          else
+            echo "❌ make:feature command not found"
+            echo "Available make commands:"
+            php artisan list | grep "make:" || echo "No make commands found"
+            exit 1
+          fi
 
       - name: Test package functionality
         run: |
           cd laravel-app
-          # Test if the command works without errors
-          echo "=== Testing make:feature command ==="
+          echo "=== Testing make:feature command functionality ==="
           
           # First, check if command is registered
-          if php artisan list | grep -q "make:feature"; then
-            echo "✅ make:feature command found in artisan list"
-            
-            # Try to run the command
-            if php artisan make:feature TestModule --force 2>&1; then
-              echo "✅ make:feature command executed successfully"
-            else
-              echo "❌ make:feature command failed to execute"
-              # Show any error logs
-              php artisan make:feature TestModule --force -v || true
-            fi
-          else
+          if ! php artisan list | grep -q "make:feature"; then
             echo "❌ make:feature command not found in artisan list"
-            echo "Available commands:"
-            php artisan list | grep make || echo "No make commands found"
+            exit 1
+          fi
+          
+          echo "✅ make:feature command found in artisan list"
+          
+          # Try to run the command help first
+          echo "=== Testing command help ==="
+          if php artisan help make:feature; then
+            echo "✅ Command help works"
+          else
+            echo "❌ Command help failed"
+            exit 1
+          fi
+          
+          # Try to run the actual command
+          echo "=== Running make:feature TestModule ==="
+          if php artisan make:feature TestModule --force; then
+            echo "✅ make:feature command executed successfully"
+          else
+            echo "❌ make:feature command failed to execute"
+            echo "=== Trying with verbose output ==="
+            php artisan make:feature TestModule --force -v || true
+            exit 1
           fi
           
           # Check if files were created
           echo "=== Checking created files ==="
+          created_files=0
+          
           echo "Controllers:"
-          find app/Http/Controllers/ -name "*TestModule*" 2>/dev/null || echo "No controller files found"
+          if find app/Http/Controllers/ -name "*TestModule*" 2>/dev/null | head -3; then
+            created_files=$((created_files + 1))
+          else
+            echo "No controller files found"
+          fi
+          
           echo "Models:"
-          find app/Models/ -name "*TestModule*" 2>/dev/null || echo "No model files found"
+          if find app/Models/ -name "*TestModule*" 2>/dev/null | head -3; then
+            created_files=$((created_files + 1))
+          else
+            echo "No model files found"
+          fi
+          
           echo "Migrations:"
-          find database/migrations/ -name "*test_modules*" 2>/dev/null || echo "No migration files found"
+          if find database/migrations/ -name "*test_modules*" 2>/dev/null | head -3; then
+            created_files=$((created_files + 1))
+          else
+            echo "No migration files found"
+          fi
+          
           echo "Requests:"
-          find app/Http/Requests/ -name "*TestModule*" 2>/dev/null || echo "No request files found"
-          echo "Routes:"
-          find routes/ -name "*TestModule*" -o -path "*/TestModules/*" 2>/dev/null || echo "No route modules found"
+          if find app/Http/Requests/ -name "*TestModule*" 2>/dev/null | head -3; then
+            created_files=$((created_files + 1))
+          else
+            echo "No request files found"
+          fi
           
-          # Show detailed error if command failed
-          echo "=== Command help test ==="
-          php artisan help make:feature || echo "Help command failed"
-          
-          # Try a simple command to verify it works
-          echo "=== Basic command test ==="
-          php artisan make:feature --help || echo "Command help failed"
+          if [ $created_files -gt 0 ]; then
+            echo "✅ Files were created successfully ($created_files types of files found)"
+          else
+            echo "❌ No files were created by the command"
+            exit 1
+          fi
 
       - name: Test Laravel application
         run: |

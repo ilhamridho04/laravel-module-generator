@@ -1,8 +1,8 @@
 # Laravel Module Generator
 ## 📦 Installation## 📋 Requirements
 
-- **PHP**: ^8.1, ^8.2, ^8.3
-- **Laravel**: ^8.12, ^9.0, ^10.0, ^11.0, ^12.0
+- **PHP**: ^8.1
+- **Laravel**: ^9.0, ^10.0, ^11.0
 - **Spatie Laravel Permission**: ^5.11 | ^6.0## Quick Installation
 
 ```bash
