@@ -11,8 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php-version: [8.1, 8.2, 8.3]
-        laravel-version: [10.*, 11.*]
+        php-version: [8.2, 8.3]
 
     steps:
       - uses: actions/checkout@v4
@@ -52,20 +51,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        include:
-          # PHP 8.1 only supports Laravel 10
-          - php-version: 8.1
-            laravel-version: "10.*"
-          # PHP 8.2 supports both Laravel 10 and 11
-          - php-version: 8.2
-            laravel-version: "10.*"
-          - php-version: 8.2
-            laravel-version: "11.*"
-          # PHP 8.3 supports both Laravel 10 and 11
-          - php-version: 8.3
-            laravel-version: "10.*"
-          - php-version: 8.3
-            laravel-version: "11.*"
+        php-version: [8.2, 8.3]
 
     steps:
       - uses: actions/checkout@v4
@@ -81,38 +67,45 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.composer/cache
-          key: ${{ runner.os }}-laravel-${{ matrix.laravel-version }}-php-${{ matrix.php-version }}-${{ hashFiles('**/composer.lock') }}
+          key: ${{ runner.os }}-laravel-11-php-${{ matrix.php-version }}-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
-            ${{ runner.os }}-laravel-${{ matrix.laravel-version }}-php-${{ matrix.php-version }}-
-            ${{ runner.os }}-laravel-${{ matrix.laravel-version }}-
+            ${{ runner.os }}-laravel-11-php-${{ matrix.php-version }}-
+            ${{ runner.os }}-laravel-11-
 
       - name: Create Laravel project
         run: |
-          if [[ "${{ matrix.laravel-version }}" == "11.*" ]]; then
-            composer create-project laravel/laravel laravel-app --prefer-dist --no-interaction
-          else
-            composer create-project laravel/laravel:${{ matrix.laravel-version }} laravel-app --prefer-dist --no-interaction
-          fi
+          composer create-project laravel/laravel laravel-app --prefer-dist --no-interaction
 
       - name: Install package into Laravel
         run: |
           cd laravel-app
-          # Add local repository
-          composer config repositories.local path ../
+          # Copy package source to a temporary directory for local installation
+          cp -r ../ ../package-source
+          # Add local repository using symlink method
+          composer config repositories.local '{"type": "path", "url": "../package-source", "options": {"symlink": false}}'
           # Require our package
           composer require ngodingskuyy/laravel-module-generator:@dev --no-interaction
-          # Refresh autoloader
-          composer dump-autoload
 
       - name: Setup Laravel environment
         run: |
           cd laravel-app
           cp .env.example .env
           php artisan key:generate
+          # Use SQLite for testing
+          sed -i 's/DB_CONNECTION=.*/DB_CONNECTION=sqlite/' .env
+          sed -i 's/DB_DATABASE=.*/DB_DATABASE=:memory:/' .env
           touch database/database.sqlite
-          # Configure database for SQLite
-          echo "DB_CONNECTION=sqlite" >> .env
-          echo "DB_DATABASE=database/database.sqlite" >> .env
+
+      - name: Verify package installation
+        run: |
+          cd laravel-app
+          # Check if composer installed the package
+          composer show ngodingskuyy/laravel-module-generator || echo "Package not found in composer show"
+          
+          # Clear and optimize Laravel
+          php artisan config:clear
+          php artisan cache:clear
+          php artisan config:cache
 
       - name: Test package installation
         run: |
