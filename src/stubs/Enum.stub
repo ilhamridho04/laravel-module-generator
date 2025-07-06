@@ -1,4 +1,3 @@
---- Enum.stub ---
 <?php
 
 namespace App\Enums;

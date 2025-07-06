@@ -1,4 +1,3 @@
---- Observer.stub ---
 <?php
 
 namespace App\Observers;

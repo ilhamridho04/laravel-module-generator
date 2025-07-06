@@ -1,5 +1,4 @@
 
---- request.store.stub ---
 <?php
 
 namespace App\Http\Requests;

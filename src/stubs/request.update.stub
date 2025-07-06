@@ -1,4 +1,3 @@
---- request.update.stub ---
 <?php
 
 namespace App\Http\Requests;
