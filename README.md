@@ -1,7 +1,9 @@
 # Laravel Module Generator
-## 📦 Installation
+## 📦 Installation## 📋 Requirements
 
-### Quick Installation
+- **PHP**: ^8.1, ^8.2, ^8.3
+- **Laravel**: ^8.12, ^9.0, ^10.0, ^11.0, ^12.0
+- **Spatie Laravel Permission**: ^5.11 | ^6.0## Quick Installation
 
 ```bash
 composer require ngodingskuyy/laravel-module-generator --dev
@@ -39,7 +41,7 @@ Created by **NgodingSkuyy** to accelerate development using standardized full-st
 - 🎨 **Modern Frontend**: Vue 3 + TailwindCSS + shadcn-vue components
 - 🔐 **Permission System**: Auto-generated permissions using Spatie Laravel Permission
 - 🧰 **Customizable Stubs**: Fully customizable templates with fallback support
-- 🚀 **Laravel 11 Ready**: Optimized for Laravel 11 with PHP 8.2+
+- 🚀 **Multi-Laravel Support**: Compatible with Laravel 8.12+ through Laravel 12
 - 🔧 **Optional Components**: Generate factories, policies, observers, enums, and tests on demand
 
 ---

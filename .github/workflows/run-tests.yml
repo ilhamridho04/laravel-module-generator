@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php-version: [8.2, 8.3]
+        php-version: [8.1, 8.2, 8.3]
 
     steps:
       - uses: actions/checkout@v4
@@ -61,7 +61,26 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php-version: [8.2, 8.3]
+        include:
+          # PHP 8.1 with Laravel 9, 10, 11
+          - php-version: 8.1
+            laravel-version: "^9.0"
+          - php-version: 8.1
+            laravel-version: "^10.0"
+          - php-version: 8.1
+            laravel-version: "^11.0"
+          # PHP 8.2 with Laravel 10, 11, 12
+          - php-version: 8.2
+            laravel-version: "^10.0"
+          - php-version: 8.2
+            laravel-version: "^11.0"
+          - php-version: 8.2
+            laravel-version: "^12.0"
+          # PHP 8.3 with Laravel 11, 12
+          - php-version: 8.3
+            laravel-version: "^11.0"
+          - php-version: 8.3
+            laravel-version: "^12.0"
 
     steps:
       - uses: actions/checkout@v4
@@ -77,15 +96,15 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.composer/cache
-          key: ${{ runner.os }}-laravel-11-php-${{ matrix.php-version }}-${{ hashFiles('**/composer.lock') }}
+          key: ${{ runner.os }}-laravel-${{ matrix.laravel-version }}-php-${{ matrix.php-version }}-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
-            ${{ runner.os }}-laravel-11-php-${{ matrix.php-version }}-
-            ${{ runner.os }}-laravel-11-
+            ${{ runner.os }}-laravel-${{ matrix.laravel-version }}-php-${{ matrix.php-version }}-
+            ${{ runner.os }}-laravel-${{ matrix.laravel-version }}-
 
       - name: Create Laravel project
         run: |
-          # Force install Laravel 11 specifically to avoid Laravel 12
-          composer create-project laravel/laravel:^11.0 laravel-app --prefer-dist --no-interaction
+          # Install Laravel with specific version
+          composer create-project laravel/laravel:${{ matrix.laravel-version }} laravel-app --prefer-dist --no-interaction
 
       - name: Install package into Laravel
         run: |
