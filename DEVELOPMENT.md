@@ -1,16 +1,17 @@
-# Laravel Module Generator - Local Development Guide
+# Laravel Module Generator v4.x - Development Guide
+
+**🚀 Laravel 12+ Compatible - PHP 8.2+ Required**
 
 ## 🚨 Installation Issues & Solutions
 
 ### Problem: Version Conflicts
 
-If you encounter dependency conflicts like this:
+If you encounter dependency conflicts, this happens because you might be trying to install an older version. 
 
-```
-ngodingskuyy/laravel-module-generator v1.0.0 requires spatie/laravel-permission ^5.11
-```
-
-This happens because older versions are published on Packagist. Here are the solutions:
+**This v4.x requires:**
+- PHP ^8.2
+- Laravel ^12.0
+- Spatie Laravel Permission ^6.0
 
 ### Solution 1: Force Latest Version (Recommended)
 
@@ -18,7 +19,7 @@ This happens because older versions are published on Packagist. Here are the sol
 # Remove old version if exists
 composer remove ngodingskuyy/laravel-module-generator
 
-# Install latest version from repository
+# Install latest v4.x version from repository
 composer config repositories.ngodingskuyy-laravel-module-generator vcs https://github.com/ilhamridho04/laravel-module-generator
 composer require ngodingskuyy/laravel-module-generator:dev-main --dev
 ```

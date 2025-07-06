@@ -1,9 +1,16 @@
-# Laravel Module Generator
-## 📦 Installation## 📋 Requirements
+# Laravel Module Generator v4.x
 
-- **PHP**: ^8.1
-- **Laravel**: ^9.0, ^10.0, ^11.0
-- **Spatie Laravel Permission**: ^5.11 | ^6.0## Quick Installation
+**🚀 Laravel 12+ Compatible Module Generator**
+
+Modular CRUD Generator for Laravel + Vue + Tailwind (shadcn-vue) - Fokus pada Laravel 12+ dengan PHP 8.2+
+
+## 📋 Requirements
+
+- **PHP**: ^8.2
+- **Laravel**: ^12.0
+- **Spatie Laravel Permission**: ^6.0## 📦 Installation
+
+### Quick Installation
 
 ```bash
 composer require ngodingskuyy/laravel-module-generator --dev
