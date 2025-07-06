@@ -4,6 +4,8 @@ namespace NgodingSkuyy\LaravelModuleGenerator\Tests\Unit;
 
 use NgodingSkuyy\LaravelModuleGenerator\Commands\MakeFeature;
 use NgodingSkuyy\LaravelModuleGenerator\Commands\DeleteFeature;
+use NgodingSkuyy\LaravelModuleGenerator\Commands\SetupModulesLoader;
+use NgodingSkuyy\LaravelModuleGenerator\Commands\InstallModulesLoader;
 use NgodingSkuyy\LaravelModuleGenerator\Tests\TestCase;
 
 class ServiceProviderTest extends TestCase
@@ -60,5 +62,33 @@ class ServiceProviderTest extends TestCase
 
         $this->assertEquals('delete:feature', $command->getName());
         $this->assertStringContainsString('Delete full CRUD feature', $command->getDescription());
+    }
+
+    /** @test */
+    public function it_registers_the_setup_modules_loader_command()
+    {
+        $command = $this->app->make(SetupModulesLoader::class);
+        $this->assertInstanceOf(SetupModulesLoader::class, $command);
+    }
+
+    /** @test */
+    public function setup_modules_loader_command_is_available()
+    {
+        $commands = $this->app[\Illuminate\Contracts\Console\Kernel::class]->all();
+        $this->assertArrayHasKey('modules:setup', $commands);
+    }
+
+    /** @test */
+    public function it_registers_the_install_modules_loader_command()
+    {
+        $command = $this->app->make(InstallModulesLoader::class);
+        $this->assertInstanceOf(InstallModulesLoader::class, $command);
+    }
+
+    /** @test */
+    public function install_modules_loader_command_is_available()
+    {
+        $commands = $this->app[\Illuminate\Contracts\Console\Kernel::class]->all();
+        $this->assertArrayHasKey('modules:install', $commands);
     }
 }

@@ -5,6 +5,8 @@ namespace NgodingSkuyy\LaravelModuleGenerator;
 use Illuminate\Support\ServiceProvider;
 use NgodingSkuyy\LaravelModuleGenerator\Commands\MakeFeature;
 use NgodingSkuyy\LaravelModuleGenerator\Commands\DeleteFeature;
+use NgodingSkuyy\LaravelModuleGenerator\Commands\SetupModulesLoader;
+use NgodingSkuyy\LaravelModuleGenerator\Commands\InstallModulesLoader;
 
 class LaravelModuleGeneratorServiceProvider extends ServiceProvider
 {
@@ -14,6 +16,8 @@ class LaravelModuleGeneratorServiceProvider extends ServiceProvider
             $this->commands([
                 Commands\MakeFeature::class,
                 Commands\DeleteFeature::class,
+                Commands\SetupModulesLoader::class,
+                Commands\InstallModulesLoader::class,
             ]);
 
             // Publish stubs

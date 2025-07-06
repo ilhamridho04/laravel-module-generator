@@ -155,7 +155,52 @@ The `delete:feature` command will remove:
 - **Empty Directories**: Automatically cleans up empty directories after deletion
 - **Service Provider**: Removes observer registration from AppServiceProvider (if applicable)
 
-> ⚠️ **Warning**: This action is irreversible. Make sure to backup your files or use version control
+> ⚠️ **Warning**: This action is irreversible. Make sure to backup your files or use version control.
+
+### 🔗 Auto-Loading Module Routes
+
+#### Setup Modules Auto-Loader
+
+```bash
+php artisan modules:setup
+```
+
+#### Install and Integrate Auto-Loader
+
+```bash
+php artisan modules:install
+```
+
+#### Manual Integration
+
+Add this line to your `routes/web.php` or `routes/app.php` (Laravel 11+):
+
+```php
+require __DIR__ . '/modules.php';
+```
+
+#### How It Works
+
+The modules auto-loader automatically discovers and loads all `web.php` files from subdirectories in `routes/Modules/`:
+
+```
+routes/
+├── web.php
+├── modules.php          # Auto-loader file
+└── Modules/
+    ├── Users/
+    │   └── web.php      # Automatically loaded
+    ├── Products/
+    │   └── web.php      # Automatically loaded
+    └── Orders/
+        └── web.php      # Automatically loaded
+```
+
+**Benefits:**
+- ✅ **Automatic Discovery**: No need to manually register each module's routes
+- ✅ **Laravel 11+ Compatible**: Works with both `routes/app.php` and `routes/web.php`
+- ✅ **Performance**: Only loads routes for existing modules
+- ✅ **Clean Organization**: Keeps routes organized by feature/module
 
 ### Generated Files Structure
 

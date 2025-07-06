@@ -29,6 +29,7 @@ class MakeFeature extends Command
         $this->info("\n🔧 Membuat fitur: $plural ($kebab)");
 
         $this->createFolders($plural);
+        $this->ensureModulesLoader($force);
         $this->makeModel($name, $force);
         $this->makeMigration($name, $force);
         $this->makeController($name, $plural, $force);
@@ -330,6 +331,67 @@ class MakeFeature extends Command
             $this->line("🔐 Permission seeder {$class} dibuat.");
         } else {
             $this->warn("🔐 Permission seeder {$class} sudah ada.");
+        }
+    }
+
+    protected function ensureModulesLoader(bool $force = false): void
+    {
+        $loaderPath = base_path('routes/modules.php');
+
+        // Check if modules loader already exists
+        if (!$force && $this->files->exists($loaderPath)) {
+            return; // File already exists, don't create
+        }
+
+        // Create the modules loader file
+        $stub = $this->renderStub('modules-loader.stub', []);
+
+        if ($force || !$this->files->exists($loaderPath)) {
+            $this->files->put($loaderPath, $stub);
+            $this->line("🔗 Modules auto-loader dibuat: routes/modules.php");
+
+            // Check if it's included in RouteServiceProvider or web.php
+            $this->suggestLoaderIntegration();
+        }
+    }
+
+    protected function suggestLoaderIntegration(): void
+    {
+        $webRoutesPath = base_path('routes/web.php');
+        $appRoutesPath = base_path('routes/app.php'); // Laravel 11+
+        $loaderInclude = "require __DIR__ . '/modules.php';";
+
+        // Check if modules.php is already included in web.php or app.php
+        $isIncludedInWeb = false;
+        $isIncludedInApp = false;
+
+        if ($this->files->exists($webRoutesPath)) {
+            $webContent = $this->files->get($webRoutesPath);
+            $isIncludedInWeb = str_contains($webContent, $loaderInclude) ||
+                str_contains($webContent, "require __DIR__ . '/modules.php'") ||
+                str_contains($webContent, "require_once __DIR__ . '/modules.php'");
+        }
+
+        if ($this->files->exists($appRoutesPath)) {
+            $appContent = $this->files->get($appRoutesPath);
+            $isIncludedInApp = str_contains($appContent, $loaderInclude) ||
+                str_contains($appContent, "require __DIR__ . '/modules.php'") ||
+                str_contains($appContent, "require_once __DIR__ . '/modules.php'");
+        }
+
+        if (!$isIncludedInWeb && !$isIncludedInApp) {
+            $this->warn("\n⚠️  Untuk mengaktifkan auto-loading modules, tambahkan baris berikut:");
+
+            if ($this->files->exists($appRoutesPath)) {
+                $this->line("   Di routes/app.php atau routes/web.php:");
+            } else {
+                $this->line("   Di routes/web.php:");
+            }
+
+            $this->line("   <fg=yellow>require __DIR__ . '/modules.php';</>");
+            $this->line("");
+        } else {
+            $this->line("✅ Modules auto-loader sudah terdaftar di routes.");
         }
     }
 }

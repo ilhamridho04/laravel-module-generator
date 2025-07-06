@@ -1,0 +1,53 @@
+<?php
+
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Route;
+
+/**
+ * Auto-load all module routes from routes/Modules directory
+ * 
+ * This file automatically loads web.php files from all subdirectories
+ * in the routes/Modules folder, allowing for modular route organization.
+ */
+
+// Path ke direktori Modules
+$modulesPath = base_path('routes/Modules');
+
+// Cek apakah direktori Modules ada
+if (File::isDirectory($modulesPath)) {
+    // Ambil semua folder di dalam Modules
+    $moduleDirectories = File::directories($modulesPath);
+
+    foreach ($moduleDirectories as $moduleDir) {
+        $moduleName = basename($moduleDir);
+        $routeFile = $moduleDir . '/web.php';
+
+        // Cek apakah file web.php ada di module
+        if (File::exists($routeFile)) {
+            // Load route file
+            require $routeFile;
+
+            // Optional: Log untuk debugging (uncomment jika diperlukan)
+            // \Log::info("Loaded module routes: {$moduleName}");
+        }
+    }
+
+    // Optional: Bisa juga load routes dengan pattern tertentu
+    // Contoh: load semua *.php files di subdirectories
+    /*
+    $allRouteFiles = [];
+    $subdirs = File::directories($modulesPath);
+    foreach ($subdirs as $subdir) {
+        $files = File::glob($subdir . '/*.php');
+        foreach ($files as $file) {
+            if (!str_ends_with($file, '/web.php')) {
+                $allRouteFiles[] = $file;
+            }
+        }
+    }
+    foreach ($allRouteFiles as $routeFile) {
+        // Load other route files like api.php, admin.php, etc.
+        require $routeFile;
+    }
+    */
+}
