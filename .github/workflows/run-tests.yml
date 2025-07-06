@@ -140,14 +140,26 @@ jobs:
       - name: Test package functionality
         run: |
           cd laravel-app
-          # Create a test module to verify package works
-          php artisan make:feature TestModule --force || echo "Command execution completed"
+          # Test if the command works without errors
+          echo "=== Testing make:feature command ==="
+          php artisan make:feature TestModule --force || echo "Command execution completed with errors"
           
           # Check if files were created
-          echo "Checking created files:"
-          ls -la app/Http/Controllers/ | grep -i test || echo "No controller files found"
-          ls -la app/Models/ | grep -i test || echo "No model files found"
-          ls -la database/migrations/ | grep -i test || echo "No migration files found"
+          echo "=== Checking created files ==="
+          echo "Controllers:"
+          ls -la app/Http/Controllers/ | grep -i testmodule || echo "No controller files found"
+          echo "Models:"
+          ls -la app/Models/ | grep -i testmodule || echo "No model files found"
+          echo "Migrations:"
+          ls -la database/migrations/ | grep -i test_module || echo "No migration files found"
+          echo "Requests:"
+          ls -la app/Http/Requests/ | grep -i testmodule || echo "No request files found"
+          echo "Routes:"
+          ls -la routes/Modules/ | grep -i testmodule || echo "No route modules found"
+          
+          # Show detailed error if command failed
+          echo "=== Command output test ==="
+          php artisan make:feature SimpleTest --help || echo "Help command failed"
 
       - name: Test Laravel application
         run: |
