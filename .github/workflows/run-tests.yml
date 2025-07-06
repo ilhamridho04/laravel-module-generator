@@ -32,8 +32,12 @@ jobs:
       - name: Install dependencies
         run: composer install --prefer-dist --no-interaction --no-suggest
 
-      - name: Copy .env
-        run: cp .env.example .env
+      - name: Ensure .env.example exists and copy .env
+        run: |
+          if [ ! -f .env.example ]; then
+            cp .env .env.example || echo "APP_KEY=base64:$(php -r 'echo base64_encode(random_bytes(32));')" > .env.example
+          fi
+          cp .env.example .env
 
       - name: Generate app key
         run: php artisan key:generate
