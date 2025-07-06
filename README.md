@@ -231,6 +231,439 @@ Running `php artisan make:feature User` will generate:
 
 ---
 
+## 📚 API Documentation
+
+### Commands Overview
+
+The Laravel Module Generator provides four main commands for complete feature lifecycle management:
+
+| Command | Description | Purpose |
+|---------|-------------|---------|
+| `make:feature` | Generate complete CRUD feature | Create new features |
+| `delete:feature` | Remove complete CRUD feature | Clean up features |
+| `setup:modules-loader` | Create modular route loader | Setup route automation |
+| `install:modules-loader` | Install route loader into Laravel | Integrate with Laravel routing |
+
+---
+
+### 📝 `make:feature` Command
+
+**Signature:** `make:feature {name} {--with=*} {--force}`
+
+#### Description
+Generates a complete CRUD feature with all necessary files including models, controllers, views, migrations, routes, and permissions.
+
+#### Arguments
+
+| Argument | Type | Required | Description |
+|----------|------|----------|-------------|
+| `name` | string | Yes | The name of the feature to generate (PascalCase) |
+
+#### Options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `--with` | array | `[]` | Optional components to include |
+| `--force` | flag | `false` | Overwrite existing files without confirmation |
+
+#### Optional Components (`--with`)
+
+| Component | Description | Generated Files |
+|-----------|-------------|-----------------|
+| `factory` | Model factory for testing | `database/factories/{Name}Factory.php` |
+| `policy` | Authorization policy | `app/Policies/{Name}Policy.php` |
+| `observer` | Model observer | `app/Observers/{Name}Observer.php` |
+| `enum` | Status enum class | `app/Enums/{Name}StatusEnum.php` |
+| `test` | Feature test class | `tests/Feature/{Name}Test.php` |
+
+#### Generated Files (Core)
+
+```bash
+# Models
+app/Models/{Name}.php
+
+# Controllers  
+app/Http/Controllers/{Name}Controller.php
+
+# Requests
+app/Http/Requests/{Name}/Store{Name}Request.php
+app/Http/Requests/{Name}/Update{Name}Request.php
+
+# Vue Components
+resources/js/Pages/{Name}/Index.vue
+resources/js/Pages/{Name}/Create.vue
+resources/js/Pages/{Name}/Edit.vue
+resources/js/Pages/{Name}/Show.vue
+
+# Database
+database/migrations/{timestamp}_create_{name}_table.php
+
+# Routes
+routes/{name}.php
+
+# Seeders
+database/seeders/{Name}PermissionSeeder.php
+```
+
+#### Usage Examples
+
+```bash
+# Basic feature generation
+php artisan make:feature Product
+
+# With optional components
+php artisan make:feature Product --with=factory,policy,observer
+
+# With all optional components
+php artisan make:feature Product --with=factory,policy,observer,enum,test
+
+# Force overwrite existing files
+php artisan make:feature Product --force
+
+# Multiple optional components (alternative syntax)
+php artisan make:feature Product --with factory --with policy --with observer
+```
+
+#### Return Codes
+
+| Code | Meaning |
+|------|---------|
+| `0` | Success - All files generated successfully |
+| `1` | Error - Missing required arguments or validation failed |
+| `2` | Error - File already exists and `--force` not specified |
+
+---
+
+### 🗑️ `delete:feature` Command
+
+**Signature:** `delete:feature {name} {--with=*} {--all} {--force}`
+
+#### Description
+Safely removes all files associated with a feature, including optional components and empty directories.
+
+#### Arguments
+
+| Argument | Type | Required | Description |
+|----------|------|----------|-------------|
+| `name` | string | Yes | The name of the feature to delete (PascalCase) |
+
+#### Options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `--with` | array | `[]` | Optional components to delete |
+| `--all` | flag | `false` | Delete all components (core + optional) |
+| `--force` | flag | `false` | Delete without confirmation prompt |
+
+#### Deletion Scope
+
+**Core Files (always deleted):**
+- Model, Controller, Requests
+- Vue Components (Index, Create, Edit, Show)
+- Migration, Routes, Permission Seeder
+
+**Optional Files (with `--with` or `--all`):**
+- Factory, Policy, Observer, Enum, Test files
+
+**Directory Cleanup:**
+- Removes empty directories after file deletion
+- Maintains directory structure if other files exist
+
+#### Usage Examples
+
+```bash
+# Delete core feature files
+php artisan delete:feature Product
+
+# Delete with specific optional components
+php artisan delete:feature Product --with=factory,policy
+
+# Delete everything (core + all optional)
+php artisan delete:feature Product --all
+
+# Force delete without confirmation
+php artisan delete:feature Product --force
+
+# Delete with confirmation showing file list
+php artisan delete:feature Product --with=factory,policy,observer
+```
+
+#### Interactive Confirmation
+
+When `--force` is not used, the command shows:
+1. List of files to be deleted
+2. Confirmation prompt
+3. Deletion progress with status for each file
+
+#### Return Codes
+
+| Code | Meaning |
+|------|---------|
+| `0` | Success - All specified files deleted |
+| `1` | Error - Feature not found or validation failed |
+| `2` | Cancelled - User declined confirmation |
+
+---
+
+### 🔄 `setup:modules-loader` Command
+
+**Signature:** `setup:modules-loader {--force}`
+
+#### Description
+Creates the modular route loader file that automatically discovers and loads route files from the `routes/modules/` directory.
+
+#### Options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `--force` | flag | `false` | Overwrite existing modules.php file |
+
+#### Generated Files
+
+```bash
+routes/modules.php    # Main modules loader file
+```
+
+#### Features
+
+- **Auto-discovery**: Recursively scans `routes/modules/` directory
+- **Performance optimized**: Only loads existing files
+- **Nested support**: Handles subdirectories automatically
+- **Cache compatible**: Works with Laravel's route caching
+
+#### Usage Examples
+
+```bash
+# Create modules loader
+php artisan setup:modules-loader
+
+# Force overwrite existing file
+php artisan setup:modules-loader --force
+```
+
+#### Generated Code Structure
+
+The generated `routes/modules.php` contains:
+- File existence checks for performance
+- Recursive directory scanning
+- Automatic route file inclusion
+- Error handling for missing directories
+
+---
+
+### ⚙️ `install:modules-loader` Command
+
+**Signature:** `install:modules-loader {--force}`
+
+#### Description
+Integrates the modules loader into Laravel's main routing system by adding the include statement to `routes/web.php`.
+
+#### Options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `--force` | flag | `false` | Add include even if already exists |
+
+#### Modifications
+
+**File Modified:** `routes/web.php`
+
+**Added Code:**
+```php
+// Auto-load module routes
+if (file_exists(__DIR__ . '/modules.php')) {
+    require __DIR__ . '/modules.php';
+}
+```
+
+#### Usage Examples
+
+```bash
+# Install modules loader into Laravel routing
+php artisan install:modules-loader
+
+# Force reinstall even if already present
+php artisan install:modules-loader --force
+```
+
+#### Integration Process
+
+1. Checks if `routes/modules.php` exists
+2. Scans `routes/web.php` for existing installation
+3. Adds include statement if not present
+4. Provides status feedback
+
+---
+
+### 🏗️ Module Directory Structure
+
+After setting up the modular loader system:
+
+```bash
+routes/
+├── web.php                 # Main Laravel routes (includes modules.php)
+├── modules.php            # Auto-generated modules loader
+└── modules/               # Your modular routes directory
+    ├── products.php       # Product feature routes
+    ├── users.php          # User feature routes
+    ├── admin/             # Admin module subdirectory
+    │   ├── dashboard.php  # Admin dashboard routes
+    │   └── reports.php    # Admin reports routes
+    └── api/               # API module subdirectory
+        ├── v1.php         # API v1 routes
+        └── v2.php         # API v2 routes
+```
+
+#### Route File Example
+
+**`routes/modules/products.php`:**
+```php
+<?php
+
+use App\Http\Controllers\ProductController;
+use Illuminate\Support\Facades\Route;
+
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::resource('products', ProductController::class);
+    Route::get('products/{product}/history', [ProductController::class, 'history'])->name('products.history');
+});
+```
+
+---
+
+### 🔧 Advanced Configuration
+
+#### Custom Stub Files
+
+You can publish and customize the stub templates:
+
+```bash
+# Publish stub files (if supported)
+php artisan vendor:publish --tag=laravel-module-generator-stubs
+
+# Or manually copy from:
+vendor/ngodingskuyy/laravel-module-generator/src/stubs/
+vendor/ngodingskuyy/laravel-module-generator/src/views/
+```
+
+#### Stub File Locations
+
+```bash
+src/stubs/
+├── controller.stub          # Controller template
+├── model.stub              # Model template  
+├── request.store.stub      # Store request template
+├── request.update.stub     # Update request template
+├── migration.stub          # Migration template
+├── routes.stub             # Routes template
+├── seeder.permission.stub  # Permission seeder template
+├── Enum.stub               # Enum template
+├── Observer.stub           # Observer template
+└── modules-loader.stub     # Modules loader template
+
+src/views/
+├── Index.vue.stub          # Index view template
+├── Create.vue.stub         # Create view template
+├── Edit.vue.stub           # Edit view template
+└── Show.vue.stub           # Show view template
+```
+
+#### Environment Considerations
+
+**Development:**
+- Use `--force` flag cautiously to avoid overwriting customizations
+- Test generated code before committing
+- Run tests after generation: `vendor/bin/phpunit`
+
+**Production:**
+- Install as `--dev` dependency only
+- Don't include in production builds
+- Use route caching: `php artisan route:cache`
+
+---
+
+### 🧪 Testing Integration
+
+#### Generated Test Files
+
+When using `--with=test`, generates:
+
+```php
+// tests/Feature/{Name}Test.php
+class ProductTest extends TestCase
+{
+    /** @test */
+    public function it_can_list_products() { /* ... */ }
+    
+    /** @test */  
+    public function it_can_create_product() { /* ... */ }
+    
+    /** @test */
+    public function it_can_update_product() { /* ... */ }
+    
+    /** @test */
+    public function it_can_delete_product() { /* ... */ }
+}
+```
+
+#### Running Tests
+
+```bash
+# Run all tests
+vendor/bin/phpunit
+
+# Run specific feature tests
+vendor/bin/phpunit tests/Feature/ProductTest.php
+
+# Run with coverage
+vendor/bin/phpunit --coverage-html coverage/
+```
+
+---
+
+### 🚨 Error Handling
+
+#### Common Issues & Solutions
+
+**File Already Exists:**
+```bash
+# Solution: Use --force flag
+php artisan make:feature Product --force
+```
+
+**Permission Denied:**
+```bash
+# Solution: Check directory permissions
+chmod 755 app/Http/Controllers/
+chmod 755 resources/js/Pages/
+```
+
+**Stub File Missing:**
+```bash
+# Solution: Reinstall package or check vendor directory
+composer reinstall ngodingskuyy/laravel-module-generator
+```
+
+**Route Not Loading:**
+```bash
+# Solution: Check modules.php exists and is included
+php artisan route:list | grep products
+```
+
+#### Debug Commands
+
+```bash
+# Check if commands are registered
+php artisan list | grep "make:feature\|delete:feature\|setup:modules\|install:modules"
+
+# Verify file generation
+php artisan make:feature TestFeature --force
+ls -la app/Models/TestFeature.php
+php artisan delete:feature TestFeature --force
+```
+
+---
+
 ## 🧪 Comprehensive Testing (New in v4.2)
 
 ### 🎯 Test Suite Overview
