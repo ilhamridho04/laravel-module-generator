@@ -151,7 +151,8 @@ class StubFilesTest extends TestCase
 
         // Check for Laravel routes structure
         $this->assertStringContainsString('Route::', $content);
-        $this->assertStringContainsString('{{ model }}', $content);
+        $this->assertStringContainsString('{{ controller }}', $content);
+        $this->assertStringContainsString('{{ kebab }}', $content);
     }
 
     /** @test */

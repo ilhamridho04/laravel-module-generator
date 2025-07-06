@@ -3,6 +3,7 @@
 namespace NgodingSkuyy\LaravelModuleGenerator\Tests\Unit;
 
 use NgodingSkuyy\LaravelModuleGenerator\Commands\MakeFeature;
+use NgodingSkuyy\LaravelModuleGenerator\Commands\DeleteFeature;
 use NgodingSkuyy\LaravelModuleGenerator\Tests\TestCase;
 
 class ServiceProviderTest extends TestCase
@@ -36,5 +37,28 @@ class ServiceProviderTest extends TestCase
 
         $this->assertEquals('make:feature', $command->getName());
         $this->assertStringContainsString('Generate full CRUD feature', $command->getDescription());
+    }
+
+    /** @test */
+    public function it_registers_the_delete_feature_command()
+    {
+        $command = $this->app->make(DeleteFeature::class);
+        $this->assertInstanceOf(DeleteFeature::class, $command);
+    }
+
+    /** @test */
+    public function delete_feature_command_is_available()
+    {
+        $commands = $this->app[\Illuminate\Contracts\Console\Kernel::class]->all();
+        $this->assertArrayHasKey('delete:feature', $commands);
+    }
+
+    /** @test */
+    public function delete_feature_command_has_correct_signature()
+    {
+        $command = $this->app->make(DeleteFeature::class);
+
+        $this->assertEquals('delete:feature', $command->getName());
+        $this->assertStringContainsString('Delete full CRUD feature', $command->getDescription());
     }
 }

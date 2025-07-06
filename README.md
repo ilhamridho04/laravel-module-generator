@@ -120,6 +120,43 @@ php artisan make:feature User --with=factory,policy,observer,enum,test
 php artisan make:feature User --force
 ```
 
+### 🗑️ Deleting Features
+
+#### Delete Basic Feature
+
+```bash
+php artisan delete:feature User
+```
+
+#### Delete with Optional Components
+
+```bash
+php artisan delete:feature User --with=factory,policy,observer,enum,test
+```
+
+#### Delete All Components (including optional)
+
+```bash
+php artisan delete:feature User --all
+```
+
+#### Force Delete (no confirmation)
+
+```bash
+php artisan delete:feature User --force
+```
+
+#### What Gets Deleted
+
+The `delete:feature` command will remove:
+
+- **Core Files**: Model, Controller, Requests, Vue components, Routes, Migration, Permission seeder
+- **Optional Components**: Enum, Observer, Policy, Factory, Test files (if specified with `--with` or `--all`)
+- **Empty Directories**: Automatically cleans up empty directories after deletion
+- **Service Provider**: Removes observer registration from AppServiceProvider (if applicable)
+
+> ⚠️ **Warning**: This action is irreversible. Make sure to backup your files or use version control
+
 ### Generated Files Structure
 
 Running `php artisan make:feature User` will generate:

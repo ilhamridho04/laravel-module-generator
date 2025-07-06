@@ -4,6 +4,7 @@ namespace NgodingSkuyy\LaravelModuleGenerator;
 
 use Illuminate\Support\ServiceProvider;
 use NgodingSkuyy\LaravelModuleGenerator\Commands\MakeFeature;
+use NgodingSkuyy\LaravelModuleGenerator\Commands\DeleteFeature;
 
 class LaravelModuleGeneratorServiceProvider extends ServiceProvider
 {
@@ -12,6 +13,7 @@ class LaravelModuleGeneratorServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 Commands\MakeFeature::class,
+                Commands\DeleteFeature::class,
             ]);
 
             // Publish stubs
