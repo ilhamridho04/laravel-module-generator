@@ -1,0 +1,11 @@
+--- views/Show.vue.stub ---
+<template>
+  <div class="p-4">
+    <h1 class="text-xl font-bold">{{ model }} Detail</h1>
+    <p><strong>Name:</strong> {{ item.name }}</p>
+  </div>
+</template>
+
+<script setup>
+const props = defineProps({ item: Object })
+</script>

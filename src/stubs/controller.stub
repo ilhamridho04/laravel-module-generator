@@ -1,0 +1,62 @@
+--- controller.stub ---
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Inertia\Inertia;
+use App\Models\{{ model }};
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+
+class {{ model }}Controller extends Controller
+{
+    use AuthorizesRequests;
+
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
+    public function index(Request $request)
+    {
+        $query = {{ model }}::query();
+
+        if ($request->filled('search')) {
+            $search = $request->get('search');
+            $query->where('name', 'like', "%{$search}%");
+        }
+
+        ${{ table }} = $query->paginate(10)->withQueryString();
+
+        return Inertia::render('{{ plural }}/Index', [
+            '{{ table }}' => ${{ table }},
+            'filters' => $request->only(['search']),
+        ]);
+    }
+
+    public function create() { return Inertia::render('{{ plural }}/Create'); }
+
+    public function store(Request $request)
+    {
+        $request->validate(['name' => 'required|string|max:255']);
+        {{ model }}::create($request->only('name'));
+        return redirect()->route('{{ table }}.index');
+    }
+
+    public function show({{ model }} ${{ table }}) { return Inertia::render('{{ plural }}/Show', ['item' => ${{ table }}]); }
+
+    public function edit({{ model }} ${{ table }}) { return Inertia::render('{{ plural }}/Edit', ['item' => ${{ table }}]); }
+
+    public function update(Request $request, {{ model }} ${{ table }})
+    {
+        $request->validate(['name' => 'required|string|max:255']);
+        ${{ table }}->update($request->only('name'));
+        return redirect()->route('{{ table }}.index');
+    }
+
+    public function destroy({{ model }} ${{ table }})
+    {
+        ${{ table }}->delete();
+        return redirect()->route('{{ table }}.index');
+    }
+}

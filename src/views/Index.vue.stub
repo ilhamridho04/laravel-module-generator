@@ -1,0 +1,14 @@
+--- views/Index.vue.stub ---
+<template>
+  <div class="p-4">
+    <h1 class="text-xl font-bold mb-4">{{ plural }}</h1>
+    <Link :href="route('{{ table }}.create')" class="bg-blue-500 text-white px-4 py-2 rounded">Create</Link>
+    <ul class="mt-4 space-y-2">
+      <li v-for="item in {{ table }}.data" :key="item.id" class="border p-2">{{ item.name }}</li>
+    </ul>
+  </div>
+</template>
+
+<script setup>
+import { Link } from '@inertiajs/vue3'
+</script>

@@ -1,0 +1,19 @@
+--- seeder.permission.stub ---
+<?php
+
+namespace Database\Seeders\Permission;
+
+use Illuminate\Database\Seeder;
+use Spatie\Permission\Models\Permission;
+
+class {{ class }} extends Seeder
+{
+    public function run(): void
+    {
+        $permissions = ['view', 'create', 'update', 'delete', 'restore', 'force_delete'];
+
+        foreach ($permissions as $perm) {
+            Permission::firstOrCreate(['name' => "$perm {{ permission }}"]);
+        }
+    }
+}
