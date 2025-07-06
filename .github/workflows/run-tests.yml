@@ -74,7 +74,8 @@ jobs:
 
       - name: Create Laravel project
         run: |
-          composer create-project laravel/laravel laravel-app --prefer-dist --no-interaction
+          # Force install Laravel 11 specifically to avoid Laravel 12
+          composer create-project laravel/laravel:^11.0 laravel-app --prefer-dist --no-interaction
 
       - name: Install package into Laravel
         run: |
@@ -83,11 +84,8 @@ jobs:
           composer config repositories.local '{"type": "path", "url": "../", "options": {"symlink": false}}'
           # Show current Laravel version for debugging
           composer show laravel/framework | head -5
-          # Try to require our package with conflict resolution
-          composer require ngodingskuyy/laravel-module-generator:@dev --with-all-dependencies --no-interaction || {
-            echo "First attempt failed, trying with ignore platform requirements..."
-            composer require ngodingskuyy/laravel-module-generator:@dev --ignore-platform-reqs --with-all-dependencies --no-interaction
-          }
+          # Install our package
+          composer require ngodingskuyy/laravel-module-generator:@dev --no-interaction
 
       - name: Setup Laravel environment
         run: |
