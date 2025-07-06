@@ -133,12 +133,40 @@ class MakeFeature extends Command
         $custom = base_path("stubs/laravel-module-generator/{$stubPath}");
         $default = __DIR__ . '/../stubs/' . $stubPath;
 
-        $stub = file_exists($custom) ? file_get_contents($custom) : file_get_contents($default);
+        // Check if custom stub exists first, then default
+        if (file_exists($custom)) {
+            $stub = file_get_contents($custom);
+        } elseif (file_exists($default)) {
+            $stub = file_get_contents($default);
+        } else {
+            // Create a basic stub if none exists
+            $this->warn("⚠️ Stub tidak ditemukan: {$stubPath}, menggunakan template dasar");
+            $stub = $this->getBasicStub($stubPath);
+        }
 
         foreach ($replacements as $key => $value) {
             $stub = str_replace('{{ ' . $key . ' }}', $value, $stub);
         }
         return $stub;
+    }
+
+    protected function getBasicStub(string $stubPath): string
+    {
+        // Return basic templates for missing stubs
+        switch ($stubPath) {
+            case 'controller.stub':
+                return "<?php\n\nnamespace App\\Http\\Controllers;\n\nuse Illuminate\\Http\\Request;\n\nclass {{ model }}Controller extends Controller\n{\n    // Add your methods here\n}\n";
+            case 'request.store.stub':
+                return "<?php\n\nnamespace App\\Http\\Requests;\n\nuse Illuminate\\Foundation\\Http\\FormRequest;\n\nclass Store{{ model }}Request extends FormRequest\n{\n    public function authorize(): bool\n    {\n        return true;\n    }\n\n    public function rules(): array\n    {\n        return [\n            'name' => 'required|string|max:255',\n        ];\n    }\n}\n";
+            case 'request.update.stub':
+                return "<?php\n\nnamespace App\\Http\\Requests;\n\nuse Illuminate\\Foundation\\Http\\FormRequest;\n\nclass Update{{ model }}Request extends FormRequest\n{\n    public function authorize(): bool\n    {\n        return true;\n    }\n\n    public function rules(): array\n    {\n        return [\n            'name' => 'required|string|max:255',\n        ];\n    }\n}\n";
+            case 'routes.stub':
+                return "<?php\n\nuse Illuminate\\Support\\Facades\\Route;\nuse App\\Http\\Controllers\\{{ model }}Controller;\n\nRoute::resource('{{ kebab }}', {{ model }}Controller::class);\n";
+            case 'seeder.permission.stub':
+                return "<?php\n\nnamespace Database\\Seeders\\Permission;\n\nuse Illuminate\\Database\\Seeder;\nuse Spatie\\Permission\\Models\\Permission;\n\nclass {{ class }} extends Seeder\n{\n    public function run(): void\n    {\n        \$permissions = ['view', 'create', 'edit', 'delete'];\n        \n        foreach (\$permissions as \$permission) {\n            Permission::firstOrCreate([\n                'name' => \"{{ permission }} {\$permission}\",\n                'guard_name' => 'web',\n            ]);\n        }\n    }\n}\n";
+            default:
+                return "<!-- Stub $stubPath not found -->\n";
+        }
     }
 
     protected function registerObserverInServiceProvider(string $name): void
@@ -156,18 +184,18 @@ class MakeFeature extends Command
 
         // Tambah use jika belum ada
         if (!str_contains($content, $modelUse)) {
-            $content = preg_replace(
-                '/namespace App\\Providers;\n*/',
-                "namespace App\\Providers;\n\n{$modelUse}\n{$observerUse}\n",
+            $content = str_replace(
+                'namespace App\\Providers;',
+                "namespace App\\Providers;\n\n{$modelUse}\n{$observerUse}",
                 $content
             );
         }
 
         // Tambah observer ke method boot()
         if (!str_contains($content, $observeLine)) {
-            $content = preg_replace_callback(
+            $content = preg_replace(
                 '/public function boot\(\)(\s*): void\s*\{/',
-                fn($matches) => $matches[0] . "\n{$observeLine}",
+                "public function boot()$1: void\n    {\n{$observeLine}",
                 $content
             );
         }
@@ -186,29 +214,10 @@ class MakeFeature extends Command
                 'table' => Str::snake(Str::pluralStudly($name)),
             ]);
             $this->files->put($modelPath, $stub);
-            $this->appendSoftDeleteToModel($modelPath, $name);
             $this->line("📋 Model dibuat: {$name}.php");
         } else {
             $this->warn("📋 Model sudah ada: {$name}.php");
         }
-    }
-
-    protected function appendSoftDeleteToModel(string $path, string $name): void
-    {
-        $content = file_get_contents($path);
-        $content = str_replace(
-            'use Illuminate\\Database\\Eloquent\\Model;',
-            "use Illuminate\\Database\\Eloquent\\Model;\nuse Illuminate\\Database\\Eloquent\\SoftDeletes;",
-            $content
-        );
-
-        $content = str_replace(
-            "class {$name} extends Model",
-            "class {$name} extends Model\n{\n    use SoftDeletes;",
-            $content
-        );
-
-        file_put_contents($path, $content);
     }
 
     protected function makeMigration(string $name, bool $force = false): void
@@ -241,26 +250,24 @@ class MakeFeature extends Command
 
     protected function makeRequests(string $name, bool $force = false): void
     {
-        $storePath = app_path("Http/Requests/Store{$name}Request.php");
-        $updatePath = app_path("Http/Requests/Update{$name}Request.php");
+        $requests = [
+            'Store' => 'request.store.stub',
+            'Update' => 'request.update.stub'
+        ];
 
-        $storeExists = $this->files->exists($storePath);
-        $updateExists = $this->files->exists($updatePath);
+        foreach ($requests as $type => $stubFile) {
+            $requestPath = app_path("Http/Requests/{$type}{$name}Request.php");
 
-        if ($force || !$storeExists) {
-            $store = $this->renderStub('request.store.stub', ['model' => $name]);
-            $this->files->put($storePath, $store);
-            $this->line("📝 Request dibuat: Store{$name}Request.php");
-        } else {
-            $this->warn("📝 Request sudah ada: Store{$name}Request.php");
-        }
-
-        if ($force || !$updateExists) {
-            $update = $this->renderStub('request.update.stub', ['model' => $name]);
-            $this->files->put($updatePath, $update);
-            $this->line("📝 Request dibuat: Update{$name}Request.php");
-        } else {
-            $this->warn("📝 Request sudah ada: Update{$name}Request.php");
+            if ($force || !$this->files->exists($requestPath)) {
+                $stub = $this->renderStub($stubFile, [
+                    'model' => $name,
+                    'type' => $type,
+                ]);
+                $this->files->put($requestPath, $stub);
+                $this->line("📝 Request dibuat: {$type}{$name}Request.php");
+            } else {
+                $this->warn("📝 Request sudah ada: {$type}{$name}Request.php");
+            }
         }
     }
 
@@ -273,11 +280,12 @@ class MakeFeature extends Command
         foreach ($views as $view) {
             $filePath = "{$viewPath}/{$view}.vue";
             if ($force || !$this->files->exists($filePath)) {
-                $stub = $this->renderStub("views/{$view}.vue.stub", [
+                $stub = $this->renderStub("{$view}.vue.stub", [
                     'model' => $name,
                     'plural' => $plural,
                     'table' => $table,
-                    'name' => Str::singular($plural),
+                    'kebab' => Str::kebab($plural),
+                    'snake' => Str::snake($plural),
                 ]);
                 $this->files->put($filePath, $stub);
                 $this->line("🖼️ View dibuat: {$view}.vue");
@@ -323,8 +331,4 @@ class MakeFeature extends Command
             $this->warn("🔐 Permission seeder {$class} sudah ada.");
         }
     }
-
-    // Pastikan method lain (makeModel, makeMigration, makeController, makeRequests, makeViews, injectRoutes, makePermissionSeeder) juga menerima $force jika perlu.
 }
-
-// End of file: src/Commands/MakeFeature.php
