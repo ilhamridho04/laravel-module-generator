@@ -79,10 +79,8 @@ jobs:
       - name: Install package into Laravel
         run: |
           cd laravel-app
-          # Copy package source to a temporary directory for local installation
-          cp -r ../ ../package-source
-          # Add local repository using symlink method
-          composer config repositories.local '{"type": "path", "url": "../package-source", "options": {"symlink": false}}'
+          # Add local repository pointing to parent directory
+          composer config repositories.local '{"type": "path", "url": "../", "options": {"symlink": false}}'
           # Require our package
           composer require ngodingskuyy/laravel-module-generator:@dev --no-interaction
 
