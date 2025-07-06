@@ -1,17 +1,20 @@
 {
     "name": "ngodingskuyy/laravel-module-generator",
-    "description": "Modular CRUD generator using Laravel + Vue (shadcn-vue) + TailwindCSS",
+    "description": "Modular CRUD Generator for Laravel + Vue + Tailwind (shadcn-vue)",
     "type": "library",
     "license": "MIT",
     "authors": [
         {
-            "name": "NgodingSkuyy",
-            "email": "you@example.com"
+            "name": "Ilham Ridho Asysyifa'a",
+            "email": "ilhamridho.ir@gmail.com",
+            "homepage": "https://github.com/ilhamridho04",
+            "role": "Developer"
         }
     ],
     "require": {
         "php": "^8.1",
-        "illuminate/support": "^10 || ^11"
+        "illuminate/support": "^10 || ^11",
+        "spatie/laravel-permission": "^5.11"
     },
     "autoload": {
         "psr-4": {
@@ -24,5 +27,7 @@
                 "NgodingSkuyy\\LaravelModuleGenerator\\LaravelModuleGeneratorServiceProvider"
             ]
         }
-    }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }
