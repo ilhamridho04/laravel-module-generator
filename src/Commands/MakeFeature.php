@@ -46,7 +46,6 @@ class MakeFeature extends Command
             $this->callSilent('make:factory', [
                 'name' => "{$name}Factory",
                 '--model' => $name,
-                '--force' => $force,
             ]);
             $this->line("🏭 Factory dibuat.");
         }
@@ -54,7 +53,6 @@ class MakeFeature extends Command
             $this->callSilent('make:policy', [
                 'name' => "{$name}Policy",
                 '--model' => $name,
-                '--force' => $force,
             ]);
             $this->line("🛡️  Policy dibuat.");
         }
@@ -131,13 +129,16 @@ class MakeFeature extends Command
     protected function renderStub(string $stubPath, array $replacements): string
     {
         $custom = base_path("stubs/laravel-module-generator/{$stubPath}");
-        $default = __DIR__ . '/../stubs/' . $stubPath;
+        $defaultStub = __DIR__ . '/../stubs/' . $stubPath;
+        $defaultView = __DIR__ . '/../views/' . $stubPath;
 
-        // Check if custom stub exists first, then default
+        // Check if custom stub exists first, then default stubs, then views
         if (file_exists($custom)) {
             $stub = file_get_contents($custom);
-        } elseif (file_exists($default)) {
-            $stub = file_get_contents($default);
+        } elseif (file_exists($defaultStub)) {
+            $stub = file_get_contents($defaultStub);
+        } elseif (file_exists($defaultView)) {
+            $stub = file_get_contents($defaultView);
         } else {
             // Create a basic stub if none exists
             $this->warn("⚠️ Stub tidak ditemukan: {$stubPath}, menggunakan template dasar");
