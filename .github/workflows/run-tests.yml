@@ -99,12 +99,10 @@ jobs:
           cd laravel-app
           # Add local repository
           composer config repositories.local path ../
-          # Require our package with proper Laravel version constraint
-          if [[ "${{ matrix.laravel-version }}" == "11.*" ]]; then
-            composer require "ngodingskuyy/laravel-module-generator:@dev" "illuminate/support:^11.0" --no-interaction
-          else
-            composer require "ngodingskuyy/laravel-module-generator:@dev" "illuminate/support:^10.0" --no-interaction
-          fi
+          # Require our package
+          composer require ngodingskuyy/laravel-module-generator:@dev --no-interaction
+          # Refresh autoloader
+          composer dump-autoload
 
       - name: Setup Laravel environment
         run: |
@@ -112,6 +110,9 @@ jobs:
           cp .env.example .env
           php artisan key:generate
           touch database/database.sqlite
+          # Configure database for SQLite
+          echo "DB_CONNECTION=sqlite" >> .env
+          echo "DB_DATABASE=database/database.sqlite" >> .env
 
       - name: Test package installation
         run: |
