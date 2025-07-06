@@ -3,6 +3,15 @@
     "description": "Modular CRUD Generator for Laravel + Vue + Tailwind (shadcn-vue)",
     "type": "library",
     "license": "MIT",
+    "keywords": [
+        "laravel",
+        "module",
+        "generator",
+        "crud",
+        "vue",
+        "tailwind",
+        "shadcn-vue"
+    ],
     "authors": [
         {
             "name": "Ilham Ridho Asysyifa'a",
@@ -25,6 +34,7 @@
             "NgodingSkuyy\\LaravelModuleGenerator\\": "src/"
         }
     },
+    "homepage": "https://github.com/ilhamridho04/laravel-module-generator",
     "extra": {
         "laravel": {
             "providers": [
