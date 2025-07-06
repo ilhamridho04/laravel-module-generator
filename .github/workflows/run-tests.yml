@@ -32,6 +32,9 @@ jobs:
       - name: Install dependencies
         run: composer install --prefer-dist --no-interaction --no-suggest
 
+      - name: List files for debugging
+        run: ls -la
+
       - name: Ensure .env.example exists and copy .env
         run: |
           if [ ! -f .env.example ]; then
