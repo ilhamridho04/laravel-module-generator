@@ -82,7 +82,11 @@ class StubFilesTest extends TestCase
 
             // Check for Vue 3 Composition API structure
             $this->assertStringContainsString('<template>', $content);
-            $this->assertStringContainsString('<script setup>', $content);
+            // Check for either JavaScript or TypeScript script setup
+            $this->assertTrue(
+                str_contains($content, '<script setup>') || str_contains($content, '<script setup lang="ts">'),
+                "Vue component should contain either '<script setup>' or '<script setup lang=\"ts\">'"
+            );
 
             // Check for at least one placeholder variable
             $hasPlaceholder = str_contains($content, '{{ table }}') ||

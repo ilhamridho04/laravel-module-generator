@@ -128,7 +128,11 @@ class MakeFeatureCommandIntegrationTest extends TestCase
 
         $indexContent = File::get($viewsPath . '/Index.vue');
         $this->assertStringContainsString('<template>', $indexContent);
-        $this->assertStringContainsString('<script setup>', $indexContent);
+        // Check for either JavaScript or TypeScript script setup
+        $this->assertTrue(
+            str_contains($indexContent, '<script setup>') || str_contains($indexContent, '<script setup lang="ts">'),
+            "Vue component should contain either '<script setup>' or '<script setup lang=\"ts\">'"
+        );
     }
 
     /** @test */

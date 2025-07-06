@@ -159,9 +159,16 @@ class MakeFeatureCommandTest extends TestCase
 
         // Check Vue structure
         $this->assertStringContainsString('<template>', $indexVue);
-        $this->assertStringContainsString('<script setup>', $indexVue);
+        // Check for either JavaScript or TypeScript script setup
+        $this->assertTrue(
+            str_contains($indexVue, '<script setup>') || str_contains($indexVue, '<script setup lang="ts">'),
+            "Index Vue component should contain either '<script setup>' or '<script setup lang=\"ts\">'"
+        );
         $this->assertStringContainsString('<template>', $createVue);
-        $this->assertStringContainsString('<script setup>', $createVue);
+        $this->assertTrue(
+            str_contains($createVue, '<script setup>') || str_contains($createVue, '<script setup lang="ts">'),
+            "Create Vue component should contain either '<script setup>' or '<script setup lang=\"ts\">'"
+        );
     }
 
     protected function cleanupGeneratedFiles(): void
