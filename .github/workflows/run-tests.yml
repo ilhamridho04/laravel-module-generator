@@ -38,6 +38,13 @@ jobs:
       - name: Generate app key
         run: php artisan key:generate
 
+      - name: Wait for MySQL
+        run: |
+          until mysqladmin ping -h127.0.0.1 -uroot -proot --silent; do
+            echo "Waiting for MySQL..."
+            sleep 2
+          done
+
       - name: Run migrations
         run: php artisan migrate --force
 
