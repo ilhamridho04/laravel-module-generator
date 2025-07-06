@@ -1,7 +1,7 @@
 {
     "name": "ngodingskuyy/laravel-module-generator",
     "description": "Modular CRUD Generator for Laravel + Vue + Tailwind (shadcn-vue)",
-    "version": "1.2.1",
+    "version": "1.2.2",
     "type": "library",
     "license": "MIT",
     "authors": [
