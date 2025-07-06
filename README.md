@@ -1,6 +1,30 @@
 # Laravel Module Generator
+## 📦 Installation
 
-![tests](https://github.com/ilhamridho04/laravel-module-generator/actions/workflows/run-tests.yml/badge.svg)
+### Quick Installation
+
+```bash
+composer require ngodingskuyy/laravel-module-generator --dev
+```
+
+### ⚠️ If You Encounter Version Conflicts
+
+Due to older versions on Packagist, you might need to install from source:
+
+```bash
+# Option 1: Install from GitHub (Recommended)
+composer config repositories.ngodingskuyy-laravel-module-generator vcs https://github.com/ilhamridho04/laravel-module-generator
+composer require ngodingskuyy/laravel-module-generator:dev-main --dev
+```
+
+```bash
+# Option 2: Local development
+git clone https://github.com/ilhamridho04/laravel-module-generator.git packages/laravel-module-generator
+composer config repositories.local path ./packages/laravel-module-generator
+composer require ngodingskuyy/laravel-module-generator:@dev --dev
+```
+
+**For detailed troubleshooting, see [DEVELOPMENT.md](DEVELOPMENT.md)**//github.com/ilhamridho04/laravel-module-generator/actions/workflows/run-tests.yml/badge.svg)
 
 A modular Laravel + Vue 3 + TailwindCSS + shadcn-vue CRUD feature generator.
 
