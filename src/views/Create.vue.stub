@@ -1,16 +1,106 @@
-<template>
-  <div class="p-4">
-    <h1 class="text-xl font-bold mb-4">Create {{ model }}</h1>
-    <form @submit.prevent="submit">
-      <input v-model="form.name" placeholder="Name" class="border p-2" />
-      <button class="ml-2 bg-green-500 text-white px-4 py-1" type="submit">Submit</button>
-    </form>
-  </div>
-</template>
+<script setup lang="ts">
+import AppLayout from '@/components/layouts/AppLayout.vue';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { ArrowLeft, Save } from 'lucide-vue-next';
+import { type BreadcrumbItem } from '@/types';
+import { Head, Link, useForm } from '@inertiajs/vue3';
 
-<script setup>
-import { useForm } from '@inertiajs/vue3'
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: 'Dashboard',
+        href: '/dashboard',
+    },
+    {
+        title: '{{ plural }}',
+        href: route('{{ table }}.index'),
+    },
+    {
+        title: 'Create',
+        href: route('{{ table }}.create'),
+    },
+];
 
-const form = useForm({ name: '' })
-const submit = () => form.post(route('{{ table }}.store'))
+const form = useForm({
+    name: '',
+    // Add more fields as needed
+});
+
+const submit = () => {
+    form.post(route('{{ table }}.store'), {
+        onSuccess: () => {
+            // Handle success
+        },
+        onError: () => {
+            // Handle errors
+        },
+    });
+};
 </script>
+
+<template>
+    <Head title="Create {{ class }}" />
+
+    <AppLayout :breadcrumbs="breadcrumbs">
+        <div class="flex h-full flex-1 flex-col gap-4 p-4">
+            <div class="flex items-center gap-4">
+                <Button variant="outline" size="icon" as-child>
+                    <Link :href="route('{{ table }}.index')">
+                        <ArrowLeft class="h-4 w-4" />
+                    </Link>
+                </Button>
+                <div>
+                    <h1 class="text-2xl font-bold tracking-tight">Create {{ class }}</h1>
+                    <p class="text-muted-foreground">Add a new {{ singular }} to your collection.</p>
+                </div>
+            </div>
+
+            <Card class="max-w-2xl">
+                <CardHeader>
+                    <CardTitle>{{ class }} Information</CardTitle>
+                    <CardDescription>
+                        Fill in the details below to create a new {{ singular }}.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <form @submit.prevent="submit" class="space-y-6">
+                        <div class="space-y-2">
+                            <Label for="name">Name</Label>
+                            <Input 
+                                id="name"
+                                v-model="form.name" 
+                                placeholder="Enter {{ singular }} name"
+                                :class="{ 'border-destructive': form.errors.name }"
+                            />
+                            <Alert v-if="form.errors.name" variant="destructive">
+                                <AlertDescription>{{ form.errors.name }}</AlertDescription>
+                            </Alert>
+                        </div>
+
+                        <!-- Add more form fields here as needed -->
+                        
+                        <div class="flex items-center gap-4">
+                            <Button 
+                                type="submit" 
+                                :disabled="form.processing"
+                                class="min-w-[100px]"
+                            >
+                                <Save class="mr-2 h-4 w-4" />
+                                {{ form.processing ? 'Creating...' : 'Create {{ class }}' }}
+                            </Button>
+                            
+                            <Button variant="outline" type="button" as-child>
+                                <Link :href="route('{{ table }}.index')">
+                                    Cancel
+                                </Link>
+                            </Button>
+                        </div>
+                    </form>
+                </CardContent>
+            </Card>
+        </div>
+    </AppLayout>
+</template>

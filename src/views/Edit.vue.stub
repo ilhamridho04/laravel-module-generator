@@ -1,16 +1,133 @@
-<template>
-  <div class="p-4">
-    <h1 class="text-xl font-bold mb-4">Edit {{ model }}</h1>
-    <form @submit.prevent="submit">
-      <input v-model="form.name" class="border p-2" />
-      <button class="ml-2 bg-yellow-500 text-white px-4 py-1" type="submit">Update</button>
-    </form>
-  </div>
-</template>
+<script setup lang="ts">
+import AppLayout from '@/components/layouts/AppLayout.vue';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { ArrowLeft, Save, Eye } from 'lucide-vue-next';
+import { type BreadcrumbItem } from '@/types';
+import { Head, Link, useForm } from '@inertiajs/vue3';
 
-<script setup>
-import { useForm } from '@inertiajs/vue3'
-const props = defineProps({ item: Object })
-const form = useForm({ name: props.item.name })
-const submit = () => form.put(route('{{ table }}.update', props.item.id))
+interface {{ class }}Item {
+    id: number;
+    name: string;
+    created_at: string;
+    updated_at: string;
+}
+
+interface Props {
+    item: {{ class }}Item;
+}
+
+const props = defineProps<Props>();
+
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: 'Dashboard',
+        href: '/dashboard',
+    },
+    {
+        title: '{{ plural }}',
+        href: route('{{ table }}.index'),
+    },
+    {
+        title: props.item.name,
+        href: route('{{ table }}.show', props.item.id),
+    },
+    {
+        title: 'Edit',
+        href: route('{{ table }}.edit', props.item.id),
+    },
+];
+
+const form = useForm({
+    name: props.item.name,
+    // Add more fields as needed
+});
+
+const submit = () => {
+    form.put(route('{{ table }}.update', props.item.id), {
+        onSuccess: () => {
+            // Handle success
+        },
+        onError: () => {
+            // Handle errors
+        },
+    });
+};
 </script>
+
+<template>
+    <Head :title="`Edit ${item.name}`" />
+
+    <AppLayout :breadcrumbs="breadcrumbs">
+        <div class="flex h-full flex-1 flex-col gap-4 p-4">
+            <div class="flex items-center gap-4">
+                <Button variant="outline" size="icon" as-child>
+                    <Link :href="route('{{ table }}.index')">
+                        <ArrowLeft class="h-4 w-4" />
+                    </Link>
+                </Button>
+                <div class="flex-1">
+                    <h1 class="text-2xl font-bold tracking-tight">Edit {{ class }}</h1>
+                    <p class="text-muted-foreground">Update the information for this {{ singular }}.</p>
+                </div>
+                <Button variant="outline" as-child>
+                    <Link :href="route('{{ table }}.show', item.id)">
+                        <Eye class="mr-2 h-4 w-4" />
+                        View
+                    </Link>
+                </Button>
+            </div>
+
+            <Card class="max-w-2xl">
+                <CardHeader>
+                    <CardTitle>{{ class }} Information</CardTitle>
+                    <CardDescription>
+                        Update the details below to modify this {{ singular }}.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <form @submit.prevent="submit" class="space-y-6">
+                        <div class="space-y-2">
+                            <Label for="name">Name</Label>
+                            <Input 
+                                id="name"
+                                v-model="form.name" 
+                                placeholder="Enter {{ singular }} name"
+                                :class="{ 'border-destructive': form.errors.name }"
+                            />
+                            <Alert v-if="form.errors.name" variant="destructive">
+                                <AlertDescription>{{ form.errors.name }}</AlertDescription>
+                            </Alert>
+                        </div>
+
+                        <!-- Add more form fields here as needed -->
+                        
+                        <div class="flex items-center gap-4">
+                            <Button 
+                                type="submit" 
+                                :disabled="form.processing || !form.isDirty"
+                                class="min-w-[100px]"
+                            >
+                                <Save class="mr-2 h-4 w-4" />
+                                {{ form.processing ? 'Updating...' : 'Update {{ class }}' }}
+                            </Button>
+                            
+                            <Button variant="outline" type="button" as-child>
+                                <Link :href="route('{{ table }}.show', item.id)">
+                                    Cancel
+                                </Link>
+                            </Button>
+                        </div>
+
+                        <div v-if="form.recentlySuccessful" class="text-sm text-green-600">
+                            {{ class }} updated successfully!
+                        </div>
+                    </form>
+                </CardContent>
+            </Card>
+        </div>
+    </AppLayout>
+</template>

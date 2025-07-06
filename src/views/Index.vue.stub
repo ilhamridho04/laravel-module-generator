@@ -1,13 +1,138 @@
-<template>
-  <div class="p-4">
-    <h1 class="text-xl font-bold mb-4">{{ plural }}</h1>
-    <Link :href="route('{{ table }}.create')" class="bg-blue-500 text-white px-4 py-2 rounded">Create</Link>
-    <ul class="mt-4 space-y-2">
-      <li v-for="item in {{ table }}.data" :key="item.id" class="border p-2">{{ item.name }}</li>
-    </ul>
-  </div>
-</template>
+<script setup lang="ts">
+import AppLayout from '@/components/layouts/AppLayout.vue';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { MoreHorizontal, Plus, Edit, Eye, Trash2 } from 'lucide-vue-next';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { type BreadcrumbItem } from '@/types';
+import { Head, Link, router } from '@inertiajs/vue3';
 
-<script setup>
-import { Link } from '@inertiajs/vue3'
+interface {{ class }}Item {
+    id: number;
+    name: string;
+    created_at: string;
+    updated_at: string;
+}
+
+interface Props {
+    {{ table }}: {
+        data: {{ class }}Item[];
+        current_page: number;
+        last_page: number;
+        per_page: number;
+        total: number;
+    };
+}
+
+defineProps<Props>();
+
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: 'Dashboard',
+        href: '/dashboard',
+    },
+    {
+        title: '{{ plural }}',
+        href: route('{{ table }}.index'),
+    },
+];
+
+const deleteItem = (id: number) => {
+    if (confirm('Are you sure you want to delete this {{ singular }}?')) {
+        router.delete(route('{{ table }}.destroy', id));
+    }
+};
 </script>
+
+<template>
+    <Head title="{{ plural }}" />
+
+    <AppLayout :breadcrumbs="breadcrumbs">
+        <div class="flex h-full flex-1 flex-col gap-4 p-4">
+            <Card>
+                <CardHeader class="flex flex-row items-center justify-between">
+                    <div>
+                        <CardTitle>{{ plural }}</CardTitle>
+                        <CardDescription>
+                            Manage your {{ table }} here. You can create, edit, and delete {{ table }}.
+                        </CardDescription>
+                    </div>
+                    <Button as-child>
+                        <Link :href="route('{{ table }}.create')">
+                            <Plus class="mr-2 h-4 w-4" />
+                            Create {{ class }}
+                        </Link>
+                    </Button>
+                </CardHeader>
+                <CardContent>
+                    <div class="rounded-md border">
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>Name</TableHead>
+                                    <TableHead>Created At</TableHead>
+                                    <TableHead>Updated At</TableHead>
+                                    <TableHead class="w-[100px]">Actions</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                <TableRow v-for="item in {{ table }}.data" :key="item.id">
+                                    <TableCell class="font-medium">
+                                        {{ item.name }}
+                                    </TableCell>
+                                    <TableCell>
+                                        <Badge variant="outline">
+                                            {{ new Date(item.created_at).toLocaleDateString() }}
+                                        </Badge>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Badge variant="outline">
+                                            {{ new Date(item.updated_at).toLocaleDateString() }}
+                                        </Badge>
+                                    </TableCell>
+                                    <TableCell>
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger as-child>
+                                                <Button variant="ghost" class="h-8 w-8 p-0">
+                                                    <MoreHorizontal class="h-4 w-4" />
+                                                </Button>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent align="end">
+                                                <DropdownMenuItem as-child>
+                                                    <Link :href="route('{{ table }}.show', item.id)">
+                                                        <Eye class="mr-2 h-4 w-4" />
+                                                        View
+                                                    </Link>
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem as-child>
+                                                    <Link :href="route('{{ table }}.edit', item.id)">
+                                                        <Edit class="mr-2 h-4 w-4" />
+                                                        Edit
+                                                    </Link>
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem @click="deleteItem(item.id)" class="text-destructive">
+                                                    <Trash2 class="mr-2 h-4 w-4" />
+                                                    Delete
+                                                </DropdownMenuItem>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
+                                    </TableCell>
+                                </TableRow>
+                            </TableBody>
+                        </Table>
+                    </div>
+                    
+                    <!-- Pagination would go here if needed -->
+                    <div v-if="{{ table }}.last_page > 1" class="mt-4 flex items-center justify-between">
+                        <div class="text-sm text-muted-foreground">
+                            Showing {{ {{ table }}.data.length }} of {{ {{ table }}.total }} results
+                        </div>
+                        <!-- Add pagination component here -->
+                    </div>
+                </CardContent>
+            </Card>
+        </div>
+    </AppLayout>
+</template>
