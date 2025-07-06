@@ -1,0 +1,29 @@
+--- Observer.stub ---
+<?php
+
+namespace App\Observers;
+
+use App\Models\{{ model }};
+
+class {{ model }}Observer
+{
+    public function creating({{ model }} $model): void
+    {
+        // Called before creating
+    }
+
+    public function updating({{ model }} $model): void
+    {
+        // Called before updating
+    }
+
+    public function deleting({{ model }} $model): void
+    {
+        // Called before deleting
+    }
+
+    public function restored({{ model }} $model): void
+    {
+        // Called when restored
+    }
+}
