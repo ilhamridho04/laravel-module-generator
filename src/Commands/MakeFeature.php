@@ -276,6 +276,7 @@ class MakeFeature extends Command
     protected function makeViews(string $name, string $plural, bool $force = false): void
     {
         $table = Str::snake($plural);
+        $singular = Str::singular($name);
         $viewPath = resource_path("js/pages/{$plural}");
         $views = ['Index', 'Create', 'Edit', 'Show'];
 
@@ -284,7 +285,9 @@ class MakeFeature extends Command
             if ($force || !$this->files->exists($filePath)) {
                 $stub = $this->renderStub("{$view}.vue.stub", [
                     'model' => $name,
+                    'class' => $name,
                     'plural' => $plural,
+                    'singular' => $singular,
                     'table' => $table,
                     'kebab' => Str::kebab($plural),
                     'snake' => Str::snake($plural),

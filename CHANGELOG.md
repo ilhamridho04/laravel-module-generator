@@ -17,6 +17,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **NEW**: Advanced form components with proper validation states
 - **NEW**: Responsive grid layouts and mobile-friendly design
 
+### 🐛 Critical Bug Fixes
+
+#### Vue Component Generation
+- **FIXED**: Missing placeholder replacements in Vue stub files (`{{ class }}`, `{{ singular }}`)
+- **FIXED**: Invalid nested placeholder syntax in pagination (`{{ {{ table }}.data.length }}`)
+- **FIXED**: Route generation errors caused by missing placeholder mappings
+- **FIXED**: TypeScript interface generation with proper variable names
+
+#### Placeholder Resolution
+- **Enhanced**: Added complete placeholder mapping for all Vue components:
+  ```php
+  'model' => $name,        // Original model name
+  'class' => $name,        // PascalCase class name  
+  'plural' => $plural,     // Plural form
+  'singular' => $singular, // Singular form
+  'table' => $table,       // snake_case table name
+  'kebab' => Str::kebab($plural), // kebab-case for routes
+  'snake' => Str::snake($plural), // snake_case variants
+  ```
+
 ### ✨ Enhanced Vue Components
 
 #### Index.vue (List View)

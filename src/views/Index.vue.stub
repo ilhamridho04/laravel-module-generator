@@ -127,7 +127,7 @@ const deleteItem = (id: number) => {
                     <!-- Pagination would go here if needed -->
                     <div v-if="{{ table }}.last_page > 1" class="mt-4 flex items-center justify-between">
                         <div class="text-sm text-muted-foreground">
-                            Showing {{ {{ table }}.data.length }} of {{ {{ table }}.total }} results
+                            Showing {{ table }}.data.length of {{ table }}.total results
                         </div>
                         <!-- Add pagination component here -->
                     </div>
