@@ -8,8 +8,13 @@ use Illuminate\Support\Str;
 
 class DeleteFeature extends Command
 {
-    protected $signature = 'features:delete {name} {--with=* : Optional components to delete like enum, observer, policy, factory, test} {--all : Delete all related files including optional components} {--force : Delete without confirmation}';
-    protected $description = 'Delete full CRUD feature and all its generated files';
+    protected $signature = 'features:delete {name} 
+                            {--with=* : Optional components to delete like enum, observer, policy, factory, test} 
+                            {--all : Delete all related files including optional components} 
+                            {--force : Delete without confirmation}
+                            {--api : Delete API-only components}
+                            {--view : Delete View-only components}';
+    protected $description = 'Delete full CRUD feature and all its generated files with interactive mode selection';
 
     protected Filesystem $files;
 
@@ -26,11 +31,39 @@ class DeleteFeature extends Command
         $kebab = Str::kebab($plural);
         $force = $this->option('force');
         $deleteAll = $this->option('all');
+        $apiOnly = $this->option('api');
+        $viewOnly = $this->option('view');
 
-        $this->warn("\n🗑️ Menghapus fitur: $plural ($kebab)");
+        // Validate options
+        if ($apiOnly && $viewOnly) {
+            $this->error('❌ Tidak bisa menggunakan --api dan --view bersamaan. Pilih salah satu atau kosongkan untuk full deletion.');
+            return;
+        }
 
-        // Collect all files to be deleted
-        $filesToDelete = $this->getFilesToDelete($name, $plural, $kebab, $deleteAll);
+        // If no mode is specified via options, show interactive menu
+        if (!$apiOnly && !$viewOnly) {
+            $deletionMode = $this->showDeletionModeMenu();
+
+            switch ($deletionMode) {
+                case 'api':
+                    $apiOnly = true;
+                    break;
+                case 'view':
+                    $viewOnly = true;
+                    break;
+                case 'full':
+                default:
+                    // Full deletion mode (default behavior) - keep both flags as false
+                    break;
+            }
+        }
+
+        // Determine deletion mode
+        $mode = $this->determineDeletionMode($apiOnly, $viewOnly);
+        $this->warn("\n🗑️ Menghapus fitur: $plural ($kebab) - Mode: {$mode}");
+
+        // Collect all files to be deleted based on mode
+        $filesToDelete = $this->getFilesToDelete($name, $plural, $kebab, $deleteAll, $apiOnly, $viewOnly);
 
         if (empty($filesToDelete)) {
             $this->info("❌ Tidak ada file yang ditemukan untuk fitur: $plural");
@@ -55,23 +88,46 @@ class DeleteFeature extends Command
         $this->info("\n✅ Fitur $plural berhasil dihapus! ($deletedCount file dihapus)");
     }
 
-    protected function getFilesToDelete(string $name, string $plural, string $kebab, bool $deleteAll): array
+    protected function getFilesToDelete(string $name, string $plural, string $kebab, bool $deleteAll, bool $apiOnly = false, bool $viewOnly = false): array
     {
         $files = [];
 
-        // Core files (always included)
-        $coreFiles = [
-            app_path("Models/{$name}.php"),
-            app_path("Http/Controllers/{$name}Controller.php"),
-            app_path("Http/Requests/Store{$name}Request.php"),
-            app_path("Http/Requests/Update{$name}Request.php"),
-            resource_path("js/pages/{$plural}/Index.vue"),
-            resource_path("js/pages/{$plural}/Create.vue"),
-            resource_path("js/pages/{$plural}/Edit.vue"),
-            resource_path("js/pages/{$plural}/Show.vue"),
-            base_path("routes/Modules/{$plural}/web.php"),
-            database_path("seeders/Permission/{$plural}PermissionSeeder.php"),
-        ];
+        // Core files based on mode
+        if ($apiOnly) {
+            // Only delete API-related files
+            $coreFiles = [
+                app_path("Http/Controllers/API/{$name}Controller.php"),
+                base_path("routes/Modules/{$plural}/api.php"),
+                app_path("Http/Requests/Store{$name}Request.php"),
+                app_path("Http/Requests/Update{$name}Request.php"),
+            ];
+        } elseif ($viewOnly) {
+            // Only delete View-related files
+            $coreFiles = [
+                app_path("Http/Controllers/{$name}Controller.php"),
+                base_path("routes/Modules/{$plural}/web.php"),
+                resource_path("js/pages/{$plural}/Index.vue"),
+                resource_path("js/pages/{$plural}/Create.vue"),
+                resource_path("js/pages/{$plural}/Edit.vue"),
+                resource_path("js/pages/{$plural}/Show.vue"),
+            ];
+        } else {
+            // Full deletion - all files
+            $coreFiles = [
+                app_path("Models/{$name}.php"),
+                app_path("Http/Controllers/{$name}Controller.php"),
+                app_path("Http/Controllers/API/{$name}Controller.php"),
+                app_path("Http/Requests/Store{$name}Request.php"),
+                app_path("Http/Requests/Update{$name}Request.php"),
+                resource_path("js/pages/{$plural}/Index.vue"),
+                resource_path("js/pages/{$plural}/Create.vue"),
+                resource_path("js/pages/{$plural}/Edit.vue"),
+                resource_path("js/pages/{$plural}/Show.vue"),
+                base_path("routes/Modules/{$plural}/api.php"),
+                base_path("routes/Modules/{$plural}/web.php"),
+                database_path("seeders/Permission/{$plural}PermissionSeeder.php"),
+            ];
+        }
 
         // Check which core files exist
         foreach ($coreFiles as $file) {
@@ -80,9 +136,19 @@ class DeleteFeature extends Command
             }
         }
 
-        // Migration files (find by pattern)
-        $migrationFiles = $this->findMigrationFiles($plural);
-        $files = array_merge($files, $migrationFiles);
+        // Handle ApiResponser trait for API-related modes (API only or full deletion)
+        if ($apiOnly || (!$apiOnly && !$viewOnly)) {
+            $apiResponserPath = app_path('Traits/ApiResponser.php');
+            if ($this->files->exists($apiResponserPath) && $this->shouldDeleteApiResponser()) {
+                $files[] = $apiResponserPath;
+            }
+        }
+
+        // Migration files (only for full deletion or when explicitly requested)
+        if (!$apiOnly && !$viewOnly) {
+            $migrationFiles = $this->findMigrationFiles($plural);
+            $files = array_merge($files, $migrationFiles);
+        }
 
         // Optional components
         $optionalFiles = $this->getOptionalFiles($name, $plural, $deleteAll);
@@ -189,10 +255,12 @@ class DeleteFeature extends Command
         $directoriesToCheck = [
             resource_path("js/pages/{$plural}"),
             base_path("routes/Modules/{$plural}"),
+            app_path("Http/Controllers/API"), // Check if API controller directory is empty
             database_path("seeders/Permission"),
             app_path("Enums"),
             app_path("Observers"),
             app_path("Policies"),
+            app_path("Traits"), // Check if Traits directory is empty
         ];
 
         foreach ($directoriesToCheck as $directory) {
@@ -208,6 +276,7 @@ class DeleteFeature extends Command
             resource_path("js/pages"),
             base_path("routes/Modules"),
             database_path("seeders"),
+            app_path("Http/Controllers"), // Only if Controllers directory becomes empty (unlikely)
         ];
 
         foreach ($parentDirectories as $directory) {
@@ -255,5 +324,65 @@ class DeleteFeature extends Command
             $this->files->put($providerPath, $content);
             $this->line("✅ Observer {$name}Observer dihapus dari AppServiceProvider");
         }
+    }
+
+    protected function determineDeletionMode(bool $apiOnly, bool $viewOnly): string
+    {
+        if ($apiOnly) {
+            return 'API Only';
+        }
+
+        if ($viewOnly) {
+            return 'View Only';
+        }
+
+        return 'Full Deletion (API + View)';
+    }
+
+    protected function showDeletionModeMenu(): string
+    {
+        $this->info("\n🎯 Pilih mode penghapusan fitur:");
+        $this->line("   <fg=cyan>1.</> Full Deletion (API + Views) - Hapus semua controller, routes, views");
+        $this->line("   <fg=yellow>2.</> API Only - Hapus hanya API controller dan routes");
+        $this->line("   <fg=green>3.</> View Only - Hapus hanya Vue views dan web controller");
+        $this->line("");
+
+        $choice = $this->choice(
+            '🤔 Pilih mode deletion',
+            [
+                '1' => 'Full Deletion (API + Views)',
+                '2' => 'API Only',
+                '3' => 'View Only'
+            ],
+            '1' // Default to full deletion
+        );
+
+        // Map choice to mode
+        switch ($choice) {
+            case '2':
+                $this->line("   <fg=yellow>✅ Mode API Only dipilih</>");
+                return 'api';
+            case '3':
+                $this->line("   <fg=green>✅ Mode View Only dipilih</>");
+                return 'view';
+            case '1':
+            default:
+                $this->line("   <fg=cyan>✅ Mode Full Deletion dipilih</>");
+                return 'full';
+        }
+    }
+
+    protected function shouldDeleteApiResponser(): bool
+    {
+        $apiControllerPath = app_path('Http/Controllers/API');
+
+        if (!$this->files->exists($apiControllerPath)) {
+            return true; // No API directory, safe to delete
+        }
+
+        $apiControllers = $this->files->files($apiControllerPath);
+
+        // If there are other API controllers besides the one being deleted, keep the trait
+        return count($apiControllers) <= 1;
     }
 }
