@@ -8,7 +8,11 @@ use Illuminate\Support\Str;
 
 class MakeFeature extends Command
 {
-    protected $signature = 'features:create {name} {--with=* : Optional components like enum, observer, policy, factory, test} {--force : Overwrite existing files}';
+    protected $signature = 'features:create {name} 
+                            {--with=* : Optional components like enum, observer, policy, factory, test} 
+                            {--force : Overwrite existing files}
+                            {--api : Generate API-only (without Vue views)}
+                            {--view : Generate View-only (without API routes)}';
     protected $description = 'Generate full CRUD feature with module structure and optional components';
 
     protected Filesystem $files;
@@ -25,17 +29,60 @@ class MakeFeature extends Command
         $plural = Str::pluralStudly($name);
         $kebab = Str::kebab($plural);
         $force = $this->option('force');
+        $apiOnly = $this->option('api');
+        $viewOnly = $this->option('view');
 
-        $this->info("\n🔧 Membuat fitur: $plural ($kebab)");
+        // Validate options
+        if ($apiOnly && $viewOnly) {
+            $this->error('❌ Tidak bisa menggunakan --api dan --view bersamaan. Pilih salah satu atau kosongkan untuk full-stack.');
+            return;
+        }
 
-        $this->createFolders($plural);
+        // If no mode is specified via options, show interactive menu
+        if (!$apiOnly && !$viewOnly) {
+            $generationMode = $this->showGenerationModeMenu();
+
+            switch ($generationMode) {
+                case 'api':
+                    $apiOnly = true;
+                    break;
+                case 'view':
+                    $viewOnly = true;
+                    break;
+                case 'full':
+                default:
+                    // Full-stack mode (default behavior)
+                    break;
+            }
+        }
+
+        // Determine generation mode
+        $mode = $this->determineGenerationMode($apiOnly, $viewOnly);
+        $this->info("\n🔧 Membuat fitur: $plural ($kebab) - Mode: {$mode}");
+
+        $this->createFolders($plural, $apiOnly);
+
+        // Ensure ApiResponser trait exists if generating API controllers
+        if ($apiOnly || (!$apiOnly && !$viewOnly)) {
+            $this->ensureApiResponserTrait();
+        }
+
         $this->ensureModulesLoader($force);
         $this->makeModel($name, $force);
         $this->makeMigration($name, $force);
-        $this->makeController($name, $plural, $force);
-        $this->makeRequests($name, $force);
-        $this->makeViews($name, $plural, $force);
-        $this->injectRoutes($name, $plural, $kebab, $force);
+        $this->makeController($name, $plural, $force, $apiOnly, $viewOnly);
+
+        // Generate requests only if not view-only mode
+        if (!$viewOnly) {
+            $this->makeRequests($name, $force);
+        }
+
+        // Generate views only if not API-only mode
+        if (!$apiOnly) {
+            $this->makeViews($name, $plural, $force);
+        }
+
+        $this->injectRoutes($name, $plural, $kebab, $force, $apiOnly, $viewOnly);
         $this->makePermissionSeeder($plural, $force);
 
         // Optional components
@@ -88,23 +135,95 @@ class MakeFeature extends Command
         $this->info("\n✅ Fitur $plural berhasil dibuat!");
     }
 
-    protected function createFolders(string $plural): void
+    protected function determineGenerationMode(bool $apiOnly, bool $viewOnly): string
+    {
+        if ($apiOnly) {
+            return 'API Only';
+        }
+
+        if ($viewOnly) {
+            return 'View Only';
+        }
+
+        return 'Full-stack (API + View)';
+    }
+
+    protected function showGenerationModeMenu(): string
+    {
+        $this->info("\n🎯 Pilih mode pembuatan fitur:");
+        $this->line("   <fg=cyan>1.</> Full-stack (API + Views) - Lengkap dengan controller, routes, views");
+        $this->line("   <fg=yellow>2.</> API Only - Hanya API controller, routes, dan requests");
+        $this->line("   <fg=green>3.</> View Only - Hanya Vue views dan web controller");
+        $this->line("");
+
+        $choice = $this->choice(
+            '🤔 Pilih mode generation',
+            [
+                '1' => 'Full-stack (API + Views)',
+                '2' => 'API Only',
+                '3' => 'View Only'
+            ],
+            '1' // Default to full-stack
+        );
+
+        // Map choice to mode
+        switch ($choice) {
+            case '2':
+                $this->line("   <fg=yellow>✅ Mode API Only dipilih</>");
+                return 'api';
+            case '3':
+                $this->line("   <fg=green>✅ Mode View Only dipilih</>");
+                return 'view';
+            case '1':
+            default:
+                $this->line("   <fg=cyan>✅ Mode Full-stack dipilih</>");
+                return 'full';
+        }
+    }
+
+    protected function createFolders(string $plural, bool $skipViews = false): void
     {
         $paths = [
             app_path("Models"),
+            app_path("Http/Controllers"),
+            app_path("Http/Controllers/API"), // For API controllers
             app_path("Http/Requests"),
-            resource_path("js/pages/$plural"),
+            app_path("Traits"), // For shared traits like ApiResponser
             database_path("seeders/Permission"),
             base_path("routes/Modules/$plural"),
             app_path("Enums"),
             app_path("Observers"),
         ];
 
+        // Only create views folder if not API-only mode
+        if (!$skipViews) {
+            $paths[] = resource_path("js/pages/$plural");
+        }
+
         foreach ($paths as $path) {
             if (!$this->files->exists($path)) {
                 $this->files->makeDirectory($path, 0755, true);
                 $this->line("📁 Folder dibuat: $path");
             }
+        }
+    }
+
+    protected function ensureApiResponserTrait(): void
+    {
+        $traitPath = app_path('Traits/ApiResponser.php');
+
+        if (!$this->files->exists($traitPath)) {
+            // Create Traits directory if it doesn't exist
+            $traitsDir = app_path('Traits');
+            if (!$this->files->exists($traitsDir)) {
+                $this->files->makeDirectory($traitsDir, 0755, true);
+                $this->line("📁 Folder dibuat: $traitsDir");
+            }
+
+            // Create the ApiResponser trait
+            $stub = $this->files->get(__DIR__ . '/../stubs/api-responser.trait.stub');
+            $this->files->put($traitPath, $stub);
+            $this->line("🔧 ApiResponser trait dibuat: Traits/ApiResponser.php");
         }
     }
 
@@ -158,12 +277,20 @@ class MakeFeature extends Command
         switch ($stubPath) {
             case 'controller.stub':
                 return "<?php\n\nnamespace App\\Http\\Controllers;\n\nuse Illuminate\\Http\\Request;\n\nclass {{ model }}Controller extends Controller\n{\n    // Add your methods here\n}\n";
+            case 'controller.api.stub':
+                return "<?php\n\nnamespace App\\Http\\Controllers\\API;\n\nuse Illuminate\\Http\\Request;\nuse App\\Models\\{{ model }};\nuse App\\Http\\Controllers\\Controller;\n\nclass {{ model }}Controller extends Controller\n{\n    public function index() { return {{ model }}::paginate(10); }\n    public function store(Request \$request) { return {{ model }}::create(\$request->all()); }\n    public function show({{ model }} \${{ table }}) { return \${{ table }}; }\n    public function update(Request \$request, {{ model }} \${{ table }}) { \${{ table }}->update(\$request->all()); return \${{ table }}; }\n    public function destroy({{ model }} \${{ table }}) { \${{ table }}->delete(); return response()->noContent(); }\n}\n";
+            case 'controller.view.stub':
+                return "<?php\n\nnamespace App\\Http\\Controllers;\n\nuse Illuminate\\Http\\Request;\nuse Inertia\\Inertia;\nuse App\\Models\\{{ model }};\n\nclass {{ model }}Controller extends Controller\n{\n    public function index() { return Inertia::render('{{ plural }}/Index', ['{{ table }}' => {{ model }}::paginate(10)]); }\n    public function create() { return Inertia::render('{{ plural }}/Create'); }\n    public function store(Request \$request) { {{ model }}::create(\$request->all()); return redirect()->route('{{ kebab }}.index'); }\n    public function show({{ model }} \${{ table }}) { return Inertia::render('{{ plural }}/Show', ['item' => \${{ table }}]); }\n    public function edit({{ model }} \${{ table }}) { return Inertia::render('{{ plural }}/Edit', ['item' => \${{ table }}]); }\n    public function update(Request \$request, {{ model }} \${{ table }}) { \${{ table }}->update(\$request->all()); return redirect()->route('{{ kebab }}.index'); }\n    public function destroy({{ model }} \${{ table }}) { \${{ table }}->delete(); return redirect()->route('{{ kebab }}.index'); }\n}\n";
             case 'request.store.stub':
                 return "<?php\n\nnamespace App\\Http\\Requests;\n\nuse Illuminate\\Foundation\\Http\\FormRequest;\n\nclass Store{{ model }}Request extends FormRequest\n{\n    public function authorize(): bool\n    {\n        return true;\n    }\n\n    public function rules(): array\n    {\n        return [\n            'name' => 'required|string|max:255',\n        ];\n    }\n}\n";
             case 'request.update.stub':
                 return "<?php\n\nnamespace App\\Http\\Requests;\n\nuse Illuminate\\Foundation\\Http\\FormRequest;\n\nclass Update{{ model }}Request extends FormRequest\n{\n    public function authorize(): bool\n    {\n        return true;\n    }\n\n    public function rules(): array\n    {\n        return [\n            'name' => 'required|string|max:255',\n        ];\n    }\n}\n";
             case 'routes.stub':
                 return "<?php\n\nuse Illuminate\\Support\\Facades\\Route;\nuse App\\Http\\Controllers\\{{ model }}Controller;\n\nRoute::resource('{{ kebab }}', {{ model }}Controller::class);\n";
+            case 'routes.api.stub':
+                return "<?php\n\nuse Illuminate\\Support\\Facades\\Route;\nuse App\\Http\\Controllers\\API\\{{ model }}Controller;\n\nRoute::middleware(['auth:sanctum'])->group(function () {\n    Route::apiResource('{{ kebab }}', {{ model }}Controller::class);\n});\n";
+            case 'routes.view.stub':
+                return "<?php\n\nuse Illuminate\\Support\\Facades\\Route;\nuse App\\Http\\Controllers\\{{ model }}Controller;\n\nRoute::middleware(['auth', 'verified'])->group(function () {\n    Route::resource('{{ kebab }}', {{ model }}Controller::class);\n});\n";
             case 'seeder.permission.stub':
                 return "<?php\n\nnamespace Database\\Seeders\\Permission;\n\nuse Illuminate\\Database\\Seeder;\nuse Spatie\\Permission\\Models\\Permission;\n\nclass {{ class }} extends Seeder\n{\n    public function run(): void\n    {\n        \$permissions = ['view', 'create', 'edit', 'delete'];\n        \n        foreach (\$permissions as \$permission) {\n            Permission::firstOrCreate([\n                'name' => \"{{ permission }} {\$permission}\",\n                'guard_name' => 'web',\n            ]);\n        }\n    }\n}\n";
             default:
@@ -232,21 +359,42 @@ class MakeFeature extends Command
         $this->line("🗄️ Migration dibuat: create_{$table}_table");
     }
 
-    protected function makeController(string $name, string $plural, bool $force = false): void
+    protected function makeController(string $name, string $plural, bool $force = false, bool $apiOnly = false, bool $viewOnly = false): void
     {
-        $controllerPath = app_path("Http/Controllers/{$name}Controller.php");
+        // Determine controller path based on mode
+        if ($apiOnly) {
+            $controllerPath = app_path("Http/Controllers/API/{$name}Controller.php");
+        } else {
+            $controllerPath = app_path("Http/Controllers/{$name}Controller.php");
+        }
 
         if ($force || !$this->files->exists($controllerPath)) {
-            $stub = $this->renderStub('controller.stub', [
+            // Ensure API directory exists for API controllers
+            if ($apiOnly && !$this->files->exists(dirname($controllerPath))) {
+                $this->files->makeDirectory(dirname($controllerPath), 0755, true);
+            }
+
+            // Determine which stub to use based on mode
+            $stubFile = 'controller.stub'; // Default full-stack
+            if ($apiOnly) {
+                $stubFile = 'controller.api.stub';
+            } elseif ($viewOnly) {
+                $stubFile = 'controller.view.stub';
+            }
+
+            $stub = $this->renderStub($stubFile, [
                 'model' => $name,
                 'plural' => $plural,
                 'table' => Str::snake($plural),
                 'kebab' => Str::kebab($plural),
             ]);
             $this->files->put($controllerPath, $stub);
-            $this->line("🎮 Controller dibuat: {$name}Controller.php");
+
+            $controllerLocation = $apiOnly ? "API/{$name}Controller.php" : "{$name}Controller.php";
+            $this->line("🎮 Controller dibuat: {$controllerLocation}");
         } else {
-            $this->warn("🎮 Controller sudah ada: {$name}Controller.php");
+            $controllerLocation = $apiOnly ? "API/{$name}Controller.php" : "{$name}Controller.php";
+            $this->warn("🎮 Controller sudah ada: {$controllerLocation}");
         }
     }
 
@@ -300,23 +448,44 @@ class MakeFeature extends Command
         }
     }
 
-    protected function injectRoutes(string $name, string $plural, string $kebab, bool $force = false): void
+    protected function injectRoutes(string $name, string $plural, string $kebab, bool $force = false, bool $apiOnly = false, bool $viewOnly = false): void
     {
         $variable = Str::camel($name);
-        $controller = "App\\Http\\Controllers\\{$name}Controller";
-        $content = $this->renderStub('routes.stub', [
+
+        // Determine controller namespace based on mode
+        if ($apiOnly) {
+            $controller = "App\\Http\\Controllers\\API\\{$name}Controller";
+        } else {
+            $controller = "App\\Http\\Controllers\\{$name}Controller";
+        }
+
+        // Determine which stub to use based on mode
+        $stubFile = 'routes.stub'; // Default full-stack
+        if ($apiOnly) {
+            $stubFile = 'routes.api.stub';
+        } elseif ($viewOnly) {
+            $stubFile = 'routes.view.stub';
+        }
+
+        $content = $this->renderStub($stubFile, [
             'plural' => $plural,
             'kebab' => $kebab,
             'variable' => $variable,
             'controller' => $controller,
         ]);
 
-        $routePath = base_path("routes/Modules/{$plural}/web.php");
+        // Determine the route file name based on mode
+        $routeFileName = 'web.php'; // Default
+        if ($apiOnly) {
+            $routeFileName = 'api.php';
+        }
+
+        $routePath = base_path("routes/Modules/{$plural}/{$routeFileName}");
         if ($force || !$this->files->exists($routePath)) {
             $this->files->put($routePath, $content);
-            $this->line("🛣️ Route file dibuat: routes/Modules/{$plural}/web.php");
+            $this->line("🛣️ Route file dibuat: routes/Modules/{$plural}/{$routeFileName}");
         } else {
-            $this->warn("🛣️ Routes sudah ada: routes/Modules/{$plural}/web.php");
+            $this->warn("🛣️ Routes sudah ada: routes/Modules/{$plural}/{$routeFileName}");
         }
     }
 

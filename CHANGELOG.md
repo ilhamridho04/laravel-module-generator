@@ -5,6 +5,82 @@ All notable changes to `ngodingskuyy/laravel-module-generator` will be documente
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.5.0] - 2025-07-07
+
+### 🎯 NEW: Generation Mode Options
+
+#### Interactive Menu System
+- **NEW**: Interactive menu automatically appears when no mode is specified
+- **USER-FRIENDLY**: Clear visual options with descriptions and emoji indicators
+- **SMART**: Defaults to Full-stack mode for backwards compatibility
+- **FLEXIBLE**: Shows confirmation message after selection
+
+#### Generation Mode Selection
+```bash
+# Interactive mode (recommended)
+php artisan features:create User
+# Shows menu: Full-stack, API Only, View Only
+
+# Direct mode (skip menu)
+php artisan features:create User --api    # API Only
+php artisan features:create User --view   # View Only
+```
+
+#### API and View Mode Support
+- **NEW**: `--api` option for API-only generation (no Vue views)
+- **NEW**: `--view` option for View-only generation (no API routes/requests)
+- **ENHANCED**: Full-stack mode remains the default (API + Views)
+- **SMART**: Validation prevents using both `--api` and `--view` simultaneously
+- **ORGANIZED**: API controllers are placed in `app/Http/Controllers/API/` folder
+- **NAMESPACED**: API controllers use `App\Http\Controllers\API` namespace
+
+#### Generation Mode Details
+
+**API-Only Mode (`--api`):**
+```bash
+php artisan features:create User --api
+```
+- ✅ Controller with JSON responses and `auth:sanctum` middleware
+- ✅ API routes (`routes/Modules/Users/api.php`)
+- ✅ Store/Update Request classes for validation
+- ✅ Model, Migration, Permission seeder
+- ❌ No Vue views generated
+
+**View-Only Mode (`--view`):**
+```bash
+php artisan features:create User --view
+```
+- ✅ Controller with Inertia responses and `auth` middleware
+- ✅ Web routes (`routes/Modules/Users/web.php`)
+- ✅ Vue components (Index, Create, Edit, Show)
+- ✅ Model, Migration, Permission seeder
+- ❌ No Request classes (uses simple validation)
+
+**Full-Stack Mode (default):**
+```bash
+php artisan features:create User
+```
+- ✅ Complete CRUD with both API and Views
+- ✅ All components included
+
+#### New Stub Files
+- **Added**: `controller.api.stub` for API-only controllers
+- **Added**: `controller.view.stub` for View-only controllers
+- **Added**: `routes.api.stub` for API-only routes
+- **Added**: `routes.view.stub` for View-only routes
+- **Enhanced**: Intelligent stub selection based on generation mode
+
+#### Enhanced Test Coverage
+- **Added**: 5 new comprehensive tests for API/View options
+- **Total**: 74 tests with 286 assertions (100% pass rate)
+- **Coverage**: All generation modes thoroughly tested
+
+### 🧪 Updated Test Suite
+- **Improved**: All existing tests updated for new command names
+- **Added**: `MakeFeatureApiViewOptionsTest` with comprehensive mode testing
+- **Validated**: All generation modes work correctly
+- **Ensured**: No regressions in existing functionality
+
 ## [4.4.0] - 2025-07-07
 
 ### 🔄 Command Restructuring

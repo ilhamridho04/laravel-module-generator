@@ -102,11 +102,90 @@ composer require ngodingskuyy/laravel-module-generator:@dev
 
 ## 🔧 Usage
 
-### Basic Usage
+### Interactive Mode (Recommended)
 
 ```bash
+# Interactive menu will appear to choose generation mode
 php artisan features:create User
 ```
+
+**Interactive Menu Options:**
+```
+🎯 Pilih mode pembuatan fitur:
+   1. Full-stack (API + Views) - Lengkap dengan controller, routes, views
+   2. API Only - Hanya API controller, routes, dan requests
+   3. View Only - Hanya Vue views dan web controller
+
+🤔 Pilih mode generation
+  [1] Full-stack (API + Views)
+  [2] API Only
+  [3] View Only
+ > 1
+```
+
+### Direct Mode Options
+
+#### API-Only Mode
+Generate only API controllers, routes, and requests (no Vue views):
+
+```bash
+php artisan features:create User --api
+```
+
+**What gets generated:**
+- ✅ Controller with JSON responses in `app/Http/Controllers/API/` folder
+- ✅ API routes (`routes/Modules/Users/api.php`) with `auth:sanctum` middleware
+- ✅ Store/Update Request classes
+- ✅ Model, Migration, Permission seeder
+- ❌ No Vue views
+
+**File Structure:**
+```
+app/
+├── Http/
+│   ├── Controllers/
+│   │   └── API/
+│   │       └── UserController.php  # API Controller
+│   └── Requests/
+│       ├── StoreUserRequest.php
+│       └── UpdateUserRequest.php
+└── Models/
+    └── User.php
+routes/
+└── Modules/
+    └── Users/
+        └── api.php  # API routes
+```
+
+#### View-Only Mode
+Generate only Vue views and web controllers (no API routes or requests):
+
+```bash
+php artisan features:create User --view
+```
+
+**What gets generated:**
+- ✅ Controller with Inertia responses and `auth` middleware
+- ✅ Web routes (`routes/Modules/Users/web.php`)
+- ✅ Vue components (Index, Create, Edit, Show)
+- ✅ Model, Migration, Permission seeder
+- ❌ No Request classes (uses simple validation)
+
+#### Full-Stack Mode (Default)
+Generate both API and Views (complete CRUD):
+
+```bash
+# These are equivalent
+php artisan features:create User
+# Select option 1 in interactive menu
+```
+
+**What gets generated:**
+- ✅ Controller with Inertia responses
+- ✅ Web routes
+- ✅ Vue components
+- ✅ Store/Update Request classes
+- ✅ Model, Migration, Permission seeder
 
 ### With Optional Components
 

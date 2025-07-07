@@ -1,0 +1,70 @@
+<?php
+
+namespace App\Http\Controllers\API;
+
+use Illuminate\Http\Request;
+use App\Models\{{ model }};
+use App\Http\Requests\Store{{ model }}Request;
+use App\Http\Requests\Update{{ model }}Request;
+use App\Http\Controllers\Controller;
+use App\Traits\ApiResponser;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\JsonResponse;
+
+class {{ model }}Controller extends Controller
+{
+    use AuthorizesRequests, ApiResponser;
+
+    public function __construct()
+    {
+        $this->middleware('auth:sanctum');
+    }
+
+    public function index(Request $request): JsonResponse
+    {
+        $query = {{ model }}::query();
+
+        if ($request->filled('search')) {
+            $search = $request->get('search');
+            $query->where('name', 'like', "%{$search}%");
+        }
+
+        ${{ table }} = $query->paginate(10)->withQueryString();
+
+        return $this->successResponse([
+            'data' => ${{ table }}->items(),
+            'meta' => [
+                'current_page' => ${{ table }}->currentPage(),
+                'last_page' => ${{ table }}->lastPage(),
+                'per_page' => ${{ table }}->perPage(),
+                'total' => ${{ table }}->total(),
+            ]
+        ], '{{ model }} list retrieved successfully');
+    }
+
+    public function store(Store{{ model }}Request $request): JsonResponse
+    {
+        ${{ table }} = {{ model }}::create($request->validated());
+        
+        return $this->successResponse(${{ table }}, '{{ model }} created successfully', 201);
+    }
+
+    public function show({{ model }} ${{ table }}): JsonResponse
+    {
+        return $this->successResponse(${{ table }}, '{{ model }} retrieved successfully');
+    }
+
+    public function update(Update{{ model }}Request $request, {{ model }} ${{ table }}): JsonResponse
+    {
+        ${{ table }}->update($request->validated());
+        
+        return $this->successResponse(${{ table }}, '{{ model }} updated successfully');
+    }
+
+    public function destroy({{ model }} ${{ table }}): JsonResponse
+    {
+        ${{ table }}->delete();
+        
+        return $this->successResponse(null, '{{ model }} deleted successfully');
+    }
+}
