@@ -1,4 +1,4 @@
-# Laravel Module Generator v4.2
+# Laravel Module Generator v4.5
 
 **🚀 Laravel 12+ Focused Module Generator**
 
@@ -6,7 +6,7 @@
 
 Modular CRUD Generator for Laravel + Vue + Tailwind (shadcn-vue) - **Optimized for Laravel 12+ with PHP 8.2+**
 
-> **Version 4.2** is a complete refactor focused exclusively on Laravel 12+ with comprehensive testing, improved code generation, and modern best practices.
+> **Version 4.5** is a complete refactor focused exclusively on Laravel 12+ with comprehensive testing, improved code generation, modern best practices, and **smart routes auto-installation**.
 
 ---
 
@@ -47,16 +47,18 @@ composer require ngodingskuyy/laravel-module-generator:@dev --dev
 
 ## 🚀 Features
 
-### ✨ **What's New in v4.2**
+### ✨ **What's New in v4.5**
 
-- 🎯 **Laravel 12+ Focused**: Exclusively optimized for Laravel 12+ and PHP 8.2+
-- 🧪 **Comprehensive Testing**: 37 tests with 164 assertions (100% pass rate)
-- 🔧 **Enhanced Code Generation**: Improved stub rendering with better error handling
-- 🐛 **Bug-Free Components**: All generated files are validated and working
-- 📁 **Better Project Structure**: Cleaner organization and modern conventions
-- 🚀 **CI/CD Ready**: Full GitHub Actions workflow for automated testing
+- 🎯 **Smart Routes Auto-Installation**: Automatic routes integration with zero manual setup
+- 🔧 **Enhanced Commands**: New `modules:setup` and `modules:install` commands
+- 🌐 **Complete Routes Separation**: Web and API routes properly separated
+- 🤖 **Interactive Installation**: Auto-detect and offer installation when generating features
+- 🧪 **Comprehensive Testing**: 98 tests with 385+ assertions (94% pass rate)
+- � **Laravel 11+ Support**: Full support for `routes/app.php` and traditional routes
+- � **API Responser Integration**: Consistent JSON responses with reusable trait
+- 🎨 **Mode Selection**: Full-stack, API-only, or View-only generation modes
 
-### � **Core Features**
+### 🔧 **Core Features**
 
 - ✅ **Full CRUD Generation**: Model, migration, controller, requests, Vue components, routes, permission seeder
 - 📦 **Modular Architecture**: Better separation of concerns per feature  
@@ -64,6 +66,7 @@ composer require ngodingskuyy/laravel-module-generator:@dev --dev
 - 🔐 **Permission System**: Auto-generated permissions using Spatie Laravel Permission
 - 🧰 **Customizable Stubs**: Fully customizable templates with intelligent fallback support
 - 🔧 **Optional Components**: Generate factories, policies, observers, enums, and tests on demand
+- 🌐 **Smart Routes**: Auto-setup and integration with proper web/API separation
 
 ---
 
@@ -236,50 +239,68 @@ The `features:delete` command will remove:
 
 > ⚠️ **Warning**: This action is irreversible. Make sure to backup your files or use version control.
 
-### 🔗 Auto-Loading Module Routes
+### 🔗 Routes Auto-Installation (New in v4.5)
 
-#### Setup Modules Auto-Loader
-
-```bash
-php artisan modules:setup
-```
-
-#### Install and Integrate Auto-Loader
+#### One-Command Setup (Recommended)
 
 ```bash
+# Setup and install routes automatically
 php artisan modules:install
 ```
 
-#### Manual Integration
+This will:
+- ✅ Create `routes/modules.php` (web routes loader)
+- ✅ Create `routes/api-modules.php` (API routes loader)
+- ✅ Auto-integrate into `routes/web.php` or `routes/app.php` (Laravel 11+)
+- ✅ Auto-integrate into `routes/api.php`
 
-Add this line to your `routes/web.php` or `routes/app.php` (Laravel 11+):
+#### Manual Setup (Alternative)
 
-```php
-require __DIR__ . '/modules.php';
+```bash
+# 1. Create loader files only
+php artisan modules:setup
+
+# 2. Then manually add to routes/web.php:
+# require __DIR__ . '/modules.php';
+
+# 3. And to routes/api.php:
+# require __DIR__ . '/api-modules.php';
 ```
 
-#### How It Works
+#### Smart Auto-Installation
 
-The modules auto-loader automatically discovers and loads all `web.php` files from subdirectories in `routes/Modules/`:
+When you generate a feature, the system will automatically detect if routes are not installed and offer to install them:
+
+```bash
+php artisan features:create Product
+
+# Output:
+# ⚠️  Untuk mengaktifkan auto-loading web modules, pilih salah satu:
+#    1. Otomatis install:
+#       php artisan modules:install
+#
+#    2. Manual install:
+#       Di routes/web.php:
+#       require __DIR__ . '/modules.php';
+#
+# 🤔 Mau auto-install sekarang? (yes/no) [yes]:
+```
+
+#### Routes Structure
+
+After installation, your routes will be organized like this:
 
 ```
 routes/
-├── web.php
-├── modules.php          # Auto-loader file
+├── web.php              # Contains: require __DIR__ . '/modules.php';
+├── api.php              # Contains: require __DIR__ . '/api-modules.php';
+├── modules.php          # Auto-loads all web.php from Modules/
+├── api-modules.php      # Auto-loads all api.php from Modules/
 └── Modules/
-    ├── Users/
-    │   └── web.php      # Automatically loaded
-    ├── Products/
-    │   └── web.php      # Automatically loaded
-    └── Orders/
-        └── web.php      # Automatically loaded
+    └── Products/
+        ├── web.php      # Web routes with auth middleware
+        └── api.php      # API routes with auth:sanctum middleware
 ```
-
-**Benefits:**
-- ✅ **Automatic Discovery**: No need to manually register each module's routes
-- ✅ **Laravel 11+ Compatible**: Works with both `routes/app.php` and `routes/web.php`
-- ✅ **Performance**: Only loads routes for existing modules
-- ✅ **Clean Organization**: Keeps routes organized by feature/module
 
 ### Generated Files Structure
 

@@ -5,6 +5,113 @@ All notable changes to `ngodingskuyy/laravel-module-generator` will be documente
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.5.0] - 2025-07-08
+
+### 🚀 NEW: Smart Routes Auto-Installation
+
+#### Enhanced Commands
+- **NEW**: `modules:setup` command creates both web and API route loaders
+- **NEW**: `modules:install` command auto-integrates routes into Laravel routes files
+- **SMART**: Auto-detect Laravel 11+ (`routes/app.php` vs `routes/web.php`)
+- **SAFE**: Backup protection prevents accidental overwrites
+
+#### Auto-Installation Integration
+- **INTERACTIVE**: `features:create` automatically detects if routes need installation
+- **USER-FRIENDLY**: Offers one-click auto-installation with confirmation
+- **INTELLIGENT**: Checks both web and API routes installation status
+- **FLEXIBLE**: Supports manual installation instructions as fallback
+
+#### Complete Routes Separation
+- **ORGANIZED**: Web routes go to `routes/modules.php` → `routes/web.php`
+- **ORGANIZED**: API routes go to `routes/api-modules.php` → `routes/api.php`
+- **CLEAN**: No more mixed routes in single files
+- **STRUCTURED**: Each feature has separate `web.php` and `api.php` files
+
+#### Routes Structure
+```
+routes/
+├── web.php              # + require __DIR__ . '/modules.php';
+├── api.php              # + require __DIR__ . '/api-modules.php';
+├── modules.php          # Web modules auto-loader
+├── api-modules.php      # API modules auto-loader
+└── Modules/
+    └── FeatureName/
+        ├── web.php      # Web routes with auth middleware
+        └── api.php      # API routes with auth:sanctum middleware
+```
+
+#### Command Examples
+```bash
+# One-command setup (recommended)
+php artisan modules:install
+
+# Manual setup
+php artisan modules:setup
+# Then manually add requires to routes files
+
+# Auto-install during feature creation
+php artisan features:create Product
+# System will offer auto-install if not detected
+```
+
+### 🔧 Enhanced Route Templates
+
+#### Improved Route Stubs
+- **FIXED**: All route stubs now use consistent `{{ model }}Controller` placeholder
+- **CLEAN**: Simplified route definitions using `Route::resource()` and `Route::apiResource()`
+- **ORGANIZED**: Separate stubs for web (`routes.web.stub`) and API (`routes.api.stub`)
+- **BACKWARD-COMPATIBLE**: Old `routes.stub` maintained for compatibility
+
+#### Updated Route Generation
+- **CONSISTENT**: Web routes use `Route::resource()` with auth middleware
+- **CONSISTENT**: API routes use `Route::apiResource()` with auth:sanctum middleware
+- **NAMESPACE-AWARE**: Proper controller namespacing in generated routes
+- **MIDDLEWARE-READY**: Pre-configured middleware for security
+
+### 🧪 Comprehensive Testing
+
+#### Test Coverage Improvements
+- **EXPANDED**: 98 tests with 385+ assertions (94% pass rate)
+- **NEW**: Route separation tests ensure web/API routes are properly separated
+- **NEW**: Modules loader command tests validate installation process
+- **NEW**: API Responser integration tests verify trait functionality
+- **ROBUST**: Enhanced test stability and reliability
+
+#### Test Categories
+- ✅ Route separation and installation tests
+- ✅ API/View mode generation tests
+- ✅ Interactive menu functionality tests
+- ✅ Command integration tests
+- ✅ Stub file validation tests
+
+### 📝 Documentation Updates
+
+#### New Documentation
+- **NEW**: `ROUTES_INSTALLATION_DEMO.md` - Complete routes installation guide
+- **ENHANCED**: README.md updated with v4.5 features and examples
+- **DETAILED**: Step-by-step installation and usage examples
+- **TROUBLESHOOTING**: Common issues and solutions guide
+
+#### Updated Examples
+- **CURRENT**: All examples updated to reflect v4.5 commands and structure
+- **COMPREHENSIVE**: Complete workflow from installation to feature generation
+- **VISUAL**: Clear structure diagrams and code examples
+
+### 🐛 Bug Fixes
+
+#### Command Fixes
+- **FIXED**: `SetupModulesLoader` now creates both web and API loaders
+- **FIXED**: `InstallModulesLoader` integrates both routes properly
+- **FIXED**: Route stub inconsistencies resolved
+- **FIXED**: Test failures related to route template changes
+
+#### Stability Improvements
+- **IMPROVED**: Better error handling in routes installation
+- **IMPROVED**: More reliable file system operations
+- **IMPROVED**: Enhanced validation of existing installations
+
+---
+
 ## [4.4.0] - 2025-07-07
 
 ### 🎯 NEW: Generation Mode Options

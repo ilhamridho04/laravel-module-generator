@@ -170,10 +170,10 @@ jobs:
           
           # Test if package commands are available
           echo "=== Testing Available Commands ==="
-          if php artisan list | grep -i "make:feature"; then
-            echo "✅ make:feature command is available"
+          if php artisan list | grep -i "features:create"; then
+            echo "✅ features:create command is available"
           else
-            echo "❌ make:feature command not found"
+            echo "❌ features:create command not found"
             echo "Available make commands:"
             php artisan list | grep "make:" || echo "No make commands found"
             exit 1
@@ -182,19 +182,19 @@ jobs:
       - name: Test package functionality
         run: |
           cd laravel-app
-          echo "=== Testing make:feature command functionality ==="
+          echo "=== Testing features:create command functionality ==="
           
           # First, check if command is registered
-          if ! php artisan list | grep -q "make:feature"; then
-            echo "❌ make:feature command not found in artisan list"
+          if ! php artisan list | grep -q "features:create"; then
+            echo "❌ features:create command not found in artisan list"
             exit 1
           fi
           
-          echo "✅ make:feature command found in artisan list"
+          echo "✅ features:create command found in artisan list"
           
           # Try to run the command help first
           echo "=== Testing command help ==="
-          if php artisan help make:feature; then
+          if php artisan help features:create; then
             echo "✅ Command help works"
           else
             echo "❌ Command help failed"
@@ -202,13 +202,13 @@ jobs:
           fi
           
           # Try to run the actual command
-          echo "=== Running make:feature TestModule ==="
-          if php artisan make:feature TestModule --force; then
-            echo "✅ make:feature command executed successfully"
+          echo "=== Running features:create TestModule ==="
+          if php artisan features:create TestModule --force; then
+            echo "✅ features:create command executed successfully"
           else
-            echo "❌ make:feature command failed to execute"
+            echo "❌ features:create command failed to execute"
             echo "=== Trying with verbose output ==="
-            php artisan make:feature TestModule --force -v || true
+            php artisan features:create TestModule --force -v || true
             exit 1
           fi
           

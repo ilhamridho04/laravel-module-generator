@@ -8,7 +8,7 @@ use Illuminate\Filesystem\Filesystem;
 class SetupModulesLoader extends Command
 {
     protected $signature = 'modules:setup {--force : Overwrite existing files}';
-    protected $description = 'Setup automatic module routes loader for Laravel Module Generator';
+    protected $description = 'Setup automatic module routes loader (web and API) for Laravel Module Generator';
 
     protected Filesystem $files;
 
@@ -25,6 +25,7 @@ class SetupModulesLoader extends Command
         $this->info("\n🔧 Setting up Laravel Module Generator auto-loader...");
 
         $this->createModulesLoader($force);
+        $this->createApiModulesLoader($force);
         $this->suggestIntegration();
 
         $this->info("\n✅ Modules loader setup completed!");
@@ -42,7 +43,22 @@ class SetupModulesLoader extends Command
         // Create modules loader
         $stub = $this->renderStub('modules-loader.stub', []);
         $this->files->put($loaderPath, $stub);
-        $this->line("✅ Auto-loader dibuat: routes/modules.php");
+        $this->line("✅ Web auto-loader dibuat: routes/modules.php");
+    }
+
+    protected function createApiModulesLoader(bool $force = false): void
+    {
+        $loaderPath = base_path('routes/api-modules.php');
+
+        if (!$force && $this->files->exists($loaderPath)) {
+            $this->warn("⚠️  routes/api-modules.php sudah ada. Gunakan --force untuk menimpa.");
+            return;
+        }
+
+        // Create API modules loader
+        $stub = $this->renderStub('api-modules-loader.stub', []);
+        $this->files->put($loaderPath, $stub);
+        $this->line("✅ API auto-loader dibuat: routes/api-modules.php");
     }
 
     protected function renderStub(string $stubPath, array $replacements): string
@@ -73,7 +89,10 @@ class SetupModulesLoader extends Command
         $this->line("1. Tambahkan baris berikut ke routes/web.php atau routes/app.php (Laravel 11+):");
         $this->line("   <fg=yellow>require __DIR__ . '/modules.php';</>");
         $this->line("");
-        $this->line("2. Atau gunakan command berikut untuk otomatis menambahkannya:");
+        $this->line("2. Tambahkan baris berikut ke routes/api.php:");
+        $this->line("   <fg=yellow>require __DIR__ . '/api-modules.php';</>");
+        $this->line("");
+        $this->line("3. Atau gunakan command berikut untuk otomatis menambahkan keduanya:");
         $this->line("   <fg=cyan>php artisan modules:install</>");
         $this->line("");
 

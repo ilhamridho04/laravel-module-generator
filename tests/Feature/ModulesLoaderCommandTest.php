@@ -48,9 +48,9 @@ class ModulesLoaderCommandTest extends TestCase
         $this->assertFileExists(base_path('routes/modules.php'));
 
         $content = File::get(base_path('routes/modules.php'));
-        $this->assertStringContainsString('Auto-load all module routes', $content);
+        $this->assertStringContainsString('Web Modules Auto-loader', $content);
         $this->assertStringContainsString('routes/Modules', $content);
-        $this->assertStringContainsString('File::isDirectory', $content);
+        $this->assertStringContainsString('File::exists', $content);
     }
 
     /** @test */
@@ -78,7 +78,7 @@ class ModulesLoaderCommandTest extends TestCase
 
         $content = File::get(base_path('routes/modules.php'));
         $this->assertStringNotContainsString('existing content', $content);
-        $this->assertStringContainsString('Auto-load all module routes', $content);
+        $this->assertStringContainsString('Web Modules Auto-loader', $content);
     }
 
     /** @test */
@@ -109,9 +109,9 @@ class ModulesLoaderCommandTest extends TestCase
         $this->assertStringContainsString('use Illuminate\Support\Facades\File;', $content);
         $this->assertStringContainsString('use Illuminate\Support\Facades\Route;', $content);
         $this->assertStringContainsString("base_path('routes/Modules')", $content);
-        $this->assertStringContainsString('File::isDirectory($modulesPath)', $content);
-        $this->assertStringContainsString('File::directories($modulesPath)', $content);
-        $this->assertStringContainsString("require \$routeFile;", $content);
+        $this->assertStringContainsString('File::exists($webModulesPath)', $content);
+        $this->assertStringContainsString('File::directories($webModulesPath)', $content);
+        $this->assertStringContainsString("->group(\$webRoutesFile);", $content);
     }
 
     /** @test */
@@ -121,7 +121,7 @@ class ModulesLoaderCommandTest extends TestCase
 
         $output = Artisan::output();
         $this->assertStringContainsString('Setting up Laravel Module Generator', $output);
-        $this->assertStringContainsString('Auto-loader dibuat:', $output);
+        $this->assertStringContainsString('Web auto-loader dibuat:', $output);
         $this->assertStringContainsString('routes/modules.php', $output);
         $this->assertStringContainsString('Langkah selanjutnya:', $output);
     }

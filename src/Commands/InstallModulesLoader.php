@@ -8,7 +8,7 @@ use Illuminate\Filesystem\Filesystem;
 class InstallModulesLoader extends Command
 {
     protected $signature = 'modules:install {--force : Force reinstall even if already installed}';
-    protected $description = 'Install and integrate modules auto-loader into Laravel routes';
+    protected $description = 'Install and integrate modules auto-loader (web and API) into Laravel routes';
 
     protected Filesystem $files;
 
@@ -24,14 +24,16 @@ class InstallModulesLoader extends Command
 
         $this->info("\n🚀 Installing Laravel Module Generator auto-loader...");
 
-        // Step 1: Create modules.php if it doesn't exist
+        // Step 1: Create loaders if they don't exist
         $this->ensureModulesLoader($force);
+        $this->ensureApiModulesLoader($force);
 
         // Step 2: Integrate into routes
         $this->integrateIntoRoutes($force);
+        $this->integrateIntoApiRoutes($force);
 
         $this->info("\n✅ Modules loader berhasil diinstall dan diintegrasikan!");
-        $this->info("🎯 Sekarang Anda dapat membuat module dengan: php artisan make:feature NamaFeature");
+        $this->info("🎯 Sekarang Anda dapat membuat module dengan: php artisan features:create NamaFeature");
     }
 
     protected function ensureModulesLoader(bool $force = false): void
@@ -46,7 +48,22 @@ class InstallModulesLoader extends Command
         // Create modules loader
         $stub = $this->renderStub('modules-loader.stub', []);
         $this->files->put($loaderPath, $stub);
-        $this->line("✅ Auto-loader dibuat: routes/modules.php");
+        $this->line("✅ Web auto-loader dibuat: routes/modules.php");
+    }
+
+    protected function ensureApiModulesLoader(bool $force = false): void
+    {
+        $loaderPath = base_path('routes/api-modules.php');
+
+        if (!$force && $this->files->exists($loaderPath)) {
+            $this->line("✅ routes/api-modules.php sudah ada");
+            return;
+        }
+
+        // Create API modules loader
+        $stub = $this->renderStub('api-modules-loader.stub', []);
+        $this->files->put($loaderPath, $stub);
+        $this->line("✅ API auto-loader dibuat: routes/api-modules.php");
     }
 
     protected function integrateIntoRoutes(bool $force = false): void
@@ -91,7 +108,41 @@ class InstallModulesLoader extends Command
         $content .= "{$loaderInclude}\n";
 
         $this->files->put($targetPath, $content);
-        $this->line("✅ Auto-loader diintegrasikan ke {$targetName}");
+        $this->line("✅ Web auto-loader diintegrasikan ke {$targetName}");
+    }
+
+    protected function integrateIntoApiRoutes(bool $force = false): void
+    {
+        $apiRoutesPath = base_path('routes/api.php');
+        $loaderInclude = "require __DIR__ . '/api-modules.php';";
+
+        if (!$this->files->exists($apiRoutesPath)) {
+            $this->warn("⚠️  routes/api.php tidak ditemukan. API auto-loader tidak diintegrasikan.");
+            return;
+        }
+
+        $content = $this->files->get($apiRoutesPath);
+
+        // Check if already included
+        if (str_contains($content, "require __DIR__ . '/api-modules.php'")) {
+            $this->line("✅ API auto-loader sudah terintegrasi di routes/api.php");
+            return;
+        }
+
+        if (!$force && str_contains($content, 'api-modules.php')) {
+            $this->warn("⚠️  Kemungkinan api-modules.php sudah diinclude dengan cara lain di routes/api.php");
+            if (!$this->confirm("Tetap tambahkan require statement?")) {
+                return;
+            }
+        }
+
+        // Add the require statement at the end of the file
+        $content = rtrim($content);
+        $content .= "\n\n// Auto-load API module routes\n";
+        $content .= "{$loaderInclude}\n";
+
+        $this->files->put($apiRoutesPath, $content);
+        $this->line("✅ API auto-loader diintegrasikan ke routes/api.php");
     }
 
     protected function renderStub(string $stubPath, array $replacements): string

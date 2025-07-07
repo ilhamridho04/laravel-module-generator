@@ -588,15 +588,19 @@ class MakeFeature extends Command
 
         // Suggest integration for web routes
         if (!$webIncludedInWeb && !$webIncludedInApp) {
-            $this->warn("\n⚠️  Untuk mengaktifkan auto-loading web modules, tambahkan baris berikut:");
+            $this->warn("\n⚠️  Untuk mengaktifkan auto-loading web modules, pilih salah satu:");
+            $this->line("   <fg=cyan>1. Otomatis install:</>");
+            $this->line("      <fg=yellow>php artisan modules:install</>");
+            $this->line("");
+            $this->line("   <fg=cyan>2. Manual install:</>");
 
             if ($this->files->exists($appRoutesPath)) {
-                $this->line("   Di routes/app.php atau routes/web.php:");
+                $this->line("      Di routes/app.php atau routes/web.php:");
             } else {
-                $this->line("   Di routes/web.php:");
+                $this->line("      Di routes/web.php:");
             }
 
-            $this->line("   <fg=yellow>require __DIR__ . '/modules.php';</>");
+            $this->line("      <fg=yellow>require __DIR__ . '/modules.php';</>");
             $this->line("");
         } else {
             $this->line("✅ Web modules auto-loader sudah terdaftar di routes.");
@@ -604,12 +608,24 @@ class MakeFeature extends Command
 
         // Suggest integration for API routes
         if (!$apiIncludedInApi) {
-            $this->warn("⚠️  Untuk mengaktifkan auto-loading API modules, tambahkan baris berikut:");
-            $this->line("   Di routes/api.php:");
-            $this->line("   <fg=yellow>require __DIR__ . '/api-modules.php';</>");
+            $this->warn("⚠️  Untuk mengaktifkan auto-loading API modules, pilih salah satu:");
+            $this->line("   <fg=cyan>1. Otomatis install:</>");
+            $this->line("      <fg=yellow>php artisan modules:install</>");
+            $this->line("");
+            $this->line("   <fg=cyan>2. Manual install:</>");
+            $this->line("      Di routes/api.php:");
+            $this->line("      <fg=yellow>require __DIR__ . '/api-modules.php';</>");
             $this->line("");
         } else {
             $this->line("✅ API modules auto-loader sudah terdaftar di routes/api.php.");
+        }
+
+        // Offer to auto-install if both are missing
+        if ((!$webIncludedInWeb && !$webIncludedInApp) || !$apiIncludedInApi) {
+            $this->line("");
+            if ($this->confirm("🤔 Mau auto-install sekarang?", true)) {
+                $this->call('modules:install');
+            }
         }
     }
 }
