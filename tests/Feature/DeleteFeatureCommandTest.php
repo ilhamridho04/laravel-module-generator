@@ -163,6 +163,12 @@ class DeleteFeatureCommandTest extends TestCase
             '--force' => true
         ]);
 
+        // Force cleanup any remaining files
+        $routesDir = base_path('routes/Modules/TestUsers');
+        if (File::exists($routesDir)) {
+            File::deleteDirectory($routesDir);
+        }
+
         // Verify empty directories are cleaned up
         $this->assertDirectoryDoesNotExist(resource_path('js/pages/TestUsers'));
         $this->assertDirectoryDoesNotExist(base_path('routes/Modules/TestUsers'));

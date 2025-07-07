@@ -12,7 +12,8 @@ class MakeFeature extends Command
                             {--with=* : Optional components like enum, observer, policy, factory, test} 
                             {--force : Overwrite existing files}
                             {--api : Generate API-only (without Vue views)}
-                            {--view : Generate View-only (without API routes)}';
+                            {--view : Generate View-only (without API routes)}
+                            {--skip-install : Skip auto-install prompt for routes}';
     protected $description = 'Generate full CRUD feature with module structure and optional components';
 
     protected Filesystem $files;
@@ -51,7 +52,7 @@ class MakeFeature extends Command
                     break;
                 case 'full':
                 default:
-                    // Full-stack mode (default behavior)
+                    // Full-stack mode (default behavior) - keep both flags as false
                     break;
             }
         }
@@ -361,26 +362,49 @@ class MakeFeature extends Command
 
     protected function makeController(string $name, string $plural, bool $force = false, bool $apiOnly = false, bool $viewOnly = false): void
     {
-        // Determine controller path based on mode
         if ($apiOnly) {
-            $controllerPath = app_path("Http/Controllers/API/{$name}Controller.php");
+            // Only generate API controller
+            $this->generateApiController($name, $plural, $force);
+        } elseif ($viewOnly) {
+            // Only generate Web controller
+            $this->generateWebController($name, $plural, $force, $viewOnly);
         } else {
-            $controllerPath = app_path("Http/Controllers/{$name}Controller.php");
+            // Generate both API and Web controllers (full-stack)
+            $this->generateApiController($name, $plural, $force);
+            $this->generateWebController($name, $plural, $force, false); // false = not view-only for full-stack
         }
+    }
+
+    protected function generateApiController(string $name, string $plural, bool $force = false): void
+    {
+        $controllerPath = app_path("Http/Controllers/API/{$name}Controller.php");
 
         if ($force || !$this->files->exists($controllerPath)) {
-            // Ensure API directory exists for API controllers
-            if ($apiOnly && !$this->files->exists(dirname($controllerPath))) {
+            // Ensure API directory exists
+            if (!$this->files->exists(dirname($controllerPath))) {
                 $this->files->makeDirectory(dirname($controllerPath), 0755, true);
             }
 
-            // Determine which stub to use based on mode
-            $stubFile = 'controller.stub'; // Default full-stack
-            if ($apiOnly) {
-                $stubFile = 'controller.api.stub';
-            } elseif ($viewOnly) {
-                $stubFile = 'controller.view.stub';
-            }
+            $stub = $this->renderStub('controller.api.stub', [
+                'model' => $name,
+                'plural' => $plural,
+                'table' => Str::snake($plural),
+                'kebab' => Str::kebab($plural),
+            ]);
+            $this->files->put($controllerPath, $stub);
+            $this->line("🎮 API Controller dibuat: API/{$name}Controller.php");
+        } else {
+            $this->warn("🎮 API Controller sudah ada: API/{$name}Controller.php");
+        }
+    }
+
+    protected function generateWebController(string $name, string $plural, bool $force = false, bool $viewOnly = false): void
+    {
+        $controllerPath = app_path("Http/Controllers/{$name}Controller.php");
+
+        if ($force || !$this->files->exists($controllerPath)) {
+            // Determine which stub to use - use view stub for view-only, otherwise use full-stack stub
+            $stubFile = $viewOnly ? 'controller.view.stub' : 'controller.stub';
 
             $stub = $this->renderStub($stubFile, [
                 'model' => $name,
@@ -389,12 +413,9 @@ class MakeFeature extends Command
                 'kebab' => Str::kebab($plural),
             ]);
             $this->files->put($controllerPath, $stub);
-
-            $controllerLocation = $apiOnly ? "API/{$name}Controller.php" : "{$name}Controller.php";
-            $this->line("🎮 Controller dibuat: {$controllerLocation}");
+            $this->line("🎮 Web Controller dibuat: {$name}Controller.php");
         } else {
-            $controllerLocation = $apiOnly ? "API/{$name}Controller.php" : "{$name}Controller.php";
-            $this->warn("🎮 Controller sudah ada: {$controllerLocation}");
+            $this->warn("🎮 Web Controller sudah ada: {$name}Controller.php");
         }
     }
 
@@ -620,9 +641,16 @@ class MakeFeature extends Command
             $this->line("✅ API modules auto-loader sudah terdaftar di routes/api.php.");
         }
 
-        // Offer to auto-install if both are missing
+        // Offer to auto-install if both are missing (skip in testing environment or if flag set)
         if ((!$webIncludedInWeb && !$webIncludedInApp) || !$apiIncludedInApi) {
             $this->line("");
+
+            // Skip auto-install prompt in testing environment or if skip flag is set
+            if (config('app.env') === 'testing' || $this->option('skip-install')) {
+                $this->line("📝 Routes auto-loader belum terpasang. Jalankan: php artisan modules:install");
+                return;
+            }
+
             if ($this->confirm("🤔 Mau auto-install sekarang?", true)) {
                 $this->call('modules:install');
             }

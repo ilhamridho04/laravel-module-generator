@@ -18,6 +18,9 @@ class MakeFeatureInteractiveTest extends TestCase
         parent::setUp();
         $this->files = new Filesystem();
         $this->cleanupTestFiles();
+
+        // Create dummy routes files to avoid auto-install detection
+        $this->createDummyRoutes();
     }
 
     protected function tearDown(): void
@@ -47,6 +50,25 @@ class MakeFeatureInteractiveTest extends TestCase
                 }
             }
         }
+    }
+
+    protected function createDummyRoutes(): void
+    {
+        // Create dummy routes/modules.php to make system think it's installed
+        $modulesContent = "<?php\n// Dummy routes for testing";
+        $this->files->ensureDirectoryExists(base_path('routes'));
+        $this->files->put(base_path('routes/modules.php'), $modulesContent);
+
+        // Update web.php to include modules.php
+        $webContent = "<?php\nrequire __DIR__ . '/modules.php';\n";
+        $this->files->put(base_path('routes/web.php'), $webContent);
+
+        // Create dummy api-modules.php 
+        $this->files->put(base_path('routes/api-modules.php'), $modulesContent);
+
+        // Update api.php to include api-modules.php
+        $apiContent = "<?php\nrequire __DIR__ . '/api-modules.php';\n";
+        $this->files->put(base_path('routes/api.php'), $apiContent);
     }
 
     /** @test */
@@ -93,7 +115,7 @@ class MakeFeatureInteractiveTest extends TestCase
         // Should create API controller
         $controllerPath = app_path("Http/Controllers/{$this->testModelName}Controller.php");
         $this->assertTrue($this->files->exists($controllerPath));
-        
+
         $controllerContent = $this->files->get($controllerPath);
         $this->assertStringContainsString('JsonResponse', $controllerContent);
         $this->assertStringContainsString('auth:sanctum', $controllerContent);
@@ -126,7 +148,7 @@ class MakeFeatureInteractiveTest extends TestCase
         // Should create View controller
         $controllerPath = app_path("Http/Controllers/{$this->testModelName}Controller.php");
         $this->assertTrue($this->files->exists($controllerPath));
-        
+
         $controllerContent = $this->files->get($controllerPath);
         $this->assertStringContainsString('Inertia', $controllerContent);
         $this->assertStringNotContainsString('JsonResponse', $controllerContent);
@@ -158,7 +180,7 @@ class MakeFeatureInteractiveTest extends TestCase
         // Should create API controller directly without prompting
         $controllerPath = app_path("Http/Controllers/{$this->testModelName}Controller.php");
         $this->assertTrue($this->files->exists($controllerPath));
-        
+
         $controllerContent = $this->files->get($controllerPath);
         $this->assertStringContainsString('JsonResponse', $controllerContent);
     }
@@ -177,7 +199,7 @@ class MakeFeatureInteractiveTest extends TestCase
         // Should create View controller directly without prompting
         $controllerPath = app_path("Http/Controllers/{$this->testModelName}Controller.php");
         $this->assertTrue($this->files->exists($controllerPath));
-        
+
         $controllerContent = $this->files->get($controllerPath);
         $this->assertStringContainsString('Inertia', $controllerContent);
     }
