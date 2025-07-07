@@ -6,7 +6,7 @@
 
 Modular CRUD Generator for Laravel + Vue + Tailwind (shadcn-vue) - **Optimized for Laravel 12+ with PHP 8.2+**
 
-> **Version 4.5** is a complete refactor focused exclusively on Laravel 12+ with comprehensive testing, improved code generation, modern best practices, and **smart routes auto-installation**.
+> **Version 4.6** is a complete refactor focused exclusively on Laravel 12+ with comprehensive testing, improved code generation, modern best practices, and **smart routes auto-installation**.
 
 ---
 
