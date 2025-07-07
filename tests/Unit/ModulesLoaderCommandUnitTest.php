@@ -27,7 +27,7 @@ class ModulesLoaderCommandUnitTest extends TestCase
         $signatureProperty->setAccessible(true);
         $signature = $signatureProperty->getValue($command);
 
-        $this->assertStringContainsString('modules:setup', $signature);
+        $this->assertStringContainsString('features:setup', $signature);
         $this->assertStringContainsString('--force', $signature);
     }
 
@@ -64,7 +64,7 @@ class ModulesLoaderCommandUnitTest extends TestCase
         $signatureProperty->setAccessible(true);
         $signature = $signatureProperty->getValue($command);
 
-        $this->assertStringContainsString('modules:install', $signature);
+        $this->assertStringContainsString('features:install', $signature);
         $this->assertStringContainsString('--force', $signature);
     }
 

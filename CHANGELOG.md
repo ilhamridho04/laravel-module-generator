@@ -10,8 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### 🚀 NEW: Smart Routes Auto-Installation
 
 #### Enhanced Commands
-- **NEW**: `modules:setup` command creates both web and API route loaders
-- **NEW**: `modules:install` command auto-integrates routes into Laravel routes files
+- **NEW**: `features:setup` command creates both web and API route loaders
+- **NEW**: `features:install` command auto-integrates routes into Laravel routes files
 - **SMART**: Auto-detect Laravel 11+ (`routes/app.php` vs `routes/web.php`)
 - **SAFE**: Backup protection prevents accidental overwrites
 
@@ -43,10 +43,10 @@ routes/
 #### Command Examples
 ```bash
 # One-command setup (recommended)
-php artisan modules:install
+php artisan features:install
 
 # Manual setup
-php artisan modules:setup
+php artisan features:setup
 # Then manually add requires to routes files
 
 # Auto-install during feature creation
@@ -707,8 +707,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Modular Routes Auto-Loader System
 - **NEW**: Added modular routes auto-loader (`modules.php`) for better route organization
-- **NEW**: Added `modules:setup` command to create the modules.php loader file
-- **NEW**: Added `modules:install` command to integrate modules loader into existing projects
+- **NEW**: Added `features:setup` command to create the modules.php loader file
+- **NEW**: Added `features:install` command to integrate modules loader into existing projects
 - Auto-creates modules.php when generating features if it doesn't exist
 - Automatically loads all `web.php` files from `routes/Modules/` directory
 - Provides clean separation of feature-specific routes
@@ -740,7 +740,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 #### README.md Enhancements
 - Added comprehensive documentation for `module:delete` command
 - Added documentation for modular routes auto-loader system
-- Added usage examples for `modules:setup` and `modules:install` commands
+- Added usage examples for `features:setup` and `features:install` commands
 - Updated feature overview with all new capabilities
 
 #### Usage Examples
@@ -752,10 +752,10 @@ php artisan module:delete User
 php artisan module:delete User --components=observer,factory,test
 
 # Setup modular routes loader
-php artisan modules:setup
+php artisan features:setup
 
 # Install modules loader in existing project
-php artisan modules:install
+php artisan features:install
 ```
 
 ### 📁 Updated Project Structure
@@ -803,7 +803,7 @@ tests/
 
 - **69 tests** with **243 assertions**
 - **100% pass rate**
-- **4 main commands**: `features:create`, `module:delete`, `modules:setup`, `modules:install`
+- **4 main commands**: `features:create`, `module:delete`, `features:setup`, `features:install`
 - Complete CRUD feature generation with optional components
 - Full feature lifecycle management (create → manage → delete)
 
@@ -814,8 +814,8 @@ tests/
 - `module:delete {name}` - Delete feature and all its components
 
 #### Modules Management
-- `modules:setup` - Create modular routes loader
-- `modules:install` - Integrate modules loader into project
+- `features:setup` - Create modular routes loader
+- `features:install` - Integrate modules loader into project
 
 ### 🚀 Migration from 4.0.x to 4.2.0
 
@@ -827,8 +827,8 @@ composer update ngodingskuyy/laravel-module-generator
 
 Optionally, set up the new modular routes system:
 ```bash
-php artisan modules:setup
-php artisan modules:install
+php artisan features:setup
+php artisan features:install
 ```
 
 ---

@@ -42,7 +42,7 @@ class ModulesLoaderCommandTest extends TestCase
     public function it_can_setup_modules_loader()
     {
         // Run setup command
-        Artisan::call('modules:setup', ['--force' => true]);
+        Artisan::call('features:setup', ['--force' => true]);
 
         // Check if modules.php is created
         $this->assertFileExists(base_path('routes/modules.php'));
@@ -60,7 +60,7 @@ class ModulesLoaderCommandTest extends TestCase
         File::put(base_path('routes/modules.php'), '<?php // existing content');
 
         // Run setup without force
-        Artisan::call('modules:setup');
+        Artisan::call('features:setup');
 
         $content = File::get(base_path('routes/modules.php'));
         $this->assertStringContainsString('existing content', $content);
@@ -74,7 +74,7 @@ class ModulesLoaderCommandTest extends TestCase
         File::put(base_path('routes/modules.php'), '<?php // existing content');
 
         // Run setup with force
-        Artisan::call('modules:setup', ['--force' => true]);
+        Artisan::call('features:setup', ['--force' => true]);
 
         $content = File::get(base_path('routes/modules.php'));
         $this->assertStringNotContainsString('existing content', $content);
@@ -92,7 +92,7 @@ class ModulesLoaderCommandTest extends TestCase
         $this->assertTrue(File::exists($webPath));
 
         // Run install command 
-        Artisan::call('modules:setup', ['--force' => true]);
+        Artisan::call('features:setup', ['--force' => true]);
 
         // Verify modules.php is created
         $this->assertFileExists(base_path('routes/modules.php'));
@@ -101,7 +101,7 @@ class ModulesLoaderCommandTest extends TestCase
     /** @test */
     public function modules_loader_content_is_correct()
     {
-        Artisan::call('modules:setup', ['--force' => true]);
+        Artisan::call('features:setup', ['--force' => true]);
 
         $content = File::get(base_path('routes/modules.php'));
 
@@ -117,7 +117,7 @@ class ModulesLoaderCommandTest extends TestCase
     /** @test */
     public function it_provides_helpful_output_messages()
     {
-        Artisan::call('modules:setup', ['--force' => true]);
+        Artisan::call('features:setup', ['--force' => true]);
 
         $output = Artisan::output();
         $this->assertStringContainsString('Setting up Laravel Module Generator', $output);

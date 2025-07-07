@@ -611,7 +611,7 @@ class MakeFeature extends Command
         if (!$webIncludedInWeb && !$webIncludedInApp) {
             $this->warn("\n⚠️  Untuk mengaktifkan auto-loading web modules, pilih salah satu:");
             $this->line("   <fg=cyan>1. Otomatis install:</>");
-            $this->line("      <fg=yellow>php artisan modules:install</>");
+            $this->line("      <fg=yellow>php artisan features:install</>");
             $this->line("");
             $this->line("   <fg=cyan>2. Manual install:</>");
 
@@ -631,7 +631,7 @@ class MakeFeature extends Command
         if (!$apiIncludedInApi) {
             $this->warn("⚠️  Untuk mengaktifkan auto-loading API modules, pilih salah satu:");
             $this->line("   <fg=cyan>1. Otomatis install:</>");
-            $this->line("      <fg=yellow>php artisan modules:install</>");
+            $this->line("      <fg=yellow>php artisan features:install</>");
             $this->line("");
             $this->line("   <fg=cyan>2. Manual install:</>");
             $this->line("      Di routes/api.php:");
@@ -647,12 +647,12 @@ class MakeFeature extends Command
 
             // Skip auto-install prompt in testing environment or if skip flag is set
             if (config('app.env') === 'testing' || $this->option('skip-install')) {
-                $this->line("📝 Routes auto-loader belum terpasang. Jalankan: php artisan modules:install");
+                $this->line("📝 Routes auto-loader belum terpasang. Jalankan: php artisan features:install");
                 return;
             }
 
             if ($this->confirm("🤔 Mau auto-install sekarang?", true)) {
-                $this->call('modules:install');
+                $this->call('features:install');
             }
         }
     }

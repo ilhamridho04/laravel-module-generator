@@ -7,7 +7,7 @@ use Illuminate\Filesystem\Filesystem;
 
 class SetupModulesLoader extends Command
 {
-    protected $signature = 'modules:setup {--force : Overwrite existing files}';
+    protected $signature = 'features:setup {--force : Overwrite existing files}';
     protected $description = 'Setup automatic module routes loader (web and API) for Laravel Module Generator';
 
     protected Filesystem $files;
@@ -93,7 +93,7 @@ class SetupModulesLoader extends Command
         $this->line("   <fg=yellow>require __DIR__ . '/api-modules.php';</>");
         $this->line("");
         $this->line("3. Atau gunakan command berikut untuk otomatis menambahkan keduanya:");
-        $this->line("   <fg=cyan>php artisan modules:install</>");
+        $this->line("   <fg=cyan>php artisan features:install</>");
         $this->line("");
 
         $webPath = base_path('routes/web.php');

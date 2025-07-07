@@ -75,7 +75,7 @@ class ServiceProviderTest extends TestCase
     public function setup_modules_loader_command_is_available()
     {
         $commands = $this->app[\Illuminate\Contracts\Console\Kernel::class]->all();
-        $this->assertArrayHasKey('modules:setup', $commands);
+        $this->assertArrayHasKey('features:setup', $commands);
     }
 
     /** @test */
@@ -89,6 +89,6 @@ class ServiceProviderTest extends TestCase
     public function install_modules_loader_command_is_available()
     {
         $commands = $this->app[\Illuminate\Contracts\Console\Kernel::class]->all();
-        $this->assertArrayHasKey('modules:install', $commands);
+        $this->assertArrayHasKey('features:install', $commands);
     }
 }

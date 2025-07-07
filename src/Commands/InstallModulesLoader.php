@@ -7,7 +7,7 @@ use Illuminate\Filesystem\Filesystem;
 
 class InstallModulesLoader extends Command
 {
-    protected $signature = 'modules:install {--force : Force reinstall even if already installed}';
+    protected $signature = 'features:install {--force : Force reinstall even if already installed}';
     protected $description = 'Install and integrate modules auto-loader (web and API) into Laravel routes';
 
     protected Filesystem $files;

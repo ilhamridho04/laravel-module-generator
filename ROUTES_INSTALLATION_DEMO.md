@@ -5,16 +5,16 @@
 ### 1. **Setup Otomatis (Recommended)**
 ```bash
 # Setup loader files
-php artisan modules:setup
+php artisan features:setup
 
 # Install dan integrasikan ke routes
-php artisan modules:install
+php artisan features:install
 ```
 
 ### 2. **Setup Manual**
 ```bash
 # Hanya buat file loader
-php artisan modules:setup
+php artisan features:setup
 
 # Kemudian manual tambahkan ke routes/web.php:
 require __DIR__ . '/modules.php';
@@ -31,7 +31,7 @@ php artisan features:create Product
 # Output:
 # ⚠️  Untuk mengaktifkan auto-loading web modules, pilih salah satu:
 #    1. Otomatis install:
-#       php artisan modules:install
+#       php artisan features:install
 #
 #    2. Manual install:
 #       Di routes/web.php:
@@ -42,7 +42,7 @@ php artisan features:create Product
 
 ## 📁 **Struktur yang Dihasilkan**
 
-### **Setelah `modules:setup`**
+### **Setelah `features:setup`**
 ```
 routes/
 ├── modules.php        # Web modules loader
@@ -50,7 +50,7 @@ routes/
 └── Modules/           # Feature modules folder
 ```
 
-### **Setelah `modules:install`**
+### **Setelah `features:install`**
 ```
 routes/
 ├── web.php            # Updated dengan require modules.php
@@ -75,13 +75,13 @@ routes/
 
 ## 🎯 **Fitur Commands**
 
-### **modules:setup**
+### **features:setup**
 - Membuat `routes/modules.php` (web loader)
 - Membuat `routes/api-modules.php` (API loader)
 - Memberikan instruksi instalasi
 
-### **modules:install**
-- Menjalankan `modules:setup` jika belum ada
+### **features:install**
+- Menjalankan `features:setup` jika belum ada
 - Auto-integrate ke `routes/web.php` atau `routes/app.php`
 - Auto-integrate ke `routes/api.php`
 - Backup otomatis jika ada konflik
@@ -104,7 +104,7 @@ routes/
 ### **Jika routes tidak terbaca:**
 ```bash
 # Pastikan loader sudah terpasang
-php artisan modules:install --force
+php artisan features:install --force
 
 # Atau cek manual di routes/web.php dan routes/api.php
 # Pastikan ada: require __DIR__ . '/modules.php';
@@ -118,6 +118,6 @@ rm routes/modules.php
 rm routes/api-modules.php
 
 # Setup ulang
-php artisan modules:setup --force
-php artisan modules:install --force
+php artisan features:setup --force
+php artisan features:install --force
 ```

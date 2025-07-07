@@ -50,7 +50,7 @@ composer require ngodingskuyy/laravel-module-generator:@dev --dev
 ### ✨ **What's New in v4.5**
 
 - 🎯 **Smart Routes Auto-Installation**: Automatic routes integration with zero manual setup
-- 🔧 **Enhanced Commands**: New `modules:setup` and `modules:install` commands
+- 🔧 **Enhanced Commands**: New `features:setup` and `features:install` commands
 - 🌐 **Complete Routes Separation**: Web and API routes properly separated
 - 🤖 **Interactive Installation**: Auto-detect and offer installation when generating features
 - 🧪 **Comprehensive Testing**: 98 tests with 385+ assertions (94% pass rate)
@@ -245,7 +245,7 @@ The `features:delete` command will remove:
 
 ```bash
 # Setup and install routes automatically
-php artisan modules:install
+php artisan features:install
 ```
 
 This will:
@@ -258,7 +258,7 @@ This will:
 
 ```bash
 # 1. Create loader files only
-php artisan modules:setup
+php artisan features:setup
 
 # 2. Then manually add to routes/web.php:
 # require __DIR__ . '/modules.php';
@@ -277,7 +277,7 @@ php artisan features:create Product
 # Output:
 # ⚠️  Untuk mengaktifkan auto-loading web modules, pilih salah satu:
 #    1. Otomatis install:
-#       php artisan modules:install
+#       php artisan features:install
 #
 #    2. Manual install:
 #       Di routes/web.php:
