@@ -32,4 +32,4 @@ echo "- Default ke Full-stack (option 1)\n";
 echo "- Konfirmasi setelah pilih mode\n";
 
 echo "\n✅ Interactive Menu ready to use!\n";
-echo "\nUsage: php artisan features:create UserManagement\n";
+echo "\nUsage: php artisan modules:create UserManagement\n";

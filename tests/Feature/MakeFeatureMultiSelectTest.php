@@ -74,7 +74,7 @@ class MakeFeatureMultiSelectTest extends TestCase
     public function it_can_create_feature_with_no_optional_components_via_multiselect()
     {
         // Test the new multi-select interface for optional components
-        $command = $this->artisan('features:create')
+        $command = $this->artisan('modules:create')
             ->expectsQuestion('📝 Masukkan nama fitur (contoh: Product, UserProfile, Category)', $this->testModelName)
             ->expectsConfirmation('✅ Lanjutkan dengan nama ini?', 'yes')
             ->expectsChoice(
@@ -93,7 +93,7 @@ class MakeFeatureMultiSelectTest extends TestCase
         // Should create basic feature without optional components
         $this->assertTrue($this->files->exists(app_path("Models/{$this->testModelName}.php")));
         $this->assertTrue($this->files->exists(app_path("Http/Controllers/{$this->testModelName}Controller.php")));
-        
+
         // Should NOT create optional components
         $this->assertFalse($this->files->exists(app_path("Enums/{$this->testModelName}Status.php")));
         $this->assertFalse($this->files->exists(app_path("Policies/{$this->testModelName}Policy.php")));
@@ -103,7 +103,7 @@ class MakeFeatureMultiSelectTest extends TestCase
     public function it_can_create_feature_with_multiple_components_via_multiselect()
     {
         // Test selecting multiple components with the new interface
-        $command = $this->artisan('features:create')
+        $command = $this->artisan('modules:create')
             ->expectsQuestion('📝 Masukkan nama fitur (contoh: Product, UserProfile, Category)', $this->testModelName)
             ->expectsConfirmation('✅ Lanjutkan dengan nama ini?', 'yes')
             ->expectsChoice(
@@ -122,11 +122,11 @@ class MakeFeatureMultiSelectTest extends TestCase
         // Should create basic feature
         $this->assertTrue($this->files->exists(app_path("Models/{$this->testModelName}.php")));
         $this->assertTrue($this->files->exists(app_path("Http/Controllers/{$this->testModelName}Controller.php")));
-        
+
         // Should create selected optional components
         $this->assertTrue($this->files->exists(app_path("Enums/{$this->testModelName}Status.php")));
         $this->assertTrue($this->files->exists(app_path("Policies/{$this->testModelName}Policy.php")));
-        
+
         // Should NOT create non-selected components
         $this->assertFalse($this->files->exists(app_path("Observers/{$this->testModelName}Observer.php")));
     }
@@ -135,7 +135,7 @@ class MakeFeatureMultiSelectTest extends TestCase
     public function it_can_select_single_component_via_multiselect()
     {
         // Test selecting a single component
-        $command = $this->artisan('features:create')
+        $command = $this->artisan('modules:create')
             ->expectsQuestion('📝 Masukkan nama fitur (contoh: Product, UserProfile, Category)', $this->testModelName)
             ->expectsConfirmation('✅ Lanjutkan dengan nama ini?', 'yes')
             ->expectsChoice(
@@ -153,10 +153,10 @@ class MakeFeatureMultiSelectTest extends TestCase
 
         // Should create basic feature
         $this->assertTrue($this->files->exists(app_path("Models/{$this->testModelName}.php")));
-        
+
         // Should create only selected component
         $this->assertTrue($this->files->exists(app_path("Enums/{$this->testModelName}Status.php")));
-        
+
         // Should NOT create other components
         $this->assertFalse($this->files->exists(app_path("Policies/{$this->testModelName}Policy.php")));
         $this->assertFalse($this->files->exists(app_path("Observers/{$this->testModelName}Observer.php")));

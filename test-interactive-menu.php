@@ -19,10 +19,10 @@ $reflection = new ReflectionClass($command);
 
 if ($reflection->hasMethod('showGenerationModeMenu')) {
     echo "✅ showGenerationModeMenu method exists\n";
-    
+
     $method = $reflection->getMethod('showGenerationModeMenu');
     echo "✅ Method is accessible: " . ($method->isPublic() ? 'public' : ($method->isProtected() ? 'protected' : 'private')) . "\n";
-    
+
     echo "✅ Method return type: " . ($method->getReturnType() ? $method->getReturnType()->getName() : 'mixed') . "\n";
 } else {
     echo "❌ showGenerationModeMenu method does not exist\n";
@@ -52,6 +52,6 @@ echo "- Shows confirmation message after selection\n";
 
 echo "\n✅ Interactive Menu implementation is ready!\n";
 echo "\n📋 Usage Examples:\n";
-echo "   php artisan features:create User           # Shows interactive menu\n";
-echo "   php artisan features:create User --api     # Skips menu, API mode\n";
-echo "   php artisan features:create User --view    # Skips menu, View mode\n";
+echo "   php artisan modules:create User           # Shows interactive menu\n";
+echo "   php artisan modules:create User --api     # Skips menu, API mode\n";
+echo "   php artisan modules:create User --view    # Skips menu, View mode\n";

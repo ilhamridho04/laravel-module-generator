@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 
 class DeleteFeature extends Command
 {
-    protected $signature = 'features:delete {name} 
+    protected $signature = 'modules:delete {name} 
                             {--with=* : Optional components to delete like enum, observer, policy, factory, test} 
                             {--all : Delete all related files including optional components} 
                             {--force : Delete without confirmation}
@@ -124,8 +124,9 @@ class DeleteFeature extends Command
                 base_path("routes/Modules/{$plural}/api.php"),
                 base_path("routes/Modules/{$plural}/web.php"),
                 database_path("seeders/Permission/{$plural}PermissionSeeder.php"),
-                base_path("Observers/{$name}Observer.php"),
-                base_path("Policies/{$name}Policy.php"),
+                app_path("Enums/{$name}Status.php"),
+                app_path("Observers/{$name}Observer.php"),
+                app_path("Policies/{$name}Policy.php"),
                 // base_path("Traits/ApiResponser.php"),
             ];
         }

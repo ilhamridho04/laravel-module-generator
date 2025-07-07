@@ -36,5 +36,5 @@ echo "- Routes menggunakan namespace yang benar\n";
 echo "- Folder API otomatis dibuat jika belum ada\n";
 
 echo "\n✅ API controller folder structure ready!\n";
-echo "\nUsage: php artisan features:create User --api\n";
+echo "\nUsage: php artisan modules:create User --api\n";
 echo "Result: app/Http/Controllers/API/UserController.php\n";

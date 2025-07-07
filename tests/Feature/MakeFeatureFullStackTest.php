@@ -72,7 +72,7 @@ class MakeFeatureFullStackTest extends TestCase
         $this->createDummyRoutes();
 
         // Test interactive mode selection for full-stack
-        $this->artisan('features:create', ['name' => 'Product', '--skip-install' => true])
+        $this->artisan('modules:create', ['name' => 'Product', '--skip-install' => true])
             ->expectsChoice('🤔 Pilih mode generation', '1', [
                 '1' => 'Full-stack (API + Views)',
                 '2' => 'API Only',
@@ -134,7 +134,7 @@ class MakeFeatureFullStackTest extends TestCase
         $this->createDummyRoutes();
 
         // Test without any flags (should default to full-stack)
-        $this->artisan('features:create', ['name' => 'Order', '--skip-install' => true])
+        $this->artisan('modules:create', ['name' => 'Order', '--skip-install' => true])
             ->expectsChoice('🤔 Pilih mode generation', '1', [
                 '1' => 'Full-stack (API + Views)',
                 '2' => 'API Only',

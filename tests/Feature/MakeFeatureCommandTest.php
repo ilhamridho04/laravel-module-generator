@@ -19,7 +19,7 @@ class MakeFeatureCommandTest extends TestCase
     public function it_can_generate_basic_crud_feature()
     {
         // Run the command
-        $exitCode = Artisan::call('features:create', ['name' => 'TestPost']);
+        $exitCode = Artisan::call('modules:create', ['name' => 'TestPost']);
 
         $this->assertEquals(0, $exitCode);
 
@@ -50,7 +50,7 @@ class MakeFeatureCommandTest extends TestCase
     public function it_can_generate_feature_with_optional_components()
     {
         // Run with optional components
-        $exitCode = Artisan::call('features:create', [
+        $exitCode = Artisan::call('modules:create', [
             'name' => 'Product',
             '--with' => ['enum', 'observer', 'factory', 'policy']
         ]);
@@ -71,7 +71,7 @@ class MakeFeatureCommandTest extends TestCase
     /** @test */
     public function it_generates_correct_model_content()
     {
-        Artisan::call('features:create', ['name' => 'Article']);
+        Artisan::call('modules:create', ['name' => 'Article']);
 
         $modelContent = File::get(app_path('Models/Article.php'));
 
@@ -88,7 +88,7 @@ class MakeFeatureCommandTest extends TestCase
     /** @test */
     public function it_generates_correct_controller_content()
     {
-        Artisan::call('features:create', ['name' => 'Category']);
+        Artisan::call('modules:create', ['name' => 'Category']);
 
         $controllerContent = File::get(app_path('Http/Controllers/CategoryController.php'));
 
@@ -109,7 +109,7 @@ class MakeFeatureCommandTest extends TestCase
     /** @test */
     public function it_generates_correct_request_files()
     {
-        Artisan::call('features:create', ['name' => 'Tag']);
+        Artisan::call('modules:create', ['name' => 'Tag']);
 
         $storeRequestContent = File::get(app_path('Http/Requests/StoreTagRequest.php'));
         $updateRequestContent = File::get(app_path('Http/Requests/UpdateTagRequest.php'));
@@ -129,14 +129,14 @@ class MakeFeatureCommandTest extends TestCase
     public function it_can_handle_force_option()
     {
         // Create the feature first
-        Artisan::call('features:create', ['name' => 'Comment']);
+        Artisan::call('modules:create', ['name' => 'Comment']);
 
         // Modify one of the files
         $modelPath = app_path('Models/Comment.php');
         File::put($modelPath, '<?php // Modified content');
 
         // Run again with force
-        $exitCode = Artisan::call('features:create', [
+        $exitCode = Artisan::call('modules:create', [
             'name' => 'Comment',
             '--force' => true
         ]);
@@ -152,7 +152,7 @@ class MakeFeatureCommandTest extends TestCase
     /** @test */
     public function it_generates_vue_components_with_correct_structure()
     {
-        Artisan::call('features:create', ['name' => 'Post']);
+        Artisan::call('modules:create', ['name' => 'Post']);
 
         $indexVue = File::get(resource_path('js/pages/Posts/Index.vue'));
         $createVue = File::get(resource_path('js/pages/Posts/Create.vue'));

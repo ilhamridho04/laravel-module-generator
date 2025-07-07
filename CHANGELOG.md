@@ -10,13 +10,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### 🚀 NEW: Smart Routes Auto-Installation
 
 #### Enhanced Commands
-- **NEW**: `features:setup` command creates both web and API route loaders
-- **NEW**: `features:install` command auto-integrates routes into Laravel routes files
+- **NEW**: `modules:setup` command creates both web and API route loaders
+- **NEW**: `modules:install` command auto-integrates routes into Laravel routes files
 - **SMART**: Auto-detect Laravel 11+ (`routes/app.php` vs `routes/web.php`)
 - **SAFE**: Backup protection prevents accidental overwrites
 
 #### Auto-Installation Integration
-- **INTERACTIVE**: `features:create` automatically detects if routes need installation
+- **INTERACTIVE**: `modules:create` automatically detects if routes need installation
 - **USER-FRIENDLY**: Offers one-click auto-installation with confirmation
 - **INTELLIGENT**: Checks both web and API routes installation status
 - **FLEXIBLE**: Supports manual installation instructions as fallback
@@ -43,14 +43,14 @@ routes/
 #### Command Examples
 ```bash
 # One-command setup (recommended)
-php artisan features:install
+php artisan modules:install
 
 # Manual setup
-php artisan features:setup
+php artisan modules:setup
 # Then manually add requires to routes files
 
 # Auto-install during feature creation
-php artisan features:create Product
+php artisan modules:create Product
 # System will offer auto-install if not detected
 ```
 
@@ -125,12 +125,12 @@ php artisan features:create Product
 #### Generation Mode Selection
 ```bash
 # Interactive mode (recommended)
-php artisan features:create User
+php artisan modules:create User
 # Shows menu: Full-stack, API Only, View Only
 
 # Direct mode (skip menu)
-php artisan features:create User --api    # API Only
-php artisan features:create User --view   # View Only
+php artisan modules:create User --api    # API Only
+php artisan modules:create User --view   # View Only
 ```
 
 #### API and View Mode Support
@@ -145,7 +145,7 @@ php artisan features:create User --view   # View Only
 
 **API-Only Mode (`--api`):**
 ```bash
-php artisan features:create User --api
+php artisan modules:create User --api
 ```
 - ✅ Controller with JSON responses and `auth:sanctum` middleware
 - ✅ API routes (`routes/Modules/Users/api.php`)
@@ -155,7 +155,7 @@ php artisan features:create User --api
 
 **View-Only Mode (`--view`):**
 ```bash
-php artisan features:create User --view
+php artisan modules:create User --view
 ```
 - ✅ Controller with Inertia responses and `auth` middleware
 - ✅ Web routes (`routes/Modules/Users/web.php`)
@@ -165,7 +165,7 @@ php artisan features:create User --view
 
 **Full-Stack Mode (default):**
 ```bash
-php artisan features:create User
+php artisan modules:create User
 ```
 - ✅ Complete CRUD with both API and Views
 - ✅ All components included
@@ -193,8 +193,8 @@ php artisan features:create User
 ### 🔄 Command Restructuring
 
 #### Command Renaming
-- **BREAKING**: Renamed `make:feature` to `features:create` for better organization
-- **BREAKING**: Renamed `delete:feature` to `features:delete` for consistency
+- **BREAKING**: Renamed `make:feature` to `modules:create` for better organization
+- **BREAKING**: Renamed `delete:feature` to `modules:delete` for consistency
 - **NEW**: Improved command grouping with `features:` namespace for better discoverability
 
 #### Benefits of New Command Structure
@@ -210,8 +210,8 @@ php artisan make:feature ProductManagement
 php artisan delete:feature ProductManagement
 
 # New Commands (v4.4+)
-php artisan features:create ProductManagement
-php artisan features:delete ProductManagement
+php artisan modules:create ProductManagement
+php artisan modules:delete ProductManagement
 ```
 
 #### Migration Guide
@@ -225,8 +225,8 @@ php artisan delete:feature User --force
 
 **After (v4.4+):**
 ```bash
-php artisan features:create User --with=factory,policy,test
-php artisan features:delete User --force
+php artisan modules:create User --with=factory,policy,test
+php artisan modules:delete User --force
 ```
 
 ### 🧪 Updated Test Suite
@@ -428,8 +428,8 @@ php artisan features:delete User --force
 composer require ngodingskuyy/laravel-module-generator:^4.3
 
 # Regenerate components to use new shadcn-vue design (optional)
-php artisan features:delete ExistingFeature --force
-php artisan features:create ExistingFeature --force
+php artisan modules:delete ExistingFeature --force
+php artisan modules:create ExistingFeature --force
 ```
 
 #### New Dependencies
@@ -497,7 +497,7 @@ Special thanks to:
 ### 🚀 Major Features
 
 #### Feature Deletion System
-- **NEW**: Added `features:delete {name}` command for comprehensive feature removal
+- **NEW**: Added `modules:delete {name}` command for comprehensive feature removal
 - Safely removes all generated files for a feature (models, controllers, views, migrations, etc.)
 - Supports optional component cleanup (enums, observers, policies, factories, tests)
 - Intelligent directory cleanup - removes empty directories after file deletion
@@ -578,10 +578,10 @@ src/stubs/
 **Feature Deletion:**
 ```bash
 # Delete a complete feature
-php artisan features:delete ProductManagement
+php artisan modules:delete ProductManagement
 
 # Delete with force (no confirmation)
-php artisan features:delete ProductManagement --force
+php artisan modules:delete ProductManagement --force
 ```
 
 **Modules Loader Setup:**
@@ -598,19 +598,19 @@ php artisan install:modules-loader
 **Enhanced Feature Generation:**
 ```bash
 # Create feature (existing, now more stable)
-php artisan features:create ProductManagement
+php artisan modules:create ProductManagement
 
 # With optional components (more robust)
-php artisan features:create ProductManagement --with=enum,observer,policy,factory,test
+php artisan modules:create ProductManagement --with=enum,observer,policy,factory,test
 ```
 
 ### 🔄 Feature Lifecycle Management
 
 The package now supports complete feature lifecycle:
 
-1. **Creation**: `features:create {name}` - Generate all feature files
+1. **Creation**: `modules:create {name}` - Generate all feature files
 2. **Management**: Manual editing and customization
-3. **Deletion**: `features:delete {name}` - Clean removal of all files
+3. **Deletion**: `modules:delete {name}` - Clean removal of all files
 4. **Modular Routing**: Automatic route discovery and loading
 
 ### 🎯 Modular Architecture Support
@@ -707,8 +707,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Modular Routes Auto-Loader System
 - **NEW**: Added modular routes auto-loader (`modules.php`) for better route organization
-- **NEW**: Added `features:setup` command to create the modules.php loader file
-- **NEW**: Added `features:install` command to integrate modules loader into existing projects
+- **NEW**: Added `modules:setup` command to create the modules.php loader file
+- **NEW**: Added `modules:install` command to integrate modules loader into existing projects
 - Auto-creates modules.php when generating features if it doesn't exist
 - Automatically loads all `web.php` files from `routes/Modules/` directory
 - Provides clean separation of feature-specific routes
@@ -740,7 +740,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 #### README.md Enhancements
 - Added comprehensive documentation for `module:delete` command
 - Added documentation for modular routes auto-loader system
-- Added usage examples for `features:setup` and `features:install` commands
+- Added usage examples for `modules:setup` and `modules:install` commands
 - Updated feature overview with all new capabilities
 
 #### Usage Examples
@@ -752,10 +752,10 @@ php artisan module:delete User
 php artisan module:delete User --components=observer,factory,test
 
 # Setup modular routes loader
-php artisan features:setup
+php artisan modules:setup
 
 # Install modules loader in existing project
-php artisan features:install
+php artisan modules:install
 ```
 
 ### 📁 Updated Project Structure
@@ -803,19 +803,19 @@ tests/
 
 - **69 tests** with **243 assertions**
 - **100% pass rate**
-- **4 main commands**: `features:create`, `module:delete`, `features:setup`, `features:install`
+- **4 main commands**: `modules:create`, `module:delete`, `modules:setup`, `modules:install`
 - Complete CRUD feature generation with optional components
 - Full feature lifecycle management (create → manage → delete)
 
 ### 🎯 Available Commands
 
 #### Core Commands
-- `features:create {name}` - Generate complete CRUD feature
+- `modules:create {name}` - Generate complete CRUD feature
 - `module:delete {name}` - Delete feature and all its components
 
 #### Modules Management
-- `features:setup` - Create modular routes loader
-- `features:install` - Integrate modules loader into project
+- `modules:setup` - Create modular routes loader
+- `modules:install` - Integrate modules loader into project
 
 ### 🚀 Migration from 4.0.x to 4.2.0
 
@@ -827,8 +827,8 @@ composer update ngodingskuyy/laravel-module-generator
 
 Optionally, set up the new modular routes system:
 ```bash
-php artisan features:setup
-php artisan features:install
+php artisan modules:setup
+php artisan modules:install
 ```
 
 ---
@@ -943,7 +943,7 @@ src/
 
 ### 🎯 Generated Components
 
-The `features:create {name}` command now generates:
+The `modules:create {name}` command now generates:
 
 - **Model** with proper traits, fillable fields, and scope methods
 - **Controller** with full CRUD operations and Inertia.js integration

@@ -39,7 +39,7 @@ class MakeFeatureInteractiveMenuTest extends TestCase
         $command = new MakeFeature();
 
         $this->assertInstanceOf(MakeFeature::class, $command);
-        $this->assertEquals('features:create', $command->getName());
+        $this->assertEquals('modules:create', $command->getName());
         $this->assertTrue($command->getDefinition()->hasOption('api'));
         $this->assertTrue($command->getDefinition()->hasOption('view'));
     }

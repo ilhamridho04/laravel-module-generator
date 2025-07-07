@@ -5,16 +5,16 @@
 ### 1. **Setup Otomatis (Recommended)**
 ```bash
 # Setup loader files
-php artisan features:setup
+php artisan modules:setup
 
 # Install dan integrasikan ke routes
-php artisan features:install
+php artisan modules:install
 ```
 
 ### 2. **Setup Manual**
 ```bash
 # Hanya buat file loader
-php artisan features:setup
+php artisan modules:setup
 
 # Kemudian manual tambahkan ke routes/web.php:
 require __DIR__ . '/modules.php';
@@ -26,12 +26,12 @@ require __DIR__ . '/api-modules.php';
 ### 3. **Auto-install saat Generate Feature**
 ```bash
 # Saat generate feature, sistem akan otomatis tanya:
-php artisan features:create Product
+php artisan modules:create Product
 
 # Output:
 # ⚠️  Untuk mengaktifkan auto-loading web modules, pilih salah satu:
 #    1. Otomatis install:
-#       php artisan features:install
+#       php artisan modules:install
 #
 #    2. Manual install:
 #       Di routes/web.php:
@@ -42,7 +42,7 @@ php artisan features:create Product
 
 ## 📁 **Struktur yang Dihasilkan**
 
-### **Setelah `features:setup`**
+### **Setelah `modules:setup`**
 ```
 routes/
 ├── modules.php        # Web modules loader
@@ -50,7 +50,7 @@ routes/
 └── Modules/           # Feature modules folder
 ```
 
-### **Setelah `features:install`**
+### **Setelah `modules:install`**
 ```
 routes/
 ├── web.php            # Updated dengan require modules.php
@@ -60,7 +60,7 @@ routes/
 └── Modules/           # Feature modules folder
 ```
 
-### **Setelah `features:create Product`**
+### **Setelah `modules:create Product`**
 ```
 routes/
 ├── web.php            # With modules.php included
@@ -75,18 +75,18 @@ routes/
 
 ## 🎯 **Fitur Commands**
 
-### **features:setup**
+### **modules:setup**
 - Membuat `routes/modules.php` (web loader)
 - Membuat `routes/api-modules.php` (API loader)
 - Memberikan instruksi instalasi
 
-### **features:install**
-- Menjalankan `features:setup` jika belum ada
+### **modules:install**
+- Menjalankan `modules:setup` jika belum ada
 - Auto-integrate ke `routes/web.php` atau `routes/app.php`
 - Auto-integrate ke `routes/api.php`
 - Backup otomatis jika ada konflik
 
-### **features:create** 
+### **modules:create** 
 - Deteksi loader sudah terpasang atau belum
 - Offer auto-install jika belum terpasang
 - Generate routes terpisah (web.php dan api.php)
@@ -104,7 +104,7 @@ routes/
 ### **Jika routes tidak terbaca:**
 ```bash
 # Pastikan loader sudah terpasang
-php artisan features:install --force
+php artisan modules:install --force
 
 # Atau cek manual di routes/web.php dan routes/api.php
 # Pastikan ada: require __DIR__ . '/modules.php';
@@ -118,6 +118,6 @@ rm routes/modules.php
 rm routes/api-modules.php
 
 # Setup ulang
-php artisan features:setup --force
-php artisan features:install --force
+php artisan modules:setup --force
+php artisan modules:install --force
 ```

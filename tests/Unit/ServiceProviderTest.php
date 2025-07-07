@@ -29,7 +29,7 @@ class ServiceProviderTest extends TestCase
     public function make_feature_command_is_available()
     {
         $commands = $this->app[\Illuminate\Contracts\Console\Kernel::class]->all();
-        $this->assertArrayHasKey('features:create', $commands);
+        $this->assertArrayHasKey('modules:create', $commands);
     }
 
     /** @test */
@@ -37,7 +37,7 @@ class ServiceProviderTest extends TestCase
     {
         $command = $this->app->make(MakeFeature::class);
 
-        $this->assertEquals('features:create', $command->getName());
+        $this->assertEquals('modules:create', $command->getName());
         $this->assertStringContainsString('Generate full CRUD feature', $command->getDescription());
     }
 
@@ -52,7 +52,7 @@ class ServiceProviderTest extends TestCase
     public function delete_feature_command_is_available()
     {
         $commands = $this->app[\Illuminate\Contracts\Console\Kernel::class]->all();
-        $this->assertArrayHasKey('features:delete', $commands);
+        $this->assertArrayHasKey('modules:delete', $commands);
     }
 
     /** @test */
@@ -60,7 +60,7 @@ class ServiceProviderTest extends TestCase
     {
         $command = $this->app->make(DeleteFeature::class);
 
-        $this->assertEquals('features:delete', $command->getName());
+        $this->assertEquals('modules:delete', $command->getName());
         $this->assertStringContainsString('Delete full CRUD feature', $command->getDescription());
     }
 
@@ -75,7 +75,7 @@ class ServiceProviderTest extends TestCase
     public function setup_modules_loader_command_is_available()
     {
         $commands = $this->app[\Illuminate\Contracts\Console\Kernel::class]->all();
-        $this->assertArrayHasKey('features:setup', $commands);
+        $this->assertArrayHasKey('modules:setup', $commands);
     }
 
     /** @test */
@@ -89,6 +89,6 @@ class ServiceProviderTest extends TestCase
     public function install_modules_loader_command_is_available()
     {
         $commands = $this->app[\Illuminate\Contracts\Console\Kernel::class]->all();
-        $this->assertArrayHasKey('features:install', $commands);
+        $this->assertArrayHasKey('modules:install', $commands);
     }
 }

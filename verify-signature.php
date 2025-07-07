@@ -1,7 +1,7 @@
 <?php
 
 // Simple test to verify the command signature format
-$signatureLine = 'features:create {name?} 
+$signatureLine = 'modules:create {name?} 
                             {--with=* : Optional components like enum, observer, policy, factory, test} 
                             {--force : Overwrite existing files}
                             {--api : Generate API-only (without Vue views)}
@@ -25,5 +25,5 @@ if (strpos($signatureLine, '{name}') !== false && strpos($signatureLine, '{name?
     echo "✅ Name argument is optional ('?' found)\n";
 }
 
-echo "\nThe command should work with: php artisan features:create\n";
+echo "\nThe command should work with: php artisan modules:create\n";
 echo "And prompt for name interactively.\n";

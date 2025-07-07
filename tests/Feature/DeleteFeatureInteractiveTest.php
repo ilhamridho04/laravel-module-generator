@@ -60,7 +60,7 @@ class DeleteFeatureInteractiveTest extends TestCase
         $this->createDummyRoutes();
 
         // Create all components for testing deletion using interactive mode
-        $this->artisan('features:create', ['name' => 'TestProduct', '--skip-install' => true])
+        $this->artisan('modules:create', ['name' => 'TestProduct', '--skip-install' => true])
             ->expectsChoice('🤔 Pilih mode generation', '1', [
                 '1' => 'Full-stack (API + Views)',
                 '2' => 'API Only',
@@ -90,7 +90,7 @@ class DeleteFeatureInteractiveTest extends TestCase
         $this->assertFileExists(app_path('Http/Controllers/TestProductController.php'));
         $this->assertFileExists(app_path('Http/Controllers/API/TestProductController.php'));
 
-        $this->artisan('features:delete', ['name' => 'TestProduct', '--force' => true])
+        $this->artisan('modules:delete', ['name' => 'TestProduct', '--force' => true])
             ->expectsChoice('🤔 Pilih mode deletion', '1', [
                 '1' => 'Full Deletion (API + Views)',
                 '2' => 'API Only',
@@ -118,7 +118,7 @@ class DeleteFeatureInteractiveTest extends TestCase
         $this->assertFileExists(app_path('Http/Controllers/API/TestProductController.php'));
         $this->assertFileExists(resource_path('js/pages/TestProducts/Index.vue'));
 
-        $this->artisan('features:delete', ['name' => 'TestProduct', '--force' => true])
+        $this->artisan('modules:delete', ['name' => 'TestProduct', '--force' => true])
             ->expectsChoice('🤔 Pilih mode deletion', '2', [
                 '1' => 'Full Deletion (API + Views)',
                 '2' => 'API Only',
@@ -149,7 +149,7 @@ class DeleteFeatureInteractiveTest extends TestCase
         $this->assertFileExists(app_path('Http/Controllers/API/TestProductController.php'));
         $this->assertFileExists(resource_path('js/pages/TestProducts/Index.vue'));
 
-        $this->artisan('features:delete', ['name' => 'TestProduct', '--force' => true])
+        $this->artisan('modules:delete', ['name' => 'TestProduct', '--force' => true])
             ->expectsChoice('🤔 Pilih mode deletion', '3', [
                 '1' => 'Full Deletion (API + Views)',
                 '2' => 'API Only',
@@ -175,7 +175,7 @@ class DeleteFeatureInteractiveTest extends TestCase
     {
         $this->createTestFiles();
 
-        $this->artisan('features:delete', ['name' => 'TestProduct', '--api' => true, '--force' => true])
+        $this->artisan('modules:delete', ['name' => 'TestProduct', '--api' => true, '--force' => true])
             ->doesntExpectOutput('🎯 Pilih mode penghapusan fitur:')
             ->expectsOutput('🗑️ Menghapus fitur: TestProducts (test-products) - Mode: API Only')
             ->assertExitCode(0);
@@ -190,7 +190,7 @@ class DeleteFeatureInteractiveTest extends TestCase
     {
         $this->createTestFiles();
 
-        $this->artisan('features:delete', ['name' => 'TestProduct', '--view' => true, '--force' => true])
+        $this->artisan('modules:delete', ['name' => 'TestProduct', '--view' => true, '--force' => true])
             ->doesntExpectOutput('🎯 Pilih mode penghapusan fitur:')
             ->expectsOutput('🗑️ Menghapus fitur: TestProducts (test-products) - Mode: View Only')
             ->assertExitCode(0);
@@ -203,7 +203,7 @@ class DeleteFeatureInteractiveTest extends TestCase
     /** @test */
     public function it_prevents_using_both_api_and_view_options()
     {
-        $this->artisan('features:delete', ['name' => 'TestProduct', '--api' => true, '--view' => true])
+        $this->artisan('modules:delete', ['name' => 'TestProduct', '--api' => true, '--view' => true])
             ->expectsOutput('❌ Tidak bisa menggunakan --api dan --view bersamaan. Pilih salah satu atau kosongkan untuk full deletion.')
             ->assertExitCode(0);
     }

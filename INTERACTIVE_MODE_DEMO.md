@@ -1,13 +1,13 @@
 # Fully Interactive Mode Demo
 
 ## Overview
-The `features:create` command now supports a fully interactive mode when no feature name is provided.
+The `modules:create` command now supports a fully interactive mode when no feature name is provided.
 
 ## Usage
 
 ### Interactive Mode (No Arguments)
 ```bash
-php artisan features:create
+php artisan modules:create
 ```
 
 When you run this command without any arguments, it will:
@@ -60,33 +60,33 @@ When you run this command without any arguments, it will:
 
 ### With Name (Traditional)
 ```bash
-php artisan features:create Product
+php artisan modules:create Product
 # Still shows mode selection and optional components if not specified via flags
 ```
 
 ### With Flags (Skip Interactive Menus)
 ```bash
 # API only mode
-php artisan features:create Product --api
+php artisan modules:create Product --api
 
 # View only mode  
-php artisan features:create Product --view
+php artisan modules:create Product --view
 
 # With optional components
-php artisan features:create Product --with=enum,observer,policy,factory,test
+php artisan modules:create Product --with=enum,observer,policy,factory,test
 
 # Force overwrite
-php artisan features:create Product --force
+php artisan modules:create Product --force
 
 # Skip auto-install prompt (for tests)
-php artisan features:create Product --skip-install
+php artisan modules:create Product --skip-install
 ```
 
 ## Interactive Workflow Examples
 
 ### Full Example - Interactive Mode
 ```bash
-php artisan features:create
+php artisan modules:create
 
 # User input flow:
 # 1. Enter "Product" as feature name
@@ -99,7 +99,7 @@ php artisan features:create
 
 ### Mixed Mode - Name Provided, Interactive Options
 ```bash
-php artisan features:create Product
+php artisan modules:create Product
 
 # Since name is provided, skips name prompt but still shows:
 # 1. Mode selection menu (if no --api or --view flag)
@@ -108,7 +108,7 @@ php artisan features:create Product
 
 ### Full Non-Interactive Mode
 ```bash
-php artisan features:create Product --api --with=enum,policy --force
+php artisan modules:create Product --api --with=enum,policy --force
 
 # Completely non-interactive:
 # - Uses provided name "Product"
