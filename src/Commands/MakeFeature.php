@@ -8,13 +8,13 @@ use Illuminate\Support\Str;
 
 class MakeFeature extends Command
 {
-    protected $signature = 'features:create {name} 
+    protected $signature = 'features:create {name?} 
                             {--with=* : Optional components like enum, observer, policy, factory, test} 
                             {--force : Overwrite existing files}
                             {--api : Generate API-only (without Vue views)}
                             {--view : Generate View-only (without API routes)}
                             {--skip-install : Skip auto-install prompt for routes}';
-    protected $description = 'Generate full CRUD feature with module structure and optional components';
+    protected $description = 'Generate full CRUD feature with module structure and optional components (interactive mode available)';
 
     protected Filesystem $files;
 
@@ -26,7 +26,13 @@ class MakeFeature extends Command
 
     public function handle(): void
     {
-        $name = Str::studly($this->argument('name'));
+        // Get feature name - ask interactively if not provided
+        $inputName = $this->argument('name');
+        if (!$inputName) {
+            $inputName = $this->askFeatureName();
+        }
+
+        $name = Str::studly($inputName);
         $plural = Str::pluralStudly($name);
         $kebab = Str::kebab($plural);
         $force = $this->option('force');
@@ -86,8 +92,16 @@ class MakeFeature extends Command
         $this->injectRoutes($name, $plural, $kebab, $force, $apiOnly, $viewOnly);
         $this->makePermissionSeeder($plural, $force);
 
-        // Optional components
+        // Optional components - ask interactively if no name was provided initially
         $options = collect($this->option('with'));
+        $isInteractiveMode = !$this->argument('name'); // True if name was prompted
+
+        if ($isInteractiveMode && $options->isEmpty()) {
+            // Ask for optional components interactively
+            $selectedComponents = $this->askOptionalComponents();
+            $options = collect($selectedComponents);
+        }
+
         if ($options->contains('test')) {
             $this->makeTest($name, $plural, $force);
         }
@@ -655,5 +669,103 @@ class MakeFeature extends Command
                 $this->call('features:install');
             }
         }
+    }
+
+    protected function askFeatureName(): string
+    {
+        $this->info("\n🚀 Laravel Module Generator - Interactive Mode");
+        $this->line("Mari buat fitur CRUD dengan mudah!");
+        $this->line("");
+
+        while (true) {
+            $name = $this->ask('📝 Masukkan nama fitur (contoh: Product, UserProfile, Category)');
+
+            if (empty($name)) {
+                $this->error('❌ Nama fitur tidak boleh kosong!');
+                continue;
+            }
+
+            // Validate name format
+            if (!preg_match('/^[a-zA-Z][a-zA-Z0-9]*$/', $name)) {
+                $this->error('❌ Nama fitur harus dimulai dengan huruf dan hanya boleh berisi huruf dan angka!');
+                $this->line('   Contoh yang benar: Product, UserProfile, Category');
+                continue;
+            }
+
+            // Show what will be generated
+            $studlyName = Str::studly($name);
+            $pluralName = Str::pluralStudly($studlyName);
+            $kebabName = Str::kebab($pluralName);
+
+            $this->line("\n✨ Preview fitur yang akan dibuat:");
+            $this->line("   📂 Model: <fg=cyan>{$studlyName}</>");
+            $this->line("   📂 Table: <fg=cyan>" . Str::snake($pluralName) . "</>");
+            $this->line("   📂 Routes: <fg=cyan>/{$kebabName}</>");
+            $this->line("   📂 Views: <fg=cyan>resources/js/pages/{$pluralName}/</>");
+            $this->line("");
+
+            if ($this->confirm('✅ Lanjutkan dengan nama ini?', true)) {
+                return $name;
+            }
+        }
+    }
+
+    protected function askOptionalComponents(): array
+    {
+        $this->line("\n🔧 Pilih komponen tambahan (opsional):");
+
+        $availableComponents = [
+            'enum' => 'Enum - Status enum untuk model',
+            'observer' => 'Observer - Model observer untuk event handling',
+            'policy' => 'Policy - Authorization policy',
+            'factory' => 'Factory - Model factory untuk testing/seeding',
+            'test' => 'Test - Feature test untuk CRUD operations'
+        ];
+
+        // Create numbered choices
+        $choices = ['0' => 'Tidak ada komponen tambahan'];
+        $keyMap = ['0' => 'none'];
+
+        $index = 1;
+        foreach ($availableComponents as $key => $description) {
+            $choices[$index] = $description;
+            $keyMap[$index] = $key;
+            $index++;
+        }
+
+        $this->line("\n📦 Pilih komponen (ketik nomor, pisahkan dengan koma untuk multiple, contoh: 1,3,5):");
+        foreach ($choices as $num => $description) {
+            $this->line("   <fg=cyan>[$num]</> $description");
+        }
+
+        $selection = $this->ask("\n🎯 Masukkan pilihan Anda (default: 0)", '0');
+
+        // Parse the selection
+        $selectedNumbers = array_map('trim', explode(',', $selection));
+        $selectedComponents = [];
+
+        foreach ($selectedNumbers as $number) {
+            if (isset($keyMap[$number]) && $keyMap[$number] !== 'none') {
+                $selectedComponents[] = $keyMap[$number];
+            }
+        }
+
+        // Remove duplicates
+        $selectedComponents = array_unique($selectedComponents);
+
+        if (!empty($selectedComponents)) {
+            $selectedDescriptions = array_map(function ($key) use ($availableComponents) {
+                return $availableComponents[$key] ?? $key;
+            }, $selectedComponents);
+
+            $this->line("\n✅ Komponen yang dipilih:");
+            foreach ($selectedDescriptions as $description) {
+                $this->line("   📦 " . $description);
+            }
+        } else {
+            $this->line("\n📝 Tidak ada komponen tambahan dipilih");
+        }
+
+        return $selectedComponents;
     }
 }

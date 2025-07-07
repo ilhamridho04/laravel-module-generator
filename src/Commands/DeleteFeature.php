@@ -124,6 +124,9 @@ class DeleteFeature extends Command
                 base_path("routes/Modules/{$plural}/api.php"),
                 base_path("routes/Modules/{$plural}/web.php"),
                 database_path("seeders/Permission/{$plural}PermissionSeeder.php"),
+                base_path("Observers/{$name}Observer.php"),
+                base_path("Policies/{$name}Policy.php"),
+                // base_path("Traits/ApiResponser.php"),
             ];
         }
 
@@ -131,6 +134,14 @@ class DeleteFeature extends Command
         foreach ($coreFiles as $file) {
             if ($this->files->exists($file)) {
                 $files[] = $file;
+
+                // If deleting an Observer, also remove its registration from AppServiceProvider
+                if (
+                    Str::endsWith($file, 'Observer.php') &&
+                    (Str::contains($file, 'Observers') || Str::contains($file, 'Observer'))
+                ) {
+                    $this->removeObserverFromServiceProvider($name);
+                }
             }
         }
 
