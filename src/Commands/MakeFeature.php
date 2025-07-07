@@ -452,40 +452,61 @@ class MakeFeature extends Command
     {
         $variable = Str::camel($name);
 
-        // Determine controller namespace based on mode
+        // Generate separate route files for API and Web
         if ($apiOnly) {
-            $controller = "App\\Http\\Controllers\\API\\{$name}Controller";
-        } else {
-            $controller = "App\\Http\\Controllers\\{$name}Controller";
-        }
-
-        // Determine which stub to use based on mode
-        $stubFile = 'routes.stub'; // Default full-stack
-        if ($apiOnly) {
-            $stubFile = 'routes.api.stub';
+            // Only generate API routes
+            $this->generateApiRoutes($name, $plural, $kebab, $force);
         } elseif ($viewOnly) {
-            $stubFile = 'routes.view.stub';
+            // Only generate Web routes
+            $this->generateWebRoutes($name, $plural, $kebab, $force);
+        } else {
+            // Generate both API and Web routes (full-stack)
+            $this->generateApiRoutes($name, $plural, $kebab, $force);
+            $this->generateWebRoutes($name, $plural, $kebab, $force);
         }
+    }
 
-        $content = $this->renderStub($stubFile, [
+    protected function generateApiRoutes(string $name, string $plural, string $kebab, bool $force = false): void
+    {
+        $variable = Str::camel($name);
+        $controller = "App\\Http\\Controllers\\API\\{$name}Controller";
+
+        $content = $this->renderStub('routes.api.stub', [
+            'model' => $name,
             'plural' => $plural,
             'kebab' => $kebab,
             'variable' => $variable,
             'controller' => $controller,
         ]);
 
-        // Determine the route file name based on mode
-        $routeFileName = 'web.php'; // Default
-        if ($apiOnly) {
-            $routeFileName = 'api.php';
-        }
-
-        $routePath = base_path("routes/Modules/{$plural}/{$routeFileName}");
+        $routePath = base_path("routes/Modules/{$plural}/api.php");
         if ($force || !$this->files->exists($routePath)) {
             $this->files->put($routePath, $content);
-            $this->line("🛣️ Route file dibuat: routes/Modules/{$plural}/{$routeFileName}");
+            $this->line("🛣️ API route file dibuat: routes/Modules/{$plural}/api.php");
         } else {
-            $this->warn("🛣️ Routes sudah ada: routes/Modules/{$plural}/{$routeFileName}");
+            $this->warn("🛣️ API routes sudah ada: routes/Modules/{$plural}/api.php");
+        }
+    }
+
+    protected function generateWebRoutes(string $name, string $plural, string $kebab, bool $force = false): void
+    {
+        $variable = Str::camel($name);
+        $controller = "App\\Http\\Controllers\\{$name}Controller";
+
+        $content = $this->renderStub('routes.web.stub', [
+            'model' => $name,
+            'plural' => $plural,
+            'kebab' => $kebab,
+            'variable' => $variable,
+            'controller' => $controller,
+        ]);
+
+        $routePath = base_path("routes/Modules/{$plural}/web.php");
+        if ($force || !$this->files->exists($routePath)) {
+            $this->files->put($routePath, $content);
+            $this->line("🛣️ Web route file dibuat: routes/Modules/{$plural}/web.php");
+        } else {
+            $this->warn("🛣️ Web routes sudah ada: routes/Modules/{$plural}/web.php");
         }
     }
 
@@ -508,51 +529,66 @@ class MakeFeature extends Command
 
     protected function ensureModulesLoader(bool $force = false): void
     {
-        $loaderPath = base_path('routes/modules.php');
+        $webLoaderPath = base_path('routes/modules.php');
+        $apiLoaderPath = base_path('routes/api-modules.php');
 
-        // Check if modules loader already exists
-        if (!$force && $this->files->exists($loaderPath)) {
-            return; // File already exists, don't create
+        // Create web modules loader
+        if ($force || !$this->files->exists($webLoaderPath)) {
+            $webStub = $this->renderStub('modules-loader.stub', []);
+            $this->files->put($webLoaderPath, $webStub);
+            $this->line("🔗 Web modules auto-loader dibuat: routes/modules.php");
         }
 
-        // Create the modules loader file
-        $stub = $this->renderStub('modules-loader.stub', []);
-
-        if ($force || !$this->files->exists($loaderPath)) {
-            $this->files->put($loaderPath, $stub);
-            $this->line("🔗 Modules auto-loader dibuat: routes/modules.php");
-
-            // Check if it's included in RouteServiceProvider or web.php
-            $this->suggestLoaderIntegration();
+        // Create API modules loader
+        if ($force || !$this->files->exists($apiLoaderPath)) {
+            $apiStub = $this->renderStub('api-modules-loader.stub', []);
+            $this->files->put($apiLoaderPath, $apiStub);
+            $this->line("🔗 API modules auto-loader dibuat: routes/api-modules.php");
         }
+
+        // Check if loaders are included in route files
+        $this->suggestLoaderIntegration();
     }
 
     protected function suggestLoaderIntegration(): void
     {
         $webRoutesPath = base_path('routes/web.php');
+        $apiRoutesPath = base_path('routes/api.php');
         $appRoutesPath = base_path('routes/app.php'); // Laravel 11+
-        $loaderInclude = "require __DIR__ . '/modules.php';";
 
-        // Check if modules.php is already included in web.php or app.php
-        $isIncludedInWeb = false;
-        $isIncludedInApp = false;
+        $webLoaderInclude = "require __DIR__ . '/modules.php';";
+        $apiLoaderInclude = "require __DIR__ . '/api-modules.php';";
+
+        // Check if web modules loader is included
+        $webIncludedInWeb = false;
+        $webIncludedInApp = false;
 
         if ($this->files->exists($webRoutesPath)) {
             $webContent = $this->files->get($webRoutesPath);
-            $isIncludedInWeb = str_contains($webContent, $loaderInclude) ||
+            $webIncludedInWeb = str_contains($webContent, $webLoaderInclude) ||
                 str_contains($webContent, "require __DIR__ . '/modules.php'") ||
                 str_contains($webContent, "require_once __DIR__ . '/modules.php'");
         }
 
         if ($this->files->exists($appRoutesPath)) {
             $appContent = $this->files->get($appRoutesPath);
-            $isIncludedInApp = str_contains($appContent, $loaderInclude) ||
+            $webIncludedInApp = str_contains($appContent, $webLoaderInclude) ||
                 str_contains($appContent, "require __DIR__ . '/modules.php'") ||
                 str_contains($appContent, "require_once __DIR__ . '/modules.php'");
         }
 
-        if (!$isIncludedInWeb && !$isIncludedInApp) {
-            $this->warn("\n⚠️  Untuk mengaktifkan auto-loading modules, tambahkan baris berikut:");
+        // Check if API modules loader is included
+        $apiIncludedInApi = false;
+        if ($this->files->exists($apiRoutesPath)) {
+            $apiContent = $this->files->get($apiRoutesPath);
+            $apiIncludedInApi = str_contains($apiContent, $apiLoaderInclude) ||
+                str_contains($apiContent, "require __DIR__ . '/api-modules.php'") ||
+                str_contains($apiContent, "require_once __DIR__ . '/api-modules.php'");
+        }
+
+        // Suggest integration for web routes
+        if (!$webIncludedInWeb && !$webIncludedInApp) {
+            $this->warn("\n⚠️  Untuk mengaktifkan auto-loading web modules, tambahkan baris berikut:");
 
             if ($this->files->exists($appRoutesPath)) {
                 $this->line("   Di routes/app.php atau routes/web.php:");
@@ -563,7 +599,17 @@ class MakeFeature extends Command
             $this->line("   <fg=yellow>require __DIR__ . '/modules.php';</>");
             $this->line("");
         } else {
-            $this->line("✅ Modules auto-loader sudah terdaftar di routes.");
+            $this->line("✅ Web modules auto-loader sudah terdaftar di routes.");
+        }
+
+        // Suggest integration for API routes
+        if (!$apiIncludedInApi) {
+            $this->warn("⚠️  Untuk mengaktifkan auto-loading API modules, tambahkan baris berikut:");
+            $this->line("   Di routes/api.php:");
+            $this->line("   <fg=yellow>require __DIR__ . '/api-modules.php';</>");
+            $this->line("");
+        } else {
+            $this->line("✅ API modules auto-loader sudah terdaftar di routes/api.php.");
         }
     }
 }

@@ -1,8 +1,11 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\API\{{ controller }};
+use App\Http\Controllers\API\{{ model }}Controller;
+
+// API routes are automatically prefixed with 'api/' and have 'api' middleware applied
+// by the API modules loader (routes/api-modules.php)
 
 Route::middleware(['auth:sanctum'])->group(function () {
-    Route::apiResource('{{ kebab }}', {{ controller }}::class);
+    Route::apiResource('{{ kebab }}', {{ model }}Controller::class);
 });
