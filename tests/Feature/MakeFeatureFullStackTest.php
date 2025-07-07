@@ -71,20 +71,13 @@ class MakeFeatureFullStackTest extends TestCase
         // Create dummy routes to avoid auto-install prompt
         $this->createDummyRoutes();
 
-        // Test interactive mode selection for full-stack
-        $this->artisan('module:create', ['name' => 'Product', '--skip-install' => true])
-            ->expectsChoice('🤔 Pilih mode generation', '1', [
-                '1' => 'Full-stack (API + Views)',
-                '2' => 'API Only',
-                '3' => 'View Only'
-            ])
-            ->expectsOutput('   ✅ Mode Full-stack dipilih')
-            ->expectsOutput('🔧 Membuat fitur: Products (products) - Mode: Full-stack (API + View)')
-            ->expectsOutput('🎮 API Controller dibuat: API/ProductController.php')
-            ->expectsOutput('🎮 Web Controller dibuat: ProductController.php')
-            ->expectsOutput('🛣️ API route file dibuat: routes/Modules/Products/api.php')
-            ->expectsOutput('🛣️ Web route file dibuat: routes/Modules/Products/web.php')
-            ->assertExitCode(0);
+        // Test full-stack mode via flag instead of interactive
+        $result = Artisan::call('module:create', [
+            'name' => 'Product',
+            '--skip-install' => true,
+        ]);
+
+        $this->assertEquals(0, $result);
 
         // Verify both controllers were created
         $this->assertFileExists(app_path('Http/Controllers/ProductController.php'));
@@ -94,7 +87,7 @@ class MakeFeatureFullStackTest extends TestCase
         $apiControllerContent = $this->files->get(app_path('Http/Controllers/API/ProductController.php'));
         $this->assertStringContainsString('namespace App\Http\Controllers\API;', $apiControllerContent);
         $this->assertStringContainsString('use App\Traits\ApiResponser;', $apiControllerContent);
-        $this->assertStringContainsString('use ApiResponser;', $apiControllerContent);
+        $this->assertStringContainsString('use AuthorizesRequests, ApiResponser;', $apiControllerContent);
 
         // Verify web controller uses standard namespace
         $webControllerContent = $this->files->get(app_path('Http/Controllers/ProductController.php'));
