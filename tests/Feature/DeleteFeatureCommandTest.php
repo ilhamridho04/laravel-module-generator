@@ -53,14 +53,14 @@ class DeleteFeatureCommandTest extends TestCase
     public function it_can_delete_basic_feature_files()
     {
         // First create a feature
-        Artisan::call('make:feature', ['name' => 'TestUser']);
+        Artisan::call('features:create', ['name' => 'TestUser']);
 
         // Verify files exist
         $this->assertFileExists(app_path('Models/TestUser.php'));
         $this->assertFileExists(app_path('Http/Controllers/TestUserController.php'));
 
         // Delete the feature
-        Artisan::call('delete:feature', [
+        Artisan::call('features:delete', [
             'name' => 'TestUser',
             '--force' => true
         ]);
@@ -76,7 +76,7 @@ class DeleteFeatureCommandTest extends TestCase
     public function it_can_delete_vue_components()
     {
         // Create feature
-        Artisan::call('make:feature', ['name' => 'TestUser']);
+        Artisan::call('features:create', ['name' => 'TestUser']);
 
         // Verify Vue files exist
         $this->assertFileExists(resource_path('js/pages/TestUsers/Index.vue'));
@@ -85,7 +85,7 @@ class DeleteFeatureCommandTest extends TestCase
         $this->assertFileExists(resource_path('js/pages/TestUsers/Show.vue'));
 
         // Delete feature
-        Artisan::call('delete:feature', [
+        Artisan::call('features:delete', [
             'name' => 'TestUser',
             '--force' => true
         ]);
@@ -104,7 +104,7 @@ class DeleteFeatureCommandTest extends TestCase
     public function it_can_delete_optional_components()
     {
         // Create feature with optional components
-        Artisan::call('make:feature', [
+        Artisan::call('features:create', [
             'name' => 'TestUser',
             '--with' => ['enum', 'observer']
         ]);
@@ -114,7 +114,7 @@ class DeleteFeatureCommandTest extends TestCase
         $this->assertFileExists(app_path('Observers/TestUserObserver.php'));
 
         // Delete feature with optional components
-        Artisan::call('delete:feature', [
+        Artisan::call('features:delete', [
             'name' => 'TestUser',
             '--with' => ['enum', 'observer'],
             '--force' => true
@@ -129,13 +129,13 @@ class DeleteFeatureCommandTest extends TestCase
     public function it_can_delete_all_components_with_all_flag()
     {
         // Create feature with all optional components
-        Artisan::call('make:feature', [
+        Artisan::call('features:create', [
             'name' => 'TestUser',
             '--with' => ['enum', 'observer']
         ]);
 
         // Delete with --all flag
-        Artisan::call('delete:feature', [
+        Artisan::call('features:delete', [
             'name' => 'TestUser',
             '--all' => true,
             '--force' => true
@@ -151,14 +151,14 @@ class DeleteFeatureCommandTest extends TestCase
     public function it_cleans_up_empty_directories()
     {
         // Create feature
-        Artisan::call('make:feature', ['name' => 'TestUser']);
+        Artisan::call('features:create', ['name' => 'TestUser']);
 
         // Verify directories exist
         $this->assertDirectoryExists(resource_path('js/pages/TestUsers'));
         $this->assertDirectoryExists(base_path('routes/Modules/TestUsers'));
 
         // Delete feature
-        Artisan::call('delete:feature', [
+        Artisan::call('features:delete', [
             'name' => 'TestUser',
             '--force' => true
         ]);
@@ -172,7 +172,7 @@ class DeleteFeatureCommandTest extends TestCase
     public function it_handles_non_existent_feature_gracefully()
     {
         // Try to delete a feature that doesn't exist
-        $exitCode = Artisan::call('delete:feature', [
+        $exitCode = Artisan::call('features:delete', [
             'name' => 'NonExistentFeature',
             '--force' => true
         ]);
@@ -188,10 +188,10 @@ class DeleteFeatureCommandTest extends TestCase
     public function it_shows_files_before_deletion()
     {
         // Create feature
-        Artisan::call('make:feature', ['name' => 'TestUser']);
+        Artisan::call('features:create', ['name' => 'TestUser']);
 
         // Delete without force to see the file list
-        Artisan::call('delete:feature', [
+        Artisan::call('features:delete', [
             'name' => 'TestUser',
             '--force' => true // Still use force to avoid interactive prompt in test
         ]);
@@ -205,7 +205,7 @@ class DeleteFeatureCommandTest extends TestCase
     public function it_finds_and_deletes_migration_files()
     {
         // Create feature (this creates migration)
-        Artisan::call('make:feature', ['name' => 'TestUser']);
+        Artisan::call('features:create', ['name' => 'TestUser']);
 
         // Find migration files
         $migrationFiles = File::glob(database_path('migrations/*_create_test_users_table.php'));
@@ -214,7 +214,7 @@ class DeleteFeatureCommandTest extends TestCase
         $this->assertNotEmpty($migrationFiles);
 
         // Delete feature
-        Artisan::call('delete:feature', [
+        Artisan::call('features:delete', [
             'name' => 'TestUser',
             '--force' => true
         ]);

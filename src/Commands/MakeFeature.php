@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 
 class MakeFeature extends Command
 {
-    protected $signature = 'make:feature {name} {--with=* : Optional components like enum, observer, policy, factory, test} {--force : Overwrite existing files}';
+    protected $signature = 'features:create {name} {--with=* : Optional components like enum, observer, policy, factory, test} {--force : Overwrite existing files}';
     protected $description = 'Generate full CRUD feature with module structure and optional components';
 
     protected Filesystem $files;

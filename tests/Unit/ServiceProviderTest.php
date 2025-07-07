@@ -29,7 +29,7 @@ class ServiceProviderTest extends TestCase
     public function make_feature_command_is_available()
     {
         $commands = $this->app[\Illuminate\Contracts\Console\Kernel::class]->all();
-        $this->assertArrayHasKey('make:feature', $commands);
+        $this->assertArrayHasKey('features:create', $commands);
     }
 
     /** @test */
@@ -37,7 +37,7 @@ class ServiceProviderTest extends TestCase
     {
         $command = $this->app->make(MakeFeature::class);
 
-        $this->assertEquals('make:feature', $command->getName());
+        $this->assertEquals('features:create', $command->getName());
         $this->assertStringContainsString('Generate full CRUD feature', $command->getDescription());
     }
 
@@ -52,7 +52,7 @@ class ServiceProviderTest extends TestCase
     public function delete_feature_command_is_available()
     {
         $commands = $this->app[\Illuminate\Contracts\Console\Kernel::class]->all();
-        $this->assertArrayHasKey('delete:feature', $commands);
+        $this->assertArrayHasKey('features:delete', $commands);
     }
 
     /** @test */
@@ -60,7 +60,7 @@ class ServiceProviderTest extends TestCase
     {
         $command = $this->app->make(DeleteFeature::class);
 
-        $this->assertEquals('delete:feature', $command->getName());
+        $this->assertEquals('features:delete', $command->getName());
         $this->assertStringContainsString('Delete full CRUD feature', $command->getDescription());
     }
 

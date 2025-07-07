@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 
 class DeleteFeature extends Command
 {
-    protected $signature = 'delete:feature {name} {--with=* : Optional components to delete like enum, observer, policy, factory, test} {--all : Delete all related files including optional components} {--force : Delete without confirmation}';
+    protected $signature = 'features:delete {name} {--with=* : Optional components to delete like enum, observer, policy, factory, test} {--all : Delete all related files including optional components} {--force : Delete without confirmation}';
     protected $description = 'Delete full CRUD feature and all its generated files';
 
     protected Filesystem $files;

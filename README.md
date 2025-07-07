@@ -105,19 +105,19 @@ composer require ngodingskuyy/laravel-module-generator:@dev
 ### Basic Usage
 
 ```bash
-php artisan make:feature User
+php artisan features:create User
 ```
 
 ### With Optional Components
 
 ```bash
-php artisan make:feature User --with=factory,policy,observer,enum,test
+php artisan features:create User --with=factory,policy,observer,enum,test
 ```
 
 ### Force Overwrite Existing Files
 
 ```bash
-php artisan make:feature User --force
+php artisan features:create User --force
 ```
 
 ### 🗑️ Deleting Features
@@ -125,30 +125,30 @@ php artisan make:feature User --force
 #### Delete Basic Feature
 
 ```bash
-php artisan delete:feature User
+php artisan features:delete User
 ```
 
 #### Delete with Optional Components
 
 ```bash
-php artisan delete:feature User --with=factory,policy,observer,enum,test
+php artisan features:delete User --with=factory,policy,observer,enum,test
 ```
 
 #### Delete All Components (including optional)
 
 ```bash
-php artisan delete:feature User --all
+php artisan features:delete User --all
 ```
 
 #### Force Delete (no confirmation)
 
 ```bash
-php artisan delete:feature User --force
+php artisan features:delete User --force
 ```
 
 #### What Gets Deleted
 
-The `delete:feature` command will remove:
+The `features:delete` command will remove:
 
 - **Core Files**: Model, Controller, Requests, Vue components, Routes, Migration, Permission seeder
 - **Optional Components**: Enum, Observer, Policy, Factory, Test files (if specified with `--with` or `--all`)
@@ -204,7 +204,7 @@ routes/
 
 ### Generated Files Structure
 
-Running `php artisan make:feature User` will generate:
+Running `php artisan features:create User` will generate:
 
 ```
 📁 Generated Files:
@@ -239,16 +239,16 @@ The Laravel Module Generator provides four main commands for complete feature li
 
 | Command | Description | Purpose |
 |---------|-------------|---------|
-| `make:feature` | Generate complete CRUD feature | Create new features |
-| `delete:feature` | Remove complete CRUD feature | Clean up features |
+| `features:create` | Generate complete CRUD feature | Create new features |
+| `features:delete` | Remove complete CRUD feature | Clean up features |
 | `setup:modules-loader` | Create modular route loader | Setup route automation |
 | `install:modules-loader` | Install route loader into Laravel | Integrate with Laravel routing |
 
 ---
 
-### 📝 `make:feature` Command
+### 📝 `features:create` Command
 
-**Signature:** `make:feature {name} {--with=*} {--force}`
+**Signature:** `features:create {name} {--with=*} {--force}`
 
 #### Description
 Generates a complete CRUD feature with all necessary files including models, controllers, views, migrations, routes, and permissions.
@@ -309,19 +309,19 @@ database/seeders/{Name}PermissionSeeder.php
 
 ```bash
 # Basic feature generation
-php artisan make:feature Product
+php artisan features:create Product
 
 # With optional components
-php artisan make:feature Product --with=factory,policy,observer
+php artisan features:create Product --with=factory,policy,observer
 
 # With all optional components
-php artisan make:feature Product --with=factory,policy,observer,enum,test
+php artisan features:create Product --with=factory,policy,observer,enum,test
 
 # Force overwrite existing files
-php artisan make:feature Product --force
+php artisan features:create Product --force
 
 # Multiple optional components (alternative syntax)
-php artisan make:feature Product --with factory --with policy --with observer
+php artisan features:create Product --with factory --with policy --with observer
 ```
 
 #### Return Codes
@@ -334,9 +334,9 @@ php artisan make:feature Product --with factory --with policy --with observer
 
 ---
 
-### 🗑️ `delete:feature` Command
+### 🗑️ `features:delete` Command
 
-**Signature:** `delete:feature {name} {--with=*} {--all} {--force}`
+**Signature:** `features:delete {name} {--with=*} {--all} {--force}`
 
 #### Description
 Safely removes all files associated with a feature, including optional components and empty directories.
@@ -373,19 +373,19 @@ Safely removes all files associated with a feature, including optional component
 
 ```bash
 # Delete core feature files
-php artisan delete:feature Product
+php artisan features:delete Product
 
 # Delete with specific optional components
-php artisan delete:feature Product --with=factory,policy
+php artisan features:delete Product --with=factory,policy
 
 # Delete everything (core + all optional)
-php artisan delete:feature Product --all
+php artisan features:delete Product --all
 
 # Force delete without confirmation
-php artisan delete:feature Product --force
+php artisan features:delete Product --force
 
 # Delete with confirmation showing file list
-php artisan delete:feature Product --with=factory,policy,observer
+php artisan features:delete Product --with=factory,policy,observer
 ```
 
 #### Interactive Confirmation
@@ -628,7 +628,7 @@ vendor/bin/phpunit --coverage-html coverage/
 **File Already Exists:**
 ```bash
 # Solution: Use --force flag
-php artisan make:feature Product --force
+php artisan features:create Product --force
 ```
 
 **Permission Denied:**
@@ -654,12 +654,12 @@ php artisan route:list | grep products
 
 ```bash
 # Check if commands are registered
-php artisan list | grep "make:feature\|delete:feature\|setup:modules\|install:modules"
+php artisan list | grep "features:create\|features:delete\|setup:modules\|install:modules"
 
 # Verify file generation
-php artisan make:feature TestFeature --force
+php artisan features:create TestFeature --force
 ls -la app/Models/TestFeature.php
-php artisan delete:feature TestFeature --force
+php artisan features:delete TestFeature --force
 ```
 
 ---
@@ -698,7 +698,7 @@ Automated testing pipeline with comprehensive validation:
 - ✅ **Matrix Testing**: PHP 8.2, 8.3 × Laravel 12
 - ✅ **Package Validation**: Composer.json validation, syntax checking
 - ✅ **Laravel Integration**: Fresh Laravel 12 app testing
-- ✅ **Command Testing**: Verify `make:feature` functionality with all options
+- ✅ **Command Testing**: Verify `features:create` functionality with all options
 - ✅ **File Validation**: Ensure all generated files contain correct content
 - ✅ **Dependency Testing**: Validate Spatie Permission integration
 
@@ -752,7 +752,7 @@ composer config repositories.local path ../
 composer require ngodingskuyy/laravel-module-generator:@dev
 
 # Test the command
-php artisan make:feature Product --with=test,factory,observer,enum
+php artisan features:create Product --with=test,factory,observer,enum
 ```
 
 ### CI Pipeline Status
@@ -760,7 +760,7 @@ php artisan make:feature Product --with=test,factory,observer,enum
 The workflow tests:
 1. **Package Validation** - Syntax, dependencies, composer.json
 2. **Laravel Integration** - Install package in fresh Laravel 11
-3. **Command Execution** - Run `make:feature` and verify file creation
+3. **Command Execution** - Run `features:create` and verify file creation
 4. **Laravel Compatibility** - Ensure no conflicts with Laravel core
 
 ---

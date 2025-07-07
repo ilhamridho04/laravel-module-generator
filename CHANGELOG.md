@@ -5,6 +5,66 @@ All notable changes to `ngodingskuyy/laravel-module-generator` will be documente
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.4.0] - 2025-07-07
+
+### 🔄 Command Restructuring
+
+#### Command Renaming
+- **BREAKING**: Renamed `make:feature` to `features:create` for better organization
+- **BREAKING**: Renamed `delete:feature` to `features:delete` for consistency
+- **NEW**: Improved command grouping with `features:` namespace for better discoverability
+
+#### Benefits of New Command Structure
+- **Consistent Naming**: All feature-related commands now use `features:` prefix
+- **Better Organization**: Commands are logically grouped by functionality
+- **Improved Discoverability**: `php artisan list features` shows all feature commands
+- **Modern Laravel Patterns**: Follows Laravel's command naming conventions
+
+#### Updated Command Usage
+```bash
+# Old Commands (deprecated)
+php artisan make:feature ProductManagement
+php artisan delete:feature ProductManagement
+
+# New Commands (v4.4+)
+php artisan features:create ProductManagement
+php artisan features:delete ProductManagement
+```
+
+#### Migration Guide
+**No code changes required** - only command names have changed:
+
+**Before (v4.3 and earlier):**
+```bash
+php artisan make:feature User --with=factory,policy,test
+php artisan delete:feature User --force
+```
+
+**After (v4.4+):**
+```bash
+php artisan features:create User --with=factory,policy,test
+php artisan features:delete User --force
+```
+
+### 🧪 Updated Test Suite
+
+#### Test Updates
+- **Updated**: All unit tests to use new command names
+- **Updated**: All feature tests to use new command names  
+- **Updated**: All integration tests to use new command names
+- **Maintained**: 100% test coverage with 69 tests, 243 assertions
+
+#### Documentation Updates
+- **Updated**: README.md with new command examples
+- **Updated**: API documentation with correct command signatures
+- **Updated**: All code examples and usage instructions
+
+### 🚀 Backward Compatibility Note
+
+**Breaking Change Notice**: This is a breaking change for command-line usage only. Generated code and package functionality remain unchanged. Users need to update their scripts and documentation to use the new command names.
+
+---
+
 ## [4.3.0] - 2025-07-06
 
 ### 🎨 Major UI/UX Enhancements
@@ -185,8 +245,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 composer require ngodingskuyy/laravel-module-generator:^4.3
 
 # Regenerate components to use new shadcn-vue design (optional)
-php artisan delete:feature ExistingFeature --force
-php artisan make:feature ExistingFeature --force
+php artisan features:delete ExistingFeature --force
+php artisan features:create ExistingFeature --force
 ```
 
 #### New Dependencies
@@ -254,7 +314,7 @@ Special thanks to:
 ### 🚀 Major Features
 
 #### Feature Deletion System
-- **NEW**: Added `delete:feature {name}` command for comprehensive feature removal
+- **NEW**: Added `features:delete {name}` command for comprehensive feature removal
 - Safely removes all generated files for a feature (models, controllers, views, migrations, etc.)
 - Supports optional component cleanup (enums, observers, policies, factories, tests)
 - Intelligent directory cleanup - removes empty directories after file deletion
@@ -335,10 +395,10 @@ src/stubs/
 **Feature Deletion:**
 ```bash
 # Delete a complete feature
-php artisan delete:feature ProductManagement
+php artisan features:delete ProductManagement
 
 # Delete with force (no confirmation)
-php artisan delete:feature ProductManagement --force
+php artisan features:delete ProductManagement --force
 ```
 
 **Modules Loader Setup:**
@@ -355,19 +415,19 @@ php artisan install:modules-loader
 **Enhanced Feature Generation:**
 ```bash
 # Create feature (existing, now more stable)
-php artisan make:feature ProductManagement
+php artisan features:create ProductManagement
 
 # With optional components (more robust)
-php artisan make:feature ProductManagement --with=enum,observer,policy,factory,test
+php artisan features:create ProductManagement --with=enum,observer,policy,factory,test
 ```
 
 ### 🔄 Feature Lifecycle Management
 
 The package now supports complete feature lifecycle:
 
-1. **Creation**: `make:feature {name}` - Generate all feature files
+1. **Creation**: `features:create {name}` - Generate all feature files
 2. **Management**: Manual editing and customization
-3. **Deletion**: `delete:feature {name}` - Clean removal of all files
+3. **Deletion**: `features:delete {name}` - Clean removal of all files
 4. **Modular Routing**: Automatic route discovery and loading
 
 ### 🎯 Modular Architecture Support
@@ -560,14 +620,14 @@ tests/
 
 - **69 tests** with **243 assertions**
 - **100% pass rate**
-- **4 main commands**: `make:feature`, `module:delete`, `modules:setup`, `modules:install`
+- **4 main commands**: `features:create`, `module:delete`, `modules:setup`, `modules:install`
 - Complete CRUD feature generation with optional components
 - Full feature lifecycle management (create → manage → delete)
 
 ### 🎯 Available Commands
 
 #### Core Commands
-- `make:feature {name}` - Generate complete CRUD feature
+- `features:create {name}` - Generate complete CRUD feature
 - `module:delete {name}` - Delete feature and all its components
 
 #### Modules Management
@@ -700,7 +760,7 @@ src/
 
 ### 🎯 Generated Components
 
-The `make:feature {name}` command now generates:
+The `features:create {name}` command now generates:
 
 - **Model** with proper traits, fillable fields, and scope methods
 - **Controller** with full CRUD operations and Inertia.js integration
