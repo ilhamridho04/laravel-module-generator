@@ -98,8 +98,6 @@ class DeleteFeature extends Command
             $coreFiles = [
                 app_path("Http/Controllers/API/{$name}Controller.php"),
                 base_path("routes/Modules/{$plural}/api.php"),
-                app_path("Http/Requests/Store{$name}Request.php"),
-                app_path("Http/Requests/Update{$name}Request.php"),
             ];
         } elseif ($viewOnly) {
             // Only delete View-related files
