@@ -8,7 +8,7 @@ Demonstrasi fitur Interactive Menu yang baru ditambahkan ke Laravel Module Gener
 Ketika menjalankan command tanpa opsi `--api` atau `--view`, menu interaktif akan muncul:
 
 ```bash
-php artisan modules:create ProductManagement
+php artisan module:create ProductManagement
 ```
 
 **Output:**
@@ -76,13 +76,13 @@ Tetap bisa menggunakan opsi langsung untuk melewati menu:
 
 ```bash
 # API Only - langsung tanpa menu
-php artisan modules:create User --api
+php artisan module:create User --api
 
 # View Only - langsung tanpa menu  
-php artisan modules:create User --view
+php artisan module:create User --view
 
 # Full-stack - tampilkan menu
-php artisan modules:create User
+php artisan module:create User
 ```
 
 ## 🎨 User Experience

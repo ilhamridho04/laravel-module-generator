@@ -33,7 +33,7 @@ Menghapus hanya komponen View:
 
 ### Interactive Mode (Default)
 ```bash
-php artisan modules:delete ProductName
+php artisan module:delete ProductName
 ```
 Akan menampilkan menu:
 ```
@@ -52,25 +52,25 @@ Akan menampilkan menu:
 ### Command Line Flags
 ```bash
 # API Only
-php artisan modules:delete ProductName --api --force
+php artisan module:delete ProductName --api --force
 
 # View Only  
-php artisan modules:delete ProductName --view --force
+php artisan module:delete ProductName --view --force
 
 # Full Deletion (tanpa konfirmasi)
-php artisan modules:delete ProductName --force
+php artisan module:delete ProductName --force
 ```
 
 ### Error Validation
 ```bash
 # Error - tidak bisa keduanya
-php artisan modules:delete ProductName --api --view
+php artisan module:delete ProductName --api --view
 # Output: ❌ Tidak bisa menggunakan --api dan --view bersamaan. Pilih salah satu atau kosongkan untuk full deletion.
 ```
 
 ## Command Signature
 ```bash
-modules:delete {name} 
+module:delete {name} 
             {--with=* : Optional components to delete like enum, observer, policy, factory, test} 
             {--all : Delete all related files including optional components} 
             {--force : Delete without confirmation}
@@ -82,7 +82,7 @@ modules:delete {name}
 
 ### Creating Full-Stack Feature
 ```bash
-$ php artisan modules:create DemoProduct --skip-install
+$ php artisan module:create DemoProduct --skip-install
 🎯 Pilih mode pembuatan fitur:
    1. Full-stack (API + Views) - Lengkap dengan controller, routes, views
    2. API Only - Hanya API controller, routes, dan requests
@@ -102,7 +102,7 @@ $ php artisan modules:create DemoProduct --skip-install
 
 ### Deleting API Only
 ```bash
-$ php artisan modules:delete DemoProduct --api --force
+$ php artisan module:delete DemoProduct --api --force
 🗑️ Menghapus fitur: DemoProducts (demo-products) - Mode: API Only
 
 📋 File yang akan dihapus:
@@ -120,7 +120,7 @@ $ php artisan modules:delete DemoProduct --api --force
 
 ### Deleting View Only
 ```bash
-$ php artisan modules:delete DemoProduct --view --force
+$ php artisan module:delete DemoProduct --view --force
 🗑️ Menghapus fitur: DemoProducts (demo-products) - Mode: View Only
 
 📋 File yang akan dihapus:

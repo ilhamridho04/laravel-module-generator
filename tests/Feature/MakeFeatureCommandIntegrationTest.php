@@ -27,7 +27,7 @@ class MakeFeatureCommandIntegrationTest extends TestCase
     public function it_can_run_make_feature_command_successfully()
     {
         // Test that the command can be called without errors
-        $exitCode = Artisan::call('modules:create', [
+        $exitCode = Artisan::call('module:create', [
             'name' => 'TestPost',
             '--force' => true
         ]);
@@ -41,7 +41,7 @@ class MakeFeatureCommandIntegrationTest extends TestCase
     /** @test */
     public function it_creates_model_file()
     {
-        Artisan::call('modules:create', [
+        Artisan::call('module:create', [
             'name' => 'Article',
             '--force' => true
         ]);
@@ -57,7 +57,7 @@ class MakeFeatureCommandIntegrationTest extends TestCase
     /** @test */
     public function it_creates_controller_file()
     {
-        Artisan::call('modules:create', [
+        Artisan::call('module:create', [
             'name' => 'Category',
             '--force' => true
         ]);
@@ -76,7 +76,7 @@ class MakeFeatureCommandIntegrationTest extends TestCase
     /** @test */
     public function it_creates_request_files()
     {
-        Artisan::call('modules:create', [
+        Artisan::call('module:create', [
             'name' => 'Tag',
             '--force' => true
         ]);
@@ -97,7 +97,7 @@ class MakeFeatureCommandIntegrationTest extends TestCase
     /** @test */
     public function it_creates_migration_file()
     {
-        Artisan::call('modules:create', [
+        Artisan::call('module:create', [
             'name' => 'Comment',
             '--force' => true
         ]);
@@ -114,7 +114,7 @@ class MakeFeatureCommandIntegrationTest extends TestCase
     /** @test */
     public function it_creates_vue_view_files()
     {
-        Artisan::call('modules:create', [
+        Artisan::call('module:create', [
             'name' => 'Post',
             '--force' => true
         ]);
@@ -138,7 +138,7 @@ class MakeFeatureCommandIntegrationTest extends TestCase
     /** @test */
     public function it_creates_route_file()
     {
-        Artisan::call('modules:create', [
+        Artisan::call('module:create', [
             'name' => 'User',
             '--force' => true
         ]);
@@ -154,7 +154,7 @@ class MakeFeatureCommandIntegrationTest extends TestCase
     /** @test */
     public function it_creates_permission_seeder()
     {
-        Artisan::call('modules:create', [
+        Artisan::call('module:create', [
             'name' => 'Product',
             '--force' => true
         ]);
@@ -171,7 +171,7 @@ class MakeFeatureCommandIntegrationTest extends TestCase
     public function it_handles_force_option_correctly()
     {
         // Create first time
-        Artisan::call('modules:create', ['name' => 'TestItem']);
+        Artisan::call('module:create', ['name' => 'TestItem']);
 
         $modelPath = app_path('Models/TestItem.php');
         $this->assertFileExists($modelPath);
@@ -180,14 +180,14 @@ class MakeFeatureCommandIntegrationTest extends TestCase
         File::put($modelPath, '<?php // This is modified content');
 
         // Run again without force - should not overwrite
-        $exitCode = Artisan::call('modules:create', ['name' => 'TestItem']);
+        $exitCode = Artisan::call('module:create', ['name' => 'TestItem']);
         $this->assertEquals(0, $exitCode);
 
         $content = File::get($modelPath);
         $this->assertStringContainsString('// This is modified content', $content);
 
         // Run again with force - should overwrite
-        Artisan::call('modules:create', ['name' => 'TestItem', '--force' => true]);
+        Artisan::call('module:create', ['name' => 'TestItem', '--force' => true]);
 
         $content = File::get($modelPath);
         $this->assertStringNotContainsString('// This is modified content', $content);
@@ -197,7 +197,7 @@ class MakeFeatureCommandIntegrationTest extends TestCase
     /** @test */
     public function it_can_create_optional_components()
     {
-        Artisan::call('modules:create', [
+        Artisan::call('module:create', [
             'name' => 'Order',
             '--with' => ['enum', 'observer'],
             '--force' => true

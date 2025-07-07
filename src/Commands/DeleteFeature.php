@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 
 class DeleteFeature extends Command
 {
-    protected $signature = 'modules:delete {name} 
+    protected $signature = 'module:delete {name} 
                             {--with=* : Optional components to delete like enum, observer, policy, factory, test} 
                             {--all : Delete all related files including optional components} 
                             {--force : Delete without confirmation}

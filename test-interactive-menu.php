@@ -52,6 +52,6 @@ echo "- Shows confirmation message after selection\n";
 
 echo "\n✅ Interactive Menu implementation is ready!\n";
 echo "\n📋 Usage Examples:\n";
-echo "   php artisan modules:create User           # Shows interactive menu\n";
-echo "   php artisan modules:create User --api     # Skips menu, API mode\n";
-echo "   php artisan modules:create User --view    # Skips menu, View mode\n";
+echo "   php artisan module:create User           # Shows interactive menu\n";
+echo "   php artisan module:create User --api     # Skips menu, API mode\n";
+echo "   php artisan module:create User --view    # Skips menu, View mode\n";

@@ -53,7 +53,7 @@ class MakeFeatureApiViewOptionsTest extends TestCase
     /** @test */
     public function it_prevents_using_both_api_and_view_options()
     {
-        $result = Artisan::call('modules:create', [
+        $result = Artisan::call('module:create', [
             'name' => $this->testModelName,
             '--api' => true,
             '--view' => true,
@@ -65,7 +65,7 @@ class MakeFeatureApiViewOptionsTest extends TestCase
     }    /** @test */
     public function it_can_generate_api_only_feature()
     {
-        $result = Artisan::call('modules:create', [
+        $result = Artisan::call('module:create', [
             'name' => $this->testModelName,
             '--api' => true,
         ]);
@@ -109,7 +109,7 @@ class MakeFeatureApiViewOptionsTest extends TestCase
     /** @test */
     public function it_can_generate_view_only_feature()
     {
-        $result = Artisan::call('modules:create', [
+        $result = Artisan::call('module:create', [
             'name' => $this->testModelName,
             '--view' => true,
         ]);
@@ -159,7 +159,7 @@ class MakeFeatureApiViewOptionsTest extends TestCase
     /** @test */
     public function it_can_generate_full_stack_feature_by_default()
     {
-        $result = Artisan::call('modules:create', [
+        $result = Artisan::call('module:create', [
             'name' => $this->testModelName,
         ]);
 
@@ -195,17 +195,17 @@ class MakeFeatureApiViewOptionsTest extends TestCase
     public function it_shows_correct_generation_mode_in_output()
     {
         // Test API mode
-        Artisan::call('modules:create', ['name' => 'TestApiMode', '--api' => true]);
+        Artisan::call('module:create', ['name' => 'TestApiMode', '--api' => true]);
         $apiOutput = Artisan::output();
         $this->assertStringContainsString('Mode: API Only', $apiOutput);
 
         // Test View mode
-        Artisan::call('modules:create', ['name' => 'TestViewMode', '--view' => true]);
+        Artisan::call('module:create', ['name' => 'TestViewMode', '--view' => true]);
         $viewOutput = Artisan::output();
         $this->assertStringContainsString('Mode: View Only', $viewOutput);
 
         // Test Full-stack mode
-        Artisan::call('modules:create', ['name' => 'TestFullMode']);
+        Artisan::call('module:create', ['name' => 'TestFullMode']);
         $fullOutput = Artisan::output();
         $this->assertStringContainsString('Mode: Full-stack (API + View)', $fullOutput);
 

@@ -54,13 +54,13 @@ Include Test - Feature test untuk CRUD operations? (yes/no) [no]: no
 ### In a Real Laravel Application:
 ```bash
 # Fully interactive mode
-php artisan modules:create
+php artisan module:create
 
 # With name provided (still shows mode and component selection)
-php artisan modules:create Product
+php artisan module:create Product
 
 # Non-interactive with flags (existing behavior)
-php artisan modules:create Product --api --with=enum,policy
+php artisan module:create Product --api --with=enum,policy
 ```
 
 ### Unit Test Results:

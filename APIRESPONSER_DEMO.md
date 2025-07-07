@@ -210,13 +210,13 @@ Tests: 91, Assertions: 354
 
 ```bash
 # Generate API-only feature with ApiResponser trait
-php artisan modules:create Product --api
+php artisan module:create Product --api
 
 # Generate full-stack feature with ApiResponser trait  
-php artisan modules:create Product
+php artisan module:create Product
 
 # Generate view-only feature (no ApiResponser trait)
-php artisan modules:create Product --view
+php artisan module:create Product --view
 ```
 
 Trait akan otomatis dibuat di `app/Traits/ApiResponser.php` dan digunakan oleh semua API controllers yang dihasilkan.

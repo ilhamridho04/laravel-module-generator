@@ -170,10 +170,10 @@ jobs:
           
           # Test if package commands are available
           echo "=== Testing Available Commands ==="
-          if php artisan list | grep -i "modules:create"; then
-            echo "✅ modules:create command is available"
+          if php artisan list | grep -i "module:create"; then
+            echo "✅ module:create command is available"
           else
-            echo "❌ modules:create command not found"
+            echo "❌ module:create command not found"
             echo "Available make commands:"
             php artisan list | grep "make:" || echo "No make commands found"
             exit 1
@@ -182,19 +182,19 @@ jobs:
       - name: Test package functionality
         run: |
           cd laravel-app
-          echo "=== Testing modules:create command functionality ==="
+          echo "=== Testing module:create command functionality ==="
           
           # First, check if command is registered
-          if ! php artisan list | grep -q "modules:create"; then
-            echo "❌ modules:create command not found in artisan list"
+          if ! php artisan list | grep -q "module:create"; then
+            echo "❌ module:create command not found in artisan list"
             exit 1
           fi
           
-          echo "✅ modules:create command found in artisan list"
+          echo "✅ module:create command found in artisan list"
           
           # Try to run the command help first
           echo "=== Testing command help ==="
-          if php artisan help modules:create; then
+          if php artisan help module:create; then
             echo "✅ Command help works"
           else
             echo "❌ Command help failed"
@@ -202,13 +202,13 @@ jobs:
           fi
           
           # Try to run the actual command
-          echo "=== Running modules:create TestModule ==="
-          if php artisan modules:create TestModule --force; then
-            echo "✅ modules:create command executed successfully"
+          echo "=== Running module:create TestModule ==="
+          if php artisan module:create TestModule --force; then
+            echo "✅ module:create command executed successfully"
           else
-            echo "❌ modules:create command failed to execute"
+            echo "❌ module:create command failed to execute"
             echo "=== Trying with verbose output ==="
-            php artisan modules:create TestModule --force -v || true
+            php artisan module:create TestModule --force -v || true
             exit 1
           fi
           

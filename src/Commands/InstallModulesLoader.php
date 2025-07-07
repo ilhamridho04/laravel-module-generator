@@ -7,7 +7,7 @@ use Illuminate\Filesystem\Filesystem;
 
 class InstallModulesLoader extends Command
 {
-    protected $signature = 'modules:install {--force : Force reinstall even if already installed}';
+    protected $signature = 'module:install {--force : Force reinstall even if already installed}';
     protected $description = 'Install and integrate modules auto-loader (web and API) into Laravel routes';
 
     protected Filesystem $files;
@@ -33,7 +33,7 @@ class InstallModulesLoader extends Command
         $this->integrateIntoApiRoutes($force);
 
         $this->info("\n✅ Modules loader berhasil diinstall dan diintegrasikan!");
-        $this->info("🎯 Sekarang Anda dapat membuat module dengan: php artisan modules:create NamaFeature");
+        $this->info("🎯 Sekarang Anda dapat membuat module dengan: php artisan module:create NamaFeature");
     }
 
     protected function ensureModulesLoader(bool $force = false): void

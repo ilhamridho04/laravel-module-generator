@@ -74,7 +74,7 @@ class MakeFeatureMultiSelectTest extends TestCase
     public function it_can_create_feature_with_no_optional_components_via_multiselect()
     {
         // Test the new multi-select interface for optional components
-        $command = $this->artisan('modules:create')
+        $command = $this->artisan('module:create')
             ->expectsQuestion('📝 Masukkan nama fitur (contoh: Product, UserProfile, Category)', $this->testModelName)
             ->expectsConfirmation('✅ Lanjutkan dengan nama ini?', 'yes')
             ->expectsChoice(
@@ -103,7 +103,7 @@ class MakeFeatureMultiSelectTest extends TestCase
     public function it_can_create_feature_with_multiple_components_via_multiselect()
     {
         // Test selecting multiple components with the new interface
-        $command = $this->artisan('modules:create')
+        $command = $this->artisan('module:create')
             ->expectsQuestion('📝 Masukkan nama fitur (contoh: Product, UserProfile, Category)', $this->testModelName)
             ->expectsConfirmation('✅ Lanjutkan dengan nama ini?', 'yes')
             ->expectsChoice(
@@ -135,7 +135,7 @@ class MakeFeatureMultiSelectTest extends TestCase
     public function it_can_select_single_component_via_multiselect()
     {
         // Test selecting a single component
-        $command = $this->artisan('modules:create')
+        $command = $this->artisan('module:create')
             ->expectsQuestion('📝 Masukkan nama fitur (contoh: Product, UserProfile, Category)', $this->testModelName)
             ->expectsConfirmation('✅ Lanjutkan dengan nama ini?', 'yes')
             ->expectsChoice(

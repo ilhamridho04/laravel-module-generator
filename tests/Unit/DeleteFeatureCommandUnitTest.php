@@ -26,7 +26,7 @@ class DeleteFeatureCommandUnitTest extends TestCase
         $signatureProperty->setAccessible(true);
         $signature = $signatureProperty->getValue($command);
 
-        $this->assertStringContainsString('modules:delete', $signature);
+        $this->assertStringContainsString('module:delete', $signature);
         $this->assertStringContainsString('{name}', $signature);
         $this->assertStringContainsString('--with=*', $signature);
         $this->assertStringContainsString('--all', $signature);

@@ -78,7 +78,7 @@ class MakeFeatureInteractiveTest extends TestCase
         // For this test, we'll verify the behavior by checking what gets created
         // since testing interactive prompts is complex in the test environment
 
-        $result = Artisan::call('modules:create', [
+        $result = Artisan::call('module:create', [
             'name' => $this->testModelName,
             '--skip-install' => true,
         ]);
@@ -96,7 +96,7 @@ class MakeFeatureInteractiveTest extends TestCase
     /** @test */
     public function it_can_select_api_only_mode_via_flag()
     {
-        $result = Artisan::call('modules:create', [
+        $result = Artisan::call('module:create', [
             'name' => $this->testModelName,
             '--api' => true,
             '--skip-install' => true,
@@ -124,7 +124,7 @@ class MakeFeatureInteractiveTest extends TestCase
     /** @test */
     public function it_can_select_view_only_mode_via_flag()
     {
-        $result = Artisan::call('modules:create', [
+        $result = Artisan::call('module:create', [
             'name' => $this->testModelName,
             '--view' => true,
             '--skip-install' => true,
@@ -157,7 +157,7 @@ class MakeFeatureInteractiveTest extends TestCase
     public function it_skips_interactive_menu_when_api_option_provided()
     {
         // When --api is provided, should not show interactive menu
-        $result = Artisan::call('modules:create', [
+        $result = Artisan::call('module:create', [
             'name' => $this->testModelName,
             '--api' => true,
             '--skip-install' => true,
@@ -177,7 +177,7 @@ class MakeFeatureInteractiveTest extends TestCase
     public function it_skips_interactive_menu_when_view_option_provided()
     {
         // When --view is provided, should not show interactive menu
-        $result = Artisan::call('modules:create', [
+        $result = Artisan::call('module:create', [
             'name' => $this->testModelName,
             '--view' => true,
             '--skip-install' => true,
@@ -196,7 +196,7 @@ class MakeFeatureInteractiveTest extends TestCase
     /** @test */
     public function it_shows_mode_selection_confirmation_messages()
     {
-        $command = $this->artisan('modules:create', ['name' => $this->testModelName])
+        $command = $this->artisan('module:create', ['name' => $this->testModelName])
             ->expectsChoice(
                 '🤔 Pilih mode generation',
                 '2',
@@ -215,7 +215,7 @@ class MakeFeatureInteractiveTest extends TestCase
     public function it_can_create_feature_with_optional_components_via_flags()
     {
         // Test that optional components work with flags (this tests the same logic as multi-select)
-        $result = Artisan::call('modules:create', [
+        $result = Artisan::call('module:create', [
             'name' => $this->testModelName,
             '--api' => true,
             '--with' => ['enum', 'policy'],
@@ -241,7 +241,7 @@ class MakeFeatureInteractiveTest extends TestCase
     public function it_can_create_feature_without_optional_components()
     {
         // Test creating feature without any optional components
-        $result = Artisan::call('modules:create', [
+        $result = Artisan::call('module:create', [
             'name' => $this->testModelName,
             '--skip-install' => true,
         ]);

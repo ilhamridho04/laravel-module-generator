@@ -26,7 +26,7 @@ class MakeFeatureCommandUnitTest extends TestCase
         $signatureProperty->setAccessible(true);
         $signature = $signatureProperty->getValue($command);
 
-        $this->assertStringContainsString('modules:create', $signature);
+        $this->assertStringContainsString('module:create', $signature);
         $this->assertStringContainsString('{name}', $signature);
         $this->assertStringContainsString('--with=*', $signature);
         $this->assertStringContainsString('--force', $signature);
