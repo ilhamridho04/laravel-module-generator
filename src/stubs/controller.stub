@@ -5,12 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\{{ model }};
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class {{ model }}Controller extends Controller
 {
-    use AuthorizesRequests;
-
     public function __construct()
     {
         $this->middleware('auth');

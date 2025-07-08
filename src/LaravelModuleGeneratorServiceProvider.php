@@ -14,10 +14,10 @@ class LaravelModuleGeneratorServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->commands([
-                Commands\MakeFeature::class,
-                Commands\DeleteFeature::class,
-                Commands\SetupModulesLoader::class,
-                Commands\InstallModulesLoader::class,
+                MakeFeature::class,
+                DeleteFeature::class,
+                SetupModulesLoader::class,
+                InstallModulesLoader::class,
             ]);
 
             // Publish stubs

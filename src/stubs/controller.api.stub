@@ -8,12 +8,11 @@ use App\Http\Requests\Store{{ model }}Request;
 use App\Http\Requests\Update{{ model }}Request;
 use App\Http\Controllers\Controller;
 use App\Traits\ApiResponser;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 
 class {{ model }}Controller extends Controller
 {
-    use AuthorizesRequests, ApiResponser;
+    use ApiResponser;
 
     public function __construct()
     {
