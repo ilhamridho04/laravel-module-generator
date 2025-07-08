@@ -367,11 +367,31 @@ class MakeFeature extends Command
     protected function makeMigration(string $name, bool $force = false): void
     {
         $table = Str::snake(Str::pluralStudly($name));
-        $this->callSilent('make:migration', [
-            'name' => "create_{$table}_table",
-            '--create' => $table,
-        ]);
-        $this->line("🗄️ Migration dibuat: create_{$table}_table");
+        $migrationName = "create_{$table}_table";
+
+        // Cek apakah migration dengan nama serupa sudah ada
+        $migrationPath = database_path('migrations');
+        $exists = false;
+
+        if ($this->files->exists($migrationPath)) {
+            $files = $this->files->files($migrationPath);
+            foreach ($files as $file) {
+                if (preg_match("/\d{4}_\d{2}_\d{2}_\d{6}_{$migrationName}\.php$/", $file->getFilename())) {
+                    $exists = true;
+                    break;
+                }
+            }
+        }
+
+        if ($force || !$exists) {
+            $this->callSilent('make:migration', [
+                'name' => $migrationName,
+                '--create' => $table,
+            ]);
+            $this->line("🗄️ Migration dibuat: {$migrationName}");
+        } else {
+            $this->warn("🗄️ Migration sudah ada: {$migrationName}");
+        }
     }
 
     protected function makeController(string $name, string $plural, bool $force = false, bool $apiOnly = false, bool $viewOnly = false): void
