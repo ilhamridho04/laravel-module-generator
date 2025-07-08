@@ -404,6 +404,7 @@ class MakeFeature extends Command
                 'plural' => $plural,
                 'table' => Str::snake($plural),
                 'kebab' => Str::kebab($plural),
+                'permission' => Str::snake($plural, ' '),
             ]);
             $this->files->put($controllerPath, $stub);
             $this->line("🎮 API Controller dibuat: API/{$name}Controller.php");
@@ -425,6 +426,7 @@ class MakeFeature extends Command
                 'plural' => $plural,
                 'table' => Str::snake($plural),
                 'kebab' => Str::kebab($plural),
+                'permission' => Str::snake($plural, ' '),
             ]);
             $this->files->put($controllerPath, $stub);
             $this->line("🎮 Web Controller dibuat: {$name}Controller.php");
