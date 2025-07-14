@@ -411,7 +411,7 @@ class MakeFeature extends Command
 
     protected function generateApiController(string $name, string $plural, bool $force = false): void
     {
-        $controllerPath = app_path("Http/Controllers/API/{$name}Controller.php");
+        $controllerPath = app_path("Http/Controllers/Api/{$name}Controller.php");
 
         if ($force || !$this->files->exists($controllerPath)) {
             // Ensure API directory exists

@@ -7,7 +7,7 @@ Laravel Module Generator sekarang mendukung interactive mode untuk deletion deng
 ### 1. Full Deletion (API + Views)
 Menghapus semua komponen:
 - Model
-- API Controller (`app/Http/Controllers/API/`)
+- API Controller (`app/Http/Controllers/Api/`)
 - Web Controller (`app/Http/Controllers/`)
 - Request classes
 - Vue Views
@@ -18,7 +18,7 @@ Menghapus semua komponen:
 
 ### 2. API Only
 Menghapus hanya komponen API:
-- API Controller (`app/Http/Controllers/API/`)
+- API Controller (`app/Http/Controllers/Api/`)
 - API Routes (`routes/Modules/{Feature}/api.php`)
 - Request classes
 - ApiResponser trait (jika tidak ada API controller lain)
@@ -106,12 +106,12 @@ $ php artisan module:delete DemoProduct --api --force
 🗑️ Menghapus fitur: DemoProducts (demo-products) - Mode: API Only
 
 📋 File yang akan dihapus:
-  🗑️  app\Http/Controllers/API/DemoProductController.php
+  🗑️  app\Http/Controllers/Api/DemoProductController.php
   🗑️  routes/Modules/DemoProducts/api.php
   🗑️  app\Http/Requests/StoreDemoProductRequest.php
   🗑️  app\Http/Requests/UpdateDemoProductRequest.php
 
-✅ Dihapus: app\Http/Controllers/API/DemoProductController.php
+✅ Dihapus: app\Http/Controllers/Api/DemoProductController.php
 ✅ Dihapus: routes/Modules/DemoProducts/api.php
 ✅ Dihapus: app\Http/Requests/StoreDemoProductRequest.php
 ✅ Dihapus: app\Http/Requests/UpdateDemoProductRequest.php

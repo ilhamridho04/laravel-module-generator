@@ -33,7 +33,7 @@ class MakeFeatureInteractiveTest extends TestCase
     {
         $paths = [
             app_path("Http/Controllers/{$this->testModelName}Controller.php"),
-            app_path("Http/Controllers/API/{$this->testModelName}Controller.php"),
+            app_path("Http/Controllers/Api/{$this->testModelName}Controller.php"),
             app_path("Http/Requests/Store{$this->testModelName}Request.php"),
             app_path("Http/Requests/Update{$this->testModelName}Request.php"),
             app_path("Models/{$this->testModelName}.php"),
@@ -109,7 +109,7 @@ class MakeFeatureInteractiveTest extends TestCase
         $this->assertEquals(0, $result);
 
         // Should create API controller
-        $controllerPath = app_path("Http/Controllers/API/{$this->testModelName}Controller.php");
+        $controllerPath = app_path("Http/Controllers/Api/{$this->testModelName}Controller.php");
         $this->assertTrue($this->files->exists($controllerPath));
 
         $controllerContent = $this->files->get($controllerPath);
@@ -170,7 +170,7 @@ class MakeFeatureInteractiveTest extends TestCase
         $this->assertEquals(0, $result);
 
         // Should create API controller directly without prompting
-        $controllerPath = app_path("Http/Controllers/API/{$this->testModelName}Controller.php");
+        $controllerPath = app_path("Http/Controllers/Api/{$this->testModelName}Controller.php");
         $this->assertTrue($this->files->exists($controllerPath));
 
         $controllerContent = $this->files->get($controllerPath);
@@ -230,7 +230,7 @@ class MakeFeatureInteractiveTest extends TestCase
 
         // Should create basic feature
         $this->assertTrue($this->files->exists(app_path("Models/{$this->testModelName}.php")));
-        $this->assertTrue($this->files->exists(app_path("Http/Controllers/API/{$this->testModelName}Controller.php")));
+        $this->assertTrue($this->files->exists(app_path("Http/Controllers/Api/{$this->testModelName}Controller.php")));
 
         // Should create selected optional components
         $this->assertTrue($this->files->exists(app_path("Enums/{$this->testModelName}Status.php")));
@@ -255,7 +255,7 @@ class MakeFeatureInteractiveTest extends TestCase
         // Should create basic feature (full-stack mode creates both controllers)
         $this->assertTrue($this->files->exists(app_path("Models/{$this->testModelName}.php")));
         $this->assertTrue($this->files->exists(app_path("Http/Controllers/{$this->testModelName}Controller.php")));
-        $this->assertTrue($this->files->exists(app_path("Http/Controllers/API/{$this->testModelName}Controller.php")));
+        $this->assertTrue($this->files->exists(app_path("Http/Controllers/Api/{$this->testModelName}Controller.php")));
 
         // Should NOT create optional components
         $this->assertFalse($this->files->exists(app_path("Enums/{$this->testModelName}Status.php")));

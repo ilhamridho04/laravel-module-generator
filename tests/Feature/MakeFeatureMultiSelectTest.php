@@ -30,7 +30,7 @@ class MakeFeatureMultiSelectTest extends TestCase
     {
         $paths = [
             app_path("Http/Controllers/{$this->testModelName}Controller.php"),
-            app_path("Http/Controllers/API/{$this->testModelName}Controller.php"),
+            app_path("Http/Controllers/Api/{$this->testModelName}Controller.php"),
             app_path("Http/Requests/Store{$this->testModelName}Request.php"),
             app_path("Http/Requests/Update{$this->testModelName}Request.php"),
             app_path("Models/{$this->testModelName}.php"),
@@ -104,7 +104,7 @@ class MakeFeatureMultiSelectTest extends TestCase
 
         // Should create basic feature
         $this->assertTrue($this->files->exists(app_path("Models/{$this->testModelName}.php")));
-        $this->assertTrue($this->files->exists(app_path("Http/Controllers/API/{$this->testModelName}Controller.php")));
+        $this->assertTrue($this->files->exists(app_path("Http/Controllers/Api/{$this->testModelName}Controller.php")));
 
         // Should create selected optional components
         $this->assertTrue($this->files->exists(app_path("Enums/{$this->testModelName}Status.php")));

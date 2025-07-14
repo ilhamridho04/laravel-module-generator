@@ -138,7 +138,7 @@ php artisan module:create User --view   # View Only
 - **NEW**: `--view` option for View-only generation (no API routes/requests)
 - **ENHANCED**: Full-stack mode remains the default (API + Views)
 - **SMART**: Validation prevents using both `--api` and `--view` simultaneously
-- **ORGANIZED**: API controllers are placed in `app/Http/Controllers/API/` folder
+- **ORGANIZED**: API controllers are placed in `app/Http/Controllers/Api/` folder
 - **NAMESPACED**: API controllers use `App\Http\Controllers\API` namespace
 
 #### Generation Mode Details

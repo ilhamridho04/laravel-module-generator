@@ -8,7 +8,7 @@ Successfully fixed all remaining test failures in the Laravel Module Generator, 
 ### 1. API Controller Path Assertions
 **Problem**: Several tests were checking for API controllers at the wrong path
 - Tests expected: `app/Http/Controllers/{Model}Controller.php`
-- Actual location: `app/Http/Controllers/API/{Model}Controller.php`
+- Actual location: `app/Http/Controllers/Api/{Model}Controller.php`
 
 **Fixed in**:
 - `tests/Feature/MakeFeatureInteractiveTest.php`

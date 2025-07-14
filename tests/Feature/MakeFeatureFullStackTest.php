@@ -29,7 +29,7 @@ class MakeFeatureFullStackTest extends TestCase
         $paths = [
             app_path('Models/Product.php'),
             app_path('Http/Controllers/ProductController.php'),
-            app_path('Http/Controllers/API/ProductController.php'),
+            app_path('Http/Controllers/Api/ProductController.php'),
             app_path('Http/Requests/StoreProductRequest.php'),
             app_path('Http/Requests/UpdateProductRequest.php'),
             app_path('Traits/ApiResponser.php'),
@@ -39,7 +39,7 @@ class MakeFeatureFullStackTest extends TestCase
             resource_path('js/Pages/Products'),
             app_path('Models/Order.php'),
             app_path('Http/Controllers/OrderController.php'),
-            app_path('Http/Controllers/API/OrderController.php'),
+            app_path('Http/Controllers/Api/OrderController.php'),
             base_path('routes/Modules/Orders'),
         ];
 
@@ -81,10 +81,10 @@ class MakeFeatureFullStackTest extends TestCase
 
         // Verify both controllers were created
         $this->assertFileExists(app_path('Http/Controllers/ProductController.php'));
-        $this->assertFileExists(app_path('Http/Controllers/API/ProductController.php'));
+        $this->assertFileExists(app_path('Http/Controllers/Api/ProductController.php'));
 
         // Verify API controller uses correct namespace and trait
-        $apiControllerContent = $this->files->get(app_path('Http/Controllers/API/ProductController.php'));
+        $apiControllerContent = $this->files->get(app_path('Http/Controllers/Api/ProductController.php'));
         $this->assertStringContainsString('namespace App\Http\Controllers\API;', $apiControllerContent);
         $this->assertStringContainsString('use App\Traits\ApiResponser;', $apiControllerContent);
         $this->assertStringContainsString('use AuthorizesRequests, ApiResponser;', $apiControllerContent);
@@ -137,7 +137,7 @@ class MakeFeatureFullStackTest extends TestCase
 
         // Verify both controllers were created
         $this->assertFileExists(app_path('Http/Controllers/OrderController.php'));
-        $this->assertFileExists(app_path('Http/Controllers/API/OrderController.php'));
+        $this->assertFileExists(app_path('Http/Controllers/Api/OrderController.php'));
 
         // Verify both route files were created
         $this->assertFileExists(base_path('routes/Modules/Orders/api.php'));

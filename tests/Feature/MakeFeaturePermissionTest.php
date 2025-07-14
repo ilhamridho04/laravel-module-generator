@@ -31,7 +31,7 @@ class MakeFeaturePermissionTest extends TestCase
         $this->artisan('module:create Product --api --force')
             ->assertExitCode(0);
 
-        $controllerPath = app_path('Http/Controllers/API/ProductController.php');
+        $controllerPath = app_path('Http/Controllers/Api/ProductController.php');
         $this->assertFileExists($controllerPath);
 
         $content = $this->files->get($controllerPath);
@@ -115,7 +115,7 @@ class MakeFeaturePermissionTest extends TestCase
     private function cleanupTestFiles(): void
     {
         $filesToClean = [
-            app_path('Http/Controllers/API/ProductController.php'),
+            app_path('Http/Controllers/Api/ProductController.php'),
             app_path('Http/Controllers/CategoryController.php'),
             app_path('Http/Controllers/OrderController.php'),
             app_path('Http/Controllers/UserController.php'),

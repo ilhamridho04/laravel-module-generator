@@ -96,7 +96,7 @@ class DeleteFeature extends Command
         if ($apiOnly) {
             // Only delete API-related files
             $coreFiles = [
-                app_path("Http/Controllers/API/{$name}Controller.php"),
+                app_path("Http/Controllers/Api/{$name}Controller.php"),
                 base_path("routes/Modules/{$plural}/api.php"),
             ];
         } elseif ($viewOnly) {
@@ -114,7 +114,7 @@ class DeleteFeature extends Command
             $coreFiles = [
                 app_path("Models/{$name}.php"),
                 app_path("Http/Controllers/{$name}Controller.php"),
-                app_path("Http/Controllers/API/{$name}Controller.php"),
+                app_path("Http/Controllers/Api/{$name}Controller.php"),
                 app_path("Http/Requests/Store{$name}Request.php"),
                 app_path("Http/Requests/Update{$name}Request.php"),
                 resource_path("js/pages/{$plural}/Index.vue"),

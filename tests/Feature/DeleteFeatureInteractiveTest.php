@@ -28,7 +28,7 @@ class DeleteFeatureInteractiveTest extends TestCase
         $paths = [
             app_path('Models/TestProduct.php'),
             app_path('Http/Controllers/TestProductController.php'),
-            app_path('Http/Controllers/API/TestProductController.php'),
+            app_path('Http/Controllers/Api/TestProductController.php'),
             app_path('Http/Requests/StoreTestProductRequest.php'),
             app_path('Http/Requests/UpdateTestProductRequest.php'),
             app_path('Traits/ApiResponser.php'),
@@ -88,7 +88,7 @@ class DeleteFeatureInteractiveTest extends TestCase
 
         // Verify files exist before deletion
         $this->assertFileExists(app_path('Http/Controllers/TestProductController.php'));
-        $this->assertFileExists(app_path('Http/Controllers/API/TestProductController.php'));
+        $this->assertFileExists(app_path('Http/Controllers/Api/TestProductController.php'));
 
         // Test deletion with full deletion mode via Artisan::call instead of interactive
         $result = Artisan::call('module:delete', [
@@ -100,7 +100,7 @@ class DeleteFeatureInteractiveTest extends TestCase
 
         // Verify all files are deleted
         $this->assertFileDoesNotExist(app_path('Http/Controllers/TestProductController.php'));
-        $this->assertFileDoesNotExist(app_path('Http/Controllers/API/TestProductController.php'));
+        $this->assertFileDoesNotExist(app_path('Http/Controllers/Api/TestProductController.php'));
         $this->assertFileDoesNotExist(app_path('Models/TestProduct.php'));
         $this->assertFileDoesNotExist(base_path('routes/Modules/TestProducts/web.php'));
         $this->assertFileDoesNotExist(base_path('routes/Modules/TestProducts/api.php'));
@@ -113,7 +113,7 @@ class DeleteFeatureInteractiveTest extends TestCase
 
         // Verify files exist before deletion
         $this->assertFileExists(app_path('Http/Controllers/TestProductController.php'));
-        $this->assertFileExists(app_path('Http/Controllers/API/TestProductController.php'));
+        $this->assertFileExists(app_path('Http/Controllers/Api/TestProductController.php'));
         $this->assertFileExists(resource_path('js/pages/TestProducts/Index.vue'));
 
         // Test API-only deletion via flag
@@ -126,7 +126,7 @@ class DeleteFeatureInteractiveTest extends TestCase
         $this->assertEquals(0, $result);
 
         // Verify only API components are deleted
-        $this->assertFileDoesNotExist(app_path('Http/Controllers/API/TestProductController.php'));
+        $this->assertFileDoesNotExist(app_path('Http/Controllers/Api/TestProductController.php'));
         $this->assertFileDoesNotExist(base_path('routes/Modules/TestProducts/api.php'));
         // Note: Requests are shared between API and Web, so they might not be deleted in API-only mode
 
@@ -143,7 +143,7 @@ class DeleteFeatureInteractiveTest extends TestCase
 
         // Verify files exist before deletion
         $this->assertFileExists(app_path('Http/Controllers/TestProductController.php'));
-        $this->assertFileExists(app_path('Http/Controllers/API/TestProductController.php'));
+        $this->assertFileExists(app_path('Http/Controllers/Api/TestProductController.php'));
         $this->assertFileExists(resource_path('js/pages/TestProducts/Index.vue'));
 
         // Test view-only deletion via flag
@@ -161,7 +161,7 @@ class DeleteFeatureInteractiveTest extends TestCase
         $this->assertFileDoesNotExist(base_path('routes/Modules/TestProducts/web.php'));
 
         // Verify API components still exist
-        $this->assertFileExists(app_path('Http/Controllers/API/TestProductController.php'));
+        $this->assertFileExists(app_path('Http/Controllers/Api/TestProductController.php'));
         $this->assertFileExists(base_path('routes/Modules/TestProducts/api.php'));
         $this->assertFileExists(app_path('Http/Requests/StoreTestProductRequest.php'));
     }
@@ -180,7 +180,7 @@ class DeleteFeatureInteractiveTest extends TestCase
         $this->assertEquals(0, $result);
 
         // Verify only API components are deleted
-        $this->assertFileDoesNotExist(app_path('Http/Controllers/API/TestProductController.php'));
+        $this->assertFileDoesNotExist(app_path('Http/Controllers/Api/TestProductController.php'));
         $this->assertFileExists(app_path('Http/Controllers/TestProductController.php'));
     }
 
@@ -199,7 +199,7 @@ class DeleteFeatureInteractiveTest extends TestCase
 
         // Verify only view components are deleted
         $this->assertFileDoesNotExist(app_path('Http/Controllers/TestProductController.php'));
-        $this->assertFileExists(app_path('Http/Controllers/API/TestProductController.php'));
+        $this->assertFileExists(app_path('Http/Controllers/Api/TestProductController.php'));
     }
 
     /** @test */

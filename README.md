@@ -136,7 +136,7 @@ php artisan module:create User --api
 ```
 
 **What gets generated:**
-- ✅ Controller with JSON responses in `app/Http/Controllers/API/` folder
+- ✅ Controller with JSON responses in `app/Http/Controllers/Api/` folder
 - ✅ API routes (`routes/Modules/Users/api.php`) with `auth:sanctum` middleware
 - ✅ Store/Update Request classes
 - ✅ Model, Migration, Permission seeder
