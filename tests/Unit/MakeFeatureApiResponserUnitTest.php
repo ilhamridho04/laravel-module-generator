@@ -43,7 +43,7 @@ class MakeFeatureApiResponserUnitTest extends TestCase
         // Test API controller stub
         $result = $method->invoke($command, 'controller.api.stub');
 
-        $this->assertStringContainsString('namespace App\\Http\\Controllers\\API;', $result);
+        $this->assertStringContainsString('namespace App\\Http\\Controllers\\Api;', $result);
         $this->assertStringContainsString('use App\\Models\\{{ model }};', $result);
         $this->assertStringContainsString('class {{ model }}Controller extends Controller', $result);
         $this->assertStringContainsString('public function index()', $result);
@@ -85,7 +85,7 @@ class MakeFeatureApiResponserUnitTest extends TestCase
         // Test API routes stub
         $result = $method->invoke($command, 'routes.api.stub');
 
-        $this->assertStringContainsString('use App\\Http\\Controllers\\API\\{{ model }}Controller;', $result);
+        $this->assertStringContainsString('use App\\Http\\Controllers\\Api\\{{ model }}Controller;', $result);
         $this->assertStringContainsString('Route::middleware([\'auth:sanctum\'])', $result);
         $this->assertStringContainsString('Route::apiResource(', $result);
     }

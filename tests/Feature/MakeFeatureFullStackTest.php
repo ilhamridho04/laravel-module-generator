@@ -85,7 +85,7 @@ class MakeFeatureFullStackTest extends TestCase
 
         // Verify API controller uses correct namespace and trait
         $apiControllerContent = $this->files->get(app_path('Http/Controllers/Api/ProductController.php'));
-        $this->assertStringContainsString('namespace App\Http\Controllers\API;', $apiControllerContent);
+        $this->assertStringContainsString('namespace App\Http\Controllers\Api;', $apiControllerContent);
         $this->assertStringContainsString('use App\Traits\ApiResponser;', $apiControllerContent);
         $this->assertStringContainsString('use AuthorizesRequests, ApiResponser;', $apiControllerContent);
 
@@ -99,7 +99,7 @@ class MakeFeatureFullStackTest extends TestCase
 
         // Verify API routes point to API controller
         $apiRoutesContent = $this->files->get(base_path('routes/Modules/Products/api.php'));
-        $this->assertStringContainsString('App\Http\Controllers\API\ProductController', $apiRoutesContent);
+        $this->assertStringContainsString('App\Http\Controllers\Api\ProductController', $apiRoutesContent);
 
         // Verify web routes point to web controller
         $webRoutesContent = $this->files->get(base_path('routes/Modules/Products/web.php'));

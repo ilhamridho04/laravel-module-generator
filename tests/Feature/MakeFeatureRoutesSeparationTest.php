@@ -44,7 +44,7 @@ class MakeFeatureRoutesSeparationTest extends TestCase
         $content = File::get($apiRoutesStub);
 
         // Should use model parameter, not controller
-        $this->assertStringContainsString('use App\Http\Controllers\API\{{ model }}Controller;', $content);
+        $this->assertStringContainsString('use App\Http\Controllers\Api\{{ model }}Controller;', $content);
         $this->assertStringContainsString('Route::apiResource(\'{{ kebab }}\', {{ model }}Controller::class);', $content);
 
         // Should have auth:sanctum middleware
@@ -95,7 +95,7 @@ class MakeFeatureRoutesSeparationTest extends TestCase
         // Test API routes stub
         $result = $method->invoke($command, 'routes.api.stub');
 
-        $this->assertStringContainsString('use App\\Http\\Controllers\\API\\{{ model }}Controller;', $result);
+        $this->assertStringContainsString('use App\\Http\\Controllers\\Api\\{{ model }}Controller;', $result);
         $this->assertStringContainsString('Route::middleware([\'auth:sanctum\'])', $result);
         $this->assertStringContainsString('Route::apiResource(', $result);
         $this->assertStringContainsString('{{ kebab }}', $result);

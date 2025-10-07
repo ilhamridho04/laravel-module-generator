@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\API\{{ model }}Controller;
+use App\Http\Controllers\Api\{{ model }}Controller;
 
 // API routes are automatically prefixed with 'api/' and have 'api' middleware applied
 // by the API modules loader (routes/api-modules.php)

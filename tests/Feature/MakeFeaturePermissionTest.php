@@ -137,7 +137,7 @@ class MakeFeaturePermissionTest extends TestCase
 
         // Clean up directories if empty
         $dirsToClean = [
-            app_path('Http/Controllers/API'),
+            app_path('Http/Controllers/Api'),
             database_path('seeders/Permission'),
         ];
 

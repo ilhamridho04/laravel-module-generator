@@ -201,7 +201,7 @@ class MakeFeature extends Command
         $paths = [
             app_path("Models"),
             app_path("Http/Controllers"),
-            app_path("Http/Controllers/API"), // For API controllers
+            app_path("Http/Controllers/Api"), // For API controllers
             app_path("Http/Requests"),
             app_path("Traits"), // For shared traits like ApiResponser
             database_path("seeders/Permission"),
@@ -293,7 +293,7 @@ class MakeFeature extends Command
             case 'controller.stub':
                 return "<?php\n\nnamespace App\\Http\\Controllers;\n\nuse Illuminate\\Http\\Request;\n\nclass {{ model }}Controller extends Controller\n{\n    // Add your methods here\n}\n";
             case 'controller.api.stub':
-                return "<?php\n\nnamespace App\\Http\\Controllers\\API;\n\nuse Illuminate\\Http\\Request;\nuse App\\Models\\{{ model }};\nuse App\\Http\\Controllers\\Controller;\n\nclass {{ model }}Controller extends Controller\n{\n    public function index() { return {{ model }}::paginate(10); }\n    public function store(Request \$request) { return {{ model }}::create(\$request->all()); }\n    public function show({{ model }} \${{ table }}) { return \${{ table }}; }\n    public function update(Request \$request, {{ model }} \${{ table }}) { \${{ table }}->update(\$request->all()); return \${{ table }}; }\n    public function destroy({{ model }} \${{ table }}) { \${{ table }}->delete(); return response()->noContent(); }\n}\n";
+                return "<?php\n\nnamespace App\\Http\\Controllers\\Api;\n\nuse Illuminate\\Http\\Request;\nuse App\\Models\\{{ model }};\nuse App\\Http\\Controllers\\Controller;\n\nclass {{ model }}Controller extends Controller\n{\n    public function index() { return {{ model }}::paginate(10); }\n    public function store(Request \$request) { return {{ model }}::create(\$request->all()); }\n    public function show({{ model }} \${{ table }}) { return \${{ table }}; }\n    public function update(Request \$request, {{ model }} \${{ table }}) { \${{ table }}->update(\$request->all()); return \${{ table }}; }\n    public function destroy({{ model }} \${{ table }}) { \${{ table }}->delete(); return response()->noContent(); }\n}\n";
             case 'controller.view.stub':
                 return "<?php\n\nnamespace App\\Http\\Controllers;\n\nuse Illuminate\\Http\\Request;\nuse Inertia\\Inertia;\nuse App\\Models\\{{ model }};\n\nclass {{ model }}Controller extends Controller\n{\n    public function index() { return Inertia::render('{{ plural }}/Index', ['{{ table }}' => {{ model }}::paginate(10)]); }\n    public function create() { return Inertia::render('{{ plural }}/Create'); }\n    public function store(Request \$request) { {{ model }}::create(\$request->all()); return redirect()->route('{{ kebab }}.index'); }\n    public function show({{ model }} \${{ table }}) { return Inertia::render('{{ plural }}/Show', ['item' => \${{ table }}]); }\n    public function edit({{ model }} \${{ table }}) { return Inertia::render('{{ plural }}/Edit', ['item' => \${{ table }}]); }\n    public function update(Request \$request, {{ model }} \${{ table }}) { \${{ table }}->update(\$request->all()); return redirect()->route('{{ kebab }}.index'); }\n    public function destroy({{ model }} \${{ table }}) { \${{ table }}->delete(); return redirect()->route('{{ kebab }}.index'); }\n}\n";
             case 'request.store.stub':
@@ -303,7 +303,7 @@ class MakeFeature extends Command
             case 'routes.stub':
                 return "<?php\n\nuse Illuminate\\Support\\Facades\\Route;\nuse App\\Http\\Controllers\\{{ model }}Controller;\n\nRoute::resource('{{ kebab }}', {{ model }}Controller::class);\n";
             case 'routes.api.stub':
-                return "<?php\n\nuse Illuminate\\Support\\Facades\\Route;\nuse App\\Http\\Controllers\\API\\{{ model }}Controller;\n\nRoute::middleware(['auth:sanctum'])->group(function () {\n    Route::apiResource('{{ kebab }}', {{ model }}Controller::class);\n});\n";
+                return "<?php\n\nuse Illuminate\\Support\\Facades\\Route;\nuse App\\Http\\Controllers\\Api\\{{ model }}Controller;\n\nRoute::middleware(['auth:sanctum'])->group(function () {\n    Route::apiResource('{{ kebab }}', {{ model }}Controller::class);\n});\n";
             case 'routes.view.stub':
                 return "<?php\n\nuse Illuminate\\Support\\Facades\\Route;\nuse App\\Http\\Controllers\\{{ model }}Controller;\n\nRoute::middleware(['auth', 'verified'])->group(function () {\n    Route::resource('{{ kebab }}', {{ model }}Controller::class);\n});\n";
             case 'seeder.permission.stub':
@@ -427,9 +427,9 @@ class MakeFeature extends Command
                 'permission' => Str::snake($plural, ' '),
             ]);
             $this->files->put($controllerPath, $stub);
-            $this->line("🎮 API Controller dibuat: API/{$name}Controller.php");
+            $this->line("🎮 API Controller dibuat: Api/{$name}Controller.php");
         } else {
-            $this->warn("🎮 API Controller sudah ada: API/{$name}Controller.php");
+            $this->warn("🎮 API Controller sudah ada: Api/{$name}Controller.php");
         }
     }
 
@@ -526,7 +526,7 @@ class MakeFeature extends Command
     protected function generateApiRoutes(string $name, string $plural, string $kebab, bool $force = false): void
     {
         $variable = Str::camel($name);
-        $controller = "App\\Http\\Controllers\\API\\{$name}Controller";
+        $controller = "App\\Http\\Controllers\\Api\\{$name}Controller";
 
         $content = $this->renderStub('routes.api.stub', [
             'model' => $name,

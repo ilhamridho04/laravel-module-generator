@@ -77,7 +77,7 @@ class MakeFeatureApiViewOptionsTest extends TestCase
         $this->assertTrue($this->files->exists($controllerPath));
 
         $controllerContent = $this->files->get($controllerPath);
-        $this->assertStringContainsString('namespace App\Http\Controllers\API', $controllerContent);
+        $this->assertStringContainsString('namespace App\Http\Controllers\Api', $controllerContent);
         $this->assertStringContainsString('JsonResponse', $controllerContent);
         $this->assertStringContainsString('auth:sanctum', $controllerContent);
         $this->assertStringNotContainsString('Inertia', $controllerContent);
@@ -95,7 +95,7 @@ class MakeFeatureApiViewOptionsTest extends TestCase
         $routeContent = $this->files->get($routePath);
         $this->assertStringContainsString('auth:sanctum', $routeContent);
         $this->assertStringContainsString('apiResource', $routeContent);
-        $this->assertStringContainsString('App\Http\Controllers\API', $routeContent);
+        $this->assertStringContainsString('App\Http\Controllers\Api', $routeContent);
 
         // Should NOT create Vue views
         $viewsPath = resource_path("js/pages/{$this->testFeaturePlural}");

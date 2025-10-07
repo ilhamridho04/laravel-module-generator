@@ -265,7 +265,7 @@ class DeleteFeature extends Command
         $directoriesToCheck = [
             resource_path("js/pages/{$plural}"),
             base_path("routes/Modules/{$plural}"),
-            app_path("Http/Controllers/API"), // Check if API controller directory is empty
+            app_path("Http/Controllers/Api"), // Check if API controller directory is empty
             database_path("seeders/Permission"),
             app_path("Enums"),
             app_path("Observers"),
@@ -384,7 +384,7 @@ class DeleteFeature extends Command
 
     protected function shouldDeleteApiResponser(): bool
     {
-        $apiControllerPath = app_path('Http/Controllers/API');
+        $apiControllerPath = app_path('Http/Controllers/Api');
 
         if (!$this->files->exists($apiControllerPath)) {
             return true; // No API directory, safe to delete

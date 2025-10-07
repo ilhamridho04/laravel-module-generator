@@ -52,7 +52,7 @@ class MakeFeatureApiResponserTest extends TestCase
         $stubPath = __DIR__ . '/../../src/stubs/controller.api.stub';
 
         $stubContent = File::get($stubPath);
-        $this->assertStringContainsString('namespace App\Http\Controllers\API;', $stubContent);
+        $this->assertStringContainsString('namespace App\Http\Controllers\Api;', $stubContent);
         $this->assertStringContainsString('class {{ model }}Controller extends Controller', $stubContent);
     }
 }
