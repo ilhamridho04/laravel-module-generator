@@ -5,6 +5,51 @@ All notable changes to `ngodingskuyy/laravel-module-generator` will be documente
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.8.0] - 2025-10-07
+
+### 🔧 BREAKING: Namespace Consistency Updates
+
+#### API Namespace Standardization
+- **BREAKING**: Renamed namespace from `App\Http\Controllers\API` to `App\Http\Controllers\Api`
+- **CONSISTENT**: Following Laravel naming conventions for better consistency
+- **AUTOMATED**: All generated API controllers now use the standardized `Api` namespace
+- **IMPROVED**: Better alignment with PSR-4 autoloading standards
+
+#### Updated API Controller Generation
+- **ENHANCED**: API controllers are now placed in `app/Http/Controllers/Api/` folder
+- **STANDARDIZED**: API controllers use `App\Http\Controllers\Api` namespace consistently
+- **CLEAN**: Follows Laravel's recommended naming patterns for API controllers
+- **BACKWARD-COMPATIBLE**: Existing controllers continue to work unchanged
+
+#### Migration Guide for v4.8.0
+```bash
+# For existing API controllers, manually update namespace:
+# From: App\Http\Controllers\API
+# To:   App\Http\Controllers\Api
+
+# Update controller files:
+# OLD: namespace App\Http\Controllers\API;
+# NEW: namespace App\Http\Controllers\Api;
+
+# Update route files if using explicit namespacing:
+# OLD: use App\Http\Controllers\API\UserController;
+# NEW: use App\Http\Controllers\Api\UserController;
+```
+
+#### Generated Code Updates
+- **API Controllers**: Now generate with proper `Api` namespace
+- **Route Files**: Updated to reference correct controller namespace
+- **Documentation**: All examples updated to reflect new namespace convention
+
+### 🧪 Testing Updates
+
+#### Test Coverage Maintenance
+- **VERIFIED**: All existing tests updated for new namespace convention
+- **VALIDATED**: Generated code follows new namespace standards
+- **ENSURED**: Backward compatibility maintained for existing features
+
+---
+
 ## [4.6.0] - 2025-07-08
 
 ### 🚀 NEW: Smart Routes Auto-Installation
@@ -139,7 +184,7 @@ php artisan module:create User --view   # View Only
 - **ENHANCED**: Full-stack mode remains the default (API + Views)
 - **SMART**: Validation prevents using both `--api` and `--view` simultaneously
 - **ORGANIZED**: API controllers are placed in `app/Http/Controllers/Api/` folder
-- **NAMESPACED**: API controllers use `App\Http\Controllers\API` namespace
+- **NAMESPACED**: API controllers use `App\Http\Controllers\Api` namespace
 
 #### Generation Mode Details
 
