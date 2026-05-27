@@ -212,7 +212,7 @@ class MakeFeature extends Command
 
         // Only create views folder if not API-only mode
         if (!$skipViews) {
-            $paths[] = resource_path("js/pages/$plural");
+            $paths[] = resource_path("js/Pages/$plural");
         }
 
         foreach ($paths as $path) {
@@ -482,7 +482,7 @@ class MakeFeature extends Command
     {
         $table = Str::snake($plural);
         $singular = Str::singular($name);
-        $viewPath = resource_path("js/pages/{$plural}");
+        $viewPath = resource_path("js/Pages/{$plural}");
         $views = ['Index', 'Create', 'Edit', 'Show'];
 
         foreach ($views as $view) {
@@ -723,7 +723,7 @@ class MakeFeature extends Command
             $this->line("   📂 Model: <fg=cyan>{$studlyName}</>");
             $this->line("   📂 Table: <fg=cyan>" . Str::snake($pluralName) . "</>");
             $this->line("   📂 Routes: <fg=cyan>/{$kebabName}</>");
-            $this->line("   📂 Views: <fg=cyan>resources/js/pages/{$pluralName}/</>");
+            $this->line("   📂 Views: <fg=cyan>resources/js/Pages/{$pluralName}/</>");
             $this->line("");
 
             if ($this->confirm('✅ Lanjutkan dengan nama ini?', true)) {

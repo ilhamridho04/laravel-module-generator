@@ -104,10 +104,10 @@ class DeleteFeature extends Command
             $coreFiles = [
                 app_path("Http/Controllers/{$name}Controller.php"),
                 base_path("routes/Modules/{$plural}/web.php"),
-                resource_path("js/pages/{$plural}/Index.vue"),
-                resource_path("js/pages/{$plural}/Create.vue"),
-                resource_path("js/pages/{$plural}/Edit.vue"),
-                resource_path("js/pages/{$plural}/Show.vue"),
+                resource_path("js/Pages/{$plural}/Index.vue"),
+                resource_path("js/Pages/{$plural}/Create.vue"),
+                resource_path("js/Pages/{$plural}/Edit.vue"),
+                resource_path("js/Pages/{$plural}/Show.vue"),
             ];
         } else {
             // Full deletion - all files
@@ -117,10 +117,10 @@ class DeleteFeature extends Command
                 app_path("Http/Controllers/Api/{$name}Controller.php"),
                 app_path("Http/Requests/Store{$name}Request.php"),
                 app_path("Http/Requests/Update{$name}Request.php"),
-                resource_path("js/pages/{$plural}/Index.vue"),
-                resource_path("js/pages/{$plural}/Create.vue"),
-                resource_path("js/pages/{$plural}/Edit.vue"),
-                resource_path("js/pages/{$plural}/Show.vue"),
+                resource_path("js/Pages/{$plural}/Index.vue"),
+                resource_path("js/Pages/{$plural}/Create.vue"),
+                resource_path("js/Pages/{$plural}/Edit.vue"),
+                resource_path("js/Pages/{$plural}/Show.vue"),
                 base_path("routes/Modules/{$plural}/api.php"),
                 base_path("routes/Modules/{$plural}/web.php"),
                 database_path("seeders/Permission/{$plural}PermissionSeeder.php"),
@@ -263,7 +263,7 @@ class DeleteFeature extends Command
     protected function cleanupEmptyDirectories(string $name, string $plural): void
     {
         $directoriesToCheck = [
-            resource_path("js/pages/{$plural}"),
+            resource_path("js/Pages/{$plural}"),
             base_path("routes/Modules/{$plural}"),
             app_path("Http/Controllers/Api"), // Check if API controller directory is empty
             database_path("seeders/Permission"),
@@ -283,7 +283,7 @@ class DeleteFeature extends Command
 
         // Clean up parent directories if empty
         $parentDirectories = [
-            resource_path("js/pages"),
+            resource_path("js/Pages"),
             base_path("routes/Modules"),
             database_path("seeders"),
             app_path("Http/Controllers"), // Only if Controllers directory becomes empty (unlikely)

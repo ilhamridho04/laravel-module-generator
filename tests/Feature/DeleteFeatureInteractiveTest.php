@@ -34,7 +34,7 @@ class DeleteFeatureInteractiveTest extends TestCase
             app_path('Traits/ApiResponser.php'),
             base_path('routes/Modules/TestProducts'),
             database_path('seeders/Permission/TestProductsPermissionSeeder.php'),
-            resource_path('js/pages/TestProducts'),
+            resource_path('js/Pages/TestProducts'),
         ];
 
         foreach ($paths as $path) {
@@ -114,7 +114,7 @@ class DeleteFeatureInteractiveTest extends TestCase
         // Verify files exist before deletion
         $this->assertFileExists(app_path('Http/Controllers/TestProductController.php'));
         $this->assertFileExists(app_path('Http/Controllers/Api/TestProductController.php'));
-        $this->assertFileExists(resource_path('js/pages/TestProducts/Index.vue'));
+        $this->assertFileExists(resource_path('js/Pages/TestProducts/Index.vue'));
 
         // Test API-only deletion via flag
         $result = Artisan::call('module:delete', [
@@ -132,7 +132,7 @@ class DeleteFeatureInteractiveTest extends TestCase
 
         // Verify web components still exist
         $this->assertFileExists(app_path('Http/Controllers/TestProductController.php'));
-        $this->assertFileExists(resource_path('js/pages/TestProducts/Index.vue'));
+        $this->assertFileExists(resource_path('js/Pages/TestProducts/Index.vue'));
         $this->assertFileExists(base_path('routes/Modules/TestProducts/web.php'));
     }
 
@@ -144,7 +144,7 @@ class DeleteFeatureInteractiveTest extends TestCase
         // Verify files exist before deletion
         $this->assertFileExists(app_path('Http/Controllers/TestProductController.php'));
         $this->assertFileExists(app_path('Http/Controllers/Api/TestProductController.php'));
-        $this->assertFileExists(resource_path('js/pages/TestProducts/Index.vue'));
+        $this->assertFileExists(resource_path('js/Pages/TestProducts/Index.vue'));
 
         // Test view-only deletion via flag
         $result = Artisan::call('module:delete', [
@@ -157,7 +157,7 @@ class DeleteFeatureInteractiveTest extends TestCase
 
         // Verify only view components are deleted
         $this->assertFileDoesNotExist(app_path('Http/Controllers/TestProductController.php'));
-        $this->assertFileDoesNotExist(resource_path('js/pages/TestProducts/Index.vue'));
+        $this->assertFileDoesNotExist(resource_path('js/Pages/TestProducts/Index.vue'));
         $this->assertFileDoesNotExist(base_path('routes/Modules/TestProducts/web.php'));
 
         // Verify API components still exist

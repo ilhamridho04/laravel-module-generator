@@ -119,7 +119,7 @@ class MakeFeatureCommandIntegrationTest extends TestCase
             '--force' => true
         ]);
 
-        $viewsPath = resource_path('js/pages/Posts');
+        $viewsPath = resource_path('js/Pages/Posts');
 
         $this->assertFileExists($viewsPath . '/Index.vue');
         $this->assertFileExists($viewsPath . '/Create.vue');
@@ -225,7 +225,7 @@ class MakeFeatureCommandIntegrationTest extends TestCase
             app_path('Http/Requests'),
             app_path('Enums'),
             app_path('Observers'),
-            resource_path('js/pages'),
+            resource_path('js/Pages'),
             base_path('routes/Modules'),
             database_path('seeders/Permission'),
         ];
@@ -269,7 +269,7 @@ class MakeFeatureCommandIntegrationTest extends TestCase
                     }
 
                     // Clean view directories
-                    $viewDir = resource_path("js/pages/{$model}s");
+                    $viewDir = resource_path("js/Pages/{$model}s");
                     if (File::exists($viewDir)) {
                         File::deleteDirectory($viewDir);
                     }

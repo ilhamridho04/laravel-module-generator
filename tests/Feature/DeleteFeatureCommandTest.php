@@ -31,7 +31,7 @@ class DeleteFeatureCommandTest extends TestCase
             app_path('Http/Controllers/TestUserController.php'),
             app_path('Http/Requests/StoreTestUserRequest.php'),
             app_path('Http/Requests/UpdateTestUserRequest.php'),
-            resource_path('js/pages/TestUsers'),
+            resource_path('js/Pages/TestUsers'),
             base_path('routes/Modules/TestUsers'),
             database_path('seeders/Permission/TestUsersPermissionSeeder.php'),
             app_path('Enums/TestUserStatus.php'),
@@ -79,10 +79,10 @@ class DeleteFeatureCommandTest extends TestCase
         Artisan::call('module:create', ['name' => 'TestUser']);
 
         // Verify Vue files exist
-        $this->assertFileExists(resource_path('js/pages/TestUsers/Index.vue'));
-        $this->assertFileExists(resource_path('js/pages/TestUsers/Create.vue'));
-        $this->assertFileExists(resource_path('js/pages/TestUsers/Edit.vue'));
-        $this->assertFileExists(resource_path('js/pages/TestUsers/Show.vue'));
+        $this->assertFileExists(resource_path('js/Pages/TestUsers/Index.vue'));
+        $this->assertFileExists(resource_path('js/Pages/TestUsers/Create.vue'));
+        $this->assertFileExists(resource_path('js/Pages/TestUsers/Edit.vue'));
+        $this->assertFileExists(resource_path('js/Pages/TestUsers/Show.vue'));
 
         // Delete feature
         Artisan::call('module:delete', [
@@ -91,13 +91,13 @@ class DeleteFeatureCommandTest extends TestCase
         ]);
 
         // Verify Vue files are deleted
-        $this->assertFileDoesNotExist(resource_path('js/pages/TestUsers/Index.vue'));
-        $this->assertFileDoesNotExist(resource_path('js/pages/TestUsers/Create.vue'));
-        $this->assertFileDoesNotExist(resource_path('js/pages/TestUsers/Edit.vue'));
-        $this->assertFileDoesNotExist(resource_path('js/pages/TestUsers/Show.vue'));
+        $this->assertFileDoesNotExist(resource_path('js/Pages/TestUsers/Index.vue'));
+        $this->assertFileDoesNotExist(resource_path('js/Pages/TestUsers/Create.vue'));
+        $this->assertFileDoesNotExist(resource_path('js/Pages/TestUsers/Edit.vue'));
+        $this->assertFileDoesNotExist(resource_path('js/Pages/TestUsers/Show.vue'));
 
         // Verify directory is cleaned up
-        $this->assertDirectoryDoesNotExist(resource_path('js/pages/TestUsers'));
+        $this->assertDirectoryDoesNotExist(resource_path('js/Pages/TestUsers'));
     }
 
     /** @test */
@@ -154,7 +154,7 @@ class DeleteFeatureCommandTest extends TestCase
         Artisan::call('module:create', ['name' => 'TestUser']);
 
         // Verify directories exist
-        $this->assertDirectoryExists(resource_path('js/pages/TestUsers'));
+        $this->assertDirectoryExists(resource_path('js/Pages/TestUsers'));
         $this->assertDirectoryExists(base_path('routes/Modules/TestUsers'));
 
         // Delete feature
@@ -170,7 +170,7 @@ class DeleteFeatureCommandTest extends TestCase
         }
 
         // Verify empty directories are cleaned up
-        $this->assertDirectoryDoesNotExist(resource_path('js/pages/TestUsers'));
+        $this->assertDirectoryDoesNotExist(resource_path('js/Pages/TestUsers'));
         $this->assertDirectoryDoesNotExist(base_path('routes/Modules/TestUsers'));
     }
 

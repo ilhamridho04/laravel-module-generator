@@ -34,7 +34,7 @@ class MakeFeatureMultiSelectTest extends TestCase
             app_path("Http/Requests/Store{$this->testModelName}Request.php"),
             app_path("Http/Requests/Update{$this->testModelName}Request.php"),
             app_path("Models/{$this->testModelName}.php"),
-            resource_path("js/pages/{$this->testFeaturePlural}"),
+            resource_path("js/Pages/{$this->testFeaturePlural}"),
             base_path("routes/Modules/{$this->testFeaturePlural}"),
             database_path("seeders/Permission/{$this->testFeaturePlural}PermissionSeeder.php"),
             app_path("Enums/{$this->testModelName}Status.php"),

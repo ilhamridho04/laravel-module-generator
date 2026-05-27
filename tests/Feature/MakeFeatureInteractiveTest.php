@@ -40,7 +40,7 @@ class MakeFeatureInteractiveTest extends TestCase
             app_path("Enums/{$this->testModelName}Status.php"),
             app_path("Policies/{$this->testModelName}Policy.php"),
             app_path("Observers/{$this->testModelName}Observer.php"),
-            resource_path("js/pages/{$this->testFeaturePlural}"),
+            resource_path("js/Pages/{$this->testFeaturePlural}"),
             base_path("routes/Modules/{$this->testFeaturePlural}"),
             database_path("seeders/Permission/{$this->testFeaturePlural}PermissionSeeder.php"),
         ];
@@ -93,7 +93,7 @@ class MakeFeatureInteractiveTest extends TestCase
         $controllerPath = app_path("Http/Controllers/{$this->testModelName}Controller.php");
         $this->assertTrue($this->files->exists($controllerPath));
 
-        $viewsPath = resource_path("js/pages/{$this->testFeaturePlural}");
+        $viewsPath = resource_path("js/Pages/{$this->testFeaturePlural}");
         $this->assertTrue($this->files->exists($viewsPath));
     }
 
@@ -117,7 +117,7 @@ class MakeFeatureInteractiveTest extends TestCase
         $this->assertStringContainsString('auth:sanctum', $controllerContent);
 
         // Should NOT create Vue views
-        $viewsPath = resource_path("js/pages/{$this->testFeaturePlural}");
+        $viewsPath = resource_path("js/Pages/{$this->testFeaturePlural}");
         $this->assertFalse($this->files->exists($viewsPath));
 
         // Should create API routes
@@ -145,7 +145,7 @@ class MakeFeatureInteractiveTest extends TestCase
         $this->assertStringNotContainsString('JsonResponse', $controllerContent);
 
         // Should create Vue views
-        $viewsPath = resource_path("js/pages/{$this->testFeaturePlural}");
+        $viewsPath = resource_path("js/Pages/{$this->testFeaturePlural}");
         $this->assertTrue($this->files->exists($viewsPath));
 
         // Should NOT create requests
@@ -237,7 +237,7 @@ class MakeFeatureInteractiveTest extends TestCase
         $this->assertTrue($this->files->exists(app_path("Policies/{$this->testModelName}Policy.php")));
 
         // Should NOT create views (API only)
-        $viewsPath = resource_path("js/pages/{$this->testFeaturePlural}");
+        $viewsPath = resource_path("js/Pages/{$this->testFeaturePlural}");
         $this->assertFalse($this->files->exists($viewsPath));
     }
 

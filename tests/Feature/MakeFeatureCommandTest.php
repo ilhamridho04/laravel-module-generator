@@ -37,10 +37,10 @@ class MakeFeatureCommandTest extends TestCase
         $this->assertFileExists(base_path('routes/Modules/TestPosts/web.php'));
 
         // Check if Vue views are created
-        $this->assertFileExists(resource_path('js/pages/TestPosts/Index.vue'));
-        $this->assertFileExists(resource_path('js/pages/TestPosts/Create.vue'));
-        $this->assertFileExists(resource_path('js/pages/TestPosts/Edit.vue'));
-        $this->assertFileExists(resource_path('js/pages/TestPosts/Show.vue'));
+        $this->assertFileExists(resource_path('js/Pages/TestPosts/Index.vue'));
+        $this->assertFileExists(resource_path('js/Pages/TestPosts/Create.vue'));
+        $this->assertFileExists(resource_path('js/Pages/TestPosts/Edit.vue'));
+        $this->assertFileExists(resource_path('js/Pages/TestPosts/Show.vue'));
 
         // Check if permission seeder is created
         $this->assertFileExists(database_path('seeders/Permission/TestPostsPermissionSeeder.php'));
@@ -154,8 +154,8 @@ class MakeFeatureCommandTest extends TestCase
     {
         Artisan::call('module:create', ['name' => 'Post']);
 
-        $indexVue = File::get(resource_path('js/pages/Posts/Index.vue'));
-        $createVue = File::get(resource_path('js/pages/Posts/Create.vue'));
+        $indexVue = File::get(resource_path('js/Pages/Posts/Index.vue'));
+        $createVue = File::get(resource_path('js/Pages/Posts/Create.vue'));
 
         // Check Vue structure
         $this->assertStringContainsString('<template>', $indexVue);
@@ -179,7 +179,7 @@ class MakeFeatureCommandTest extends TestCase
             app_path('Http/Requests'),
             app_path('Enums'),
             app_path('Observers'),
-            resource_path('js/pages'),
+            resource_path('js/Pages'),
             base_path('routes/Modules'),
             database_path('seeders/Permission'),
         ];

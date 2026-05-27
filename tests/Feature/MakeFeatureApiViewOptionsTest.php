@@ -34,7 +34,7 @@ class MakeFeatureApiViewOptionsTest extends TestCase
             app_path("Http/Requests/Store{$this->testModelName}Request.php"),
             app_path("Http/Requests/Update{$this->testModelName}Request.php"),
             app_path("Models/{$this->testModelName}.php"),
-            resource_path("js/pages/{$this->testFeaturePlural}"),
+            resource_path("js/Pages/{$this->testFeaturePlural}"),
             base_path("routes/Modules/{$this->testFeaturePlural}"),
             database_path("seeders/Permission/{$this->testFeaturePlural}PermissionSeeder.php"),
         ];
@@ -98,7 +98,7 @@ class MakeFeatureApiViewOptionsTest extends TestCase
         $this->assertStringContainsString('App\Http\Controllers\Api', $routeContent);
 
         // Should NOT create Vue views
-        $viewsPath = resource_path("js/pages/{$this->testFeaturePlural}");
+        $viewsPath = resource_path("js/Pages/{$this->testFeaturePlural}");
         $this->assertFalse($this->files->exists($viewsPath));
 
         // Should create model and other common files
@@ -142,7 +142,7 @@ class MakeFeatureApiViewOptionsTest extends TestCase
         $this->assertStringNotContainsString('apiResource', $routeContent);
 
         // Should create Vue views
-        $viewsPath = resource_path("js/pages/{$this->testFeaturePlural}");
+        $viewsPath = resource_path("js/Pages/{$this->testFeaturePlural}");
         $this->assertTrue($this->files->exists($viewsPath));
 
         $views = ['Index.vue', 'Create.vue', 'Edit.vue', 'Show.vue'];
@@ -183,7 +183,7 @@ class MakeFeatureApiViewOptionsTest extends TestCase
         $this->assertTrue($this->files->exists($routePath));
 
         // Should create Vue views
-        $viewsPath = resource_path("js/pages/{$this->testFeaturePlural}");
+        $viewsPath = resource_path("js/Pages/{$this->testFeaturePlural}");
         $this->assertTrue($this->files->exists($viewsPath));
 
         // Should create model and other common files
@@ -217,7 +217,7 @@ class MakeFeatureApiViewOptionsTest extends TestCase
                 app_path("Http/Requests/Store{$model}Request.php"),
                 app_path("Http/Requests/Update{$model}Request.php"),
                 app_path("Models/{$model}.php"),
-                resource_path("js/pages/" . Str::pluralStudly($model)),
+                resource_path("js/Pages/" . Str::pluralStudly($model)),
                 base_path("routes/Modules/" . Str::pluralStudly($model)),
             ];
 
